@@ -1,42 +1,85 @@
+/*담당:박도현*/
+
 @charset "UTF-8";
+/*기본지정 폰트입니다.*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+/*서브폰트*/
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Dongle&family=Jua&display=swap');
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	box-sizing:border-box;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+
+/*폰트적용*/
+body{font-family: "Noto Sans KR", sans-serif; }
+.juafonts{font-family: "Jua", sans-serif;}
+.donglefonts{font-family: "Dongle", sans-serif;}
+
+
+/*디자인을 위한 리셋 적용*/
+*{margin: 0;padding: 0; box-sizing: border-box;}
+ul,ol,li{list-style: none;}
+a{ color: inherit; text-decoration: none; display: block;}
+button:hover{cursor: pointer;}
+
+
+/*공통 지정 변수*/
+
+:root {
+  /*컬러 변수*/
+  /*백그라운드*/
+  --admin-body-color: rgb(246, 246, 246);
+  --background-color: #E0E0E0;
+  --background-color2: #F3F1F6;
+  --trans-background-color:rgba( 255, 255, 255, 0.55 );
+  /*메인 레드*/
+  --main-red:#DB242D;
+  --main-grey:#524747;
+  --main-grey:#f1f1f1;
+  --main-black:#040707;
+  --main-white:#FEFCF8;
+  --sub-red:#A51F22;
+
+  /*글*/
+  --font-color:#2B2D2F;
+  --font-color2:#44474A;
+  --font-color3:#7d8388;
+  
+  /*서브*/
+  --sub-color: #F6C6C6;
+  --sub-color3: #fbd546;
+  --sub-color4:#bd9ff4;
+  --sub-color5:#cfd8e2;
+  --sub-color6:rgba(0,0,0, 0.2);
+  --sub-color7:#efeafc;
+  --sub-color8:#2CAFFE;
+  /*투명도 적용 서브*/
+  --trans-sub-color:rgba(246,198,198,1);
 }
 
-body {
-	line-height: 1.6;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
+
+/*공통 버튼*/
+.cmbutton1{padding: 5px; border: 1px solid var(--mian-color); background-color: var(--mian-color); color: #fff; border-radius: 5px ;text-align: center;}
+.cmbutton1 i{margin-left: 6px}
+
+.cmbutton2{padding: 5px; border: 1px solid var(--mian-color); background-color:#fff; color: var(--mian-color); border-radius: 5px;text-align: center; }
+.cmbutton2 i{margin-left: 6px}
+
+/*공통 대시보드*/
+
+.dash{background-color: rgba( 255, 255, 255, 1 );backdrop-filter: blur( 8px ); box-shadow: 0 4px 10px 0 rgba( 31, 38, 135, 0.37 ); border-radius: 10px;padding: 15px; overflow-y:auto;position: relative; border: 1px solid rgba( 255, 255, 255, 0.18 );}
+
+
+
+/*대시보드 서브 메뉴 */
+.cmindex {display: grid;grid-template-rows: 5% 91.5%;gap: 20px;overflow-y: auto;}
+.cmsubnav > ul {display: flex;}
+.cmsubnav > ul >li {display: flex;margin-right:20px;  background-color:rgba( 255, 255, 255, 1 ); backdrop-filter: blur( 8px ); box-shadow: 0 4px 10px 0 rgba( 31, 38, 135, 0.37 ); border-radius: 10px; overflow-y:auto;position: relative; }
+
+.cmsubnav > ul >li>a {white-space: nowrap;overflow: hidden;text-overflow: ellipsis;border-radius: 10px;color: #333;padding: 10px 15px;
+	text-align: center;text-decoration: none;font-size: 16px;transition: background-color 0.3s, color 0.3s;}
+	
+.cmsubnav > ul > li > a:hover,
+.cmsubnav > ul > li > a.active {
+  background-color: var(--mian-color);
+  border-radius: 10px;
+  color: white;
+  border: none;
 }
