@@ -1,0 +1,79 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.btn-group {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 5px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-login {
+    background-color: #f0a3a3;
+    color: white;
+}
+
+.btn-signup {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.board-table th,
+.board-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.board-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+}
+
+.board-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.board-table a {
+    color: #333;
+    text-decoration: none;
+}
+
+.board-table a:hover {
+    text-decoration: underline;
+}
+
+.comment-count {
+    color: #ff6600;
+    font-weight: bold;
+    margin-left: 5px;
+}
