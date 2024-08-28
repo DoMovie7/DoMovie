@@ -2,11 +2,13 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     margin: 0;
-    padding: 20px;
+    padding: 0;
 }
 
 .container {
     background-color: white;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -76,4 +78,32 @@ h1 {
     color: #ff6600;
     font-weight: bold;
     margin-left: 5px;
+}
+
+/* 반응형 디자인을 위한 미디어 쿼리 */
+@media (max-width: 1200px) {
+    .container {
+        margin: 0 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 0 10px;
+    }
+
+    .board-table th,
+    .board-table td {
+        padding: 8px;
+    }
+
+    .btn-group {
+        text-align: center;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }

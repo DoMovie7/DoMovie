@@ -1,41 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>티켓나눔 게시판</title>
+    <title>홈시어터 정보 공유 게시판 - 두무비</title>
     <link rel="stylesheet" th:href="@{/css/hometheater.css}">
 </head>
 <body>
-<div class="container">
-    <header>
+<main>
+    <div class="container">
         <h1>홈시어터 정보 공유 게시판</h1>
-    </header>
-    <div class="btn-group">
-        <button class="btn btn-login">로그인</button>
-        <button class="btn btn-signup">회원가입</button>
+        <table class="board-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>글쓴이</th>
+                <th>날짜</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td>
+                    <a th:href="@{/hometheater/{id}(id=${post.id})}" th:text="${post.title}"></a>
+                    <span th:if="${post.commentCount > 0}" th:text="'[' + ${post.commentCount} + ']'" class="comment-count"></span>
+                </td>
+                <td th:text="${post.author}"></td>
+                <td th:text="${#temporals.format(post.createdAt, 'yy.MM.dd')}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <table class="board-table">
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>글쓴이</th>
-            <th>날짜</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="post : ${posts}">
-            <td th:text="${post.id}"></td>
-            <td>
-                <a th:href="@{/hometheater/{id}(id=${post.id})}" th:text="${post.title}"></a>
-                <span th:if="${post.commentCount > 0}" th:text="'[' + ${post.commentCount} + ']'" class="comment-count"></span>
-            </td>
-            <td th:text="${post.author}"></td>
-            <td th:text="${#temporals.format(post.createdAt, 'yy.MM.dd')}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+</main>
 </body>
 </html>
