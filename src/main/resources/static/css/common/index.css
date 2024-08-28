@@ -1,0 +1,54 @@
+@charset "UTF-8";
+
+
+
+
+main{padding-top:110px }
+
+.indexslide-container{width: 100%;  position: relative; overflow: hidden; }
+
+.indexslide-wrap{width: 100%;position:absolute;}
+
+.indexslide{
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position:center;
+	width: 100%;
+	height:774px;
+	position: absolute;
+	top: 50%;
+	transform:translateY(-50%);
+	
+}
+
+
+.indexslide-wrap>li:nth-of-type(1) {
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/Junsu/Junsu_19207742.jpg");
+
+}
+
+
+.indexslide-wrap>li:nth-of-type(2) {
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/NoWayUp/NoWayUp_1920774.jpg");
+
+}
+
+
+.indexslide-wrap>li:nth-of-type(3) {
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/YouShineInTheMoonlight/YouShineInTheMoonlight_1920774.jpg");
+
+}
+
+.indexslide-container:before{content: ""; display: block; position:absolute;  top:0;left: 0;width: 100%; height: 130px;  
+background-image: linear-gradient(to bottom, rgba(0,0,0,0.6),rgba(0,0,0,0.3), rgba(0,0,0,0)); z-index: 1}
+
+.indexslide-container:after{content: ""; display: block; position:absolute; bottom:0;  left: 0;width: 100%; height: 120px;  
+background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.7),rgba(0,0,0,0)); z-index: 1}
+
+#prev{position: absolute; left:10%; top:50%; transform:translateY(-50%); font-size: 2.5em; color: #fff}
+#next{position: absolute; left:90%; top:50%; transform:translateY(-50%); font-size: 2.5em; color: #fff}
+
+.indexslide-wrap.animated{
+	-webkit-transition: left .3s ease-in;
+	transition:left .3s ease-in;
+}
