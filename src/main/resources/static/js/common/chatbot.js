@@ -73,11 +73,7 @@ function showWelcomeMessage() {
 											안녕하세요. 영화를 '하다', DoMovie입니다.<br>
 											반갑습니다. 000님.<br><br>
 	
-											무엇을 도와드릴까요?<br><br>
-	
-											1:1 상담 운영시간<br>
-											평일 10:00 ~ 17:00<br>
-											점심시간 13:10 ~ 14:00 <br>
+											무엇을 도와드릴까요?<br>
                                         </p>
                                     </div>
                                 </div>
@@ -186,35 +182,96 @@ window.addEventListener('beforeunload', function() {
 // 챗봇 닫기 버튼 클릭 이벤트 핸들러
 function btnCloseClicked() {
     const botContainer = document.getElementById("bot-container");
-    botContainer.classList.remove('open');
-    saveBotState();
-    disconnect();
-    flag = false;
-    document.getElementById("chat-content").innerHTML = "";  // 채팅 내용 초기화
-    localStorage.removeItem('chatContent');
-    localStorage.setItem('chatReset', 'true');
-    localStorage.removeItem('hasShownWelcomeMessage');
+    
+    // bounceOut 애니메이션 클래스 추가
+    botContainer.classList.add('animate__animated', 'animate__bounceOut');
+    
+    // 애니메이션 종료 후 실행할 함수
+    function onAnimationEnd() {
+        botContainer.classList.remove('open', 'animate__animated', 'animate__bounceOut');
+        saveBotState();
+        disconnect();
+        flag = false;
+        document.getElementById("chat-content").innerHTML = ""; // 채팅 내용 초기화
+        localStorage.removeItem('chatContent');
+        localStorage.setItem('chatReset', 'true');
+        localStorage.removeItem('hasShownWelcomeMessage');
+        
+        // 이벤트 리스너 제거
+        botContainer.removeEventListener('animationend', onAnimationEnd);
+    }
+    
+    // 애니메이션 종료 이벤트 리스너 추가
+    botContainer.addEventListener('animationend', onAnimationEnd);
 }
 
+/*
 // 챗봇 열기 버튼 클릭 이벤트 핸들러
 function btnBotClicked() {
     if (flag) return;  // 이미 열려있으면 무시
 
     const botContainer = document.getElementById("bot-container");
-    botContainer.classList.add('open');
+    botContainer.classList.add('open'); // 챗봇 컨테이너에 'open' 클래스를 추가하여 UI에 표시
+	botContainer.classList.add('animate__animated', 'animate__rubberBand');
     connect();
     flag = true;
     
+	// 로컬 스토리지에서 웰컴 메시지 표시 여부와 채팅 리셋 여부를 확인
     var hasShownWelcomeMessage = localStorage.getItem('hasShownWelcomeMessage');
     var wasChatReset = localStorage.getItem('chatReset');
     
+	// 웰컴 메시지를 아직 보여주지 않았거나 채팅이 리셋된 경우
     if (!hasShownWelcomeMessage || wasChatReset) {
+		// 웰컴 메시지 표시 함수 호출 (별도로 정의된 함수)
         showWelcomeMessage();
+		// 채팅 리셋 상태를 로컬 스토리지에서 제거
         localStorage.removeItem('chatReset');
     }
-    
+	
+	// 현재 챗봇 상태를 저장하는 함수 호출
     saveBotState();
 }
+*/
+
+let botContainer;
+
+// 챗봇 열기 버튼 클릭
+function initializeChatBot() {
+    botContainer = document.getElementById("bot-container");
+    
+    // 챗봇 여는 애니메이션 끝난 후 효과 제거
+    botContainer.addEventListener('animationend', () => {
+        botContainer.classList.remove('animate__animated', 'animate__bounceIn');
+    });
+}
+
+// 챗봇 열기 버튼 클릭 이벤트 핸들러
+function btnBotClicked() {
+    if (flag) return; // 이미 열려있으면 무시
+
+    botContainer.classList.add('open'); // 챗봇 컨테이너에 'open' 클래스를 추가하여 UI에 표시
+    botContainer.classList.add('animate__animated', 'animate__bounceIn');
+    connect();
+    flag = true;
+
+    // 로컬 스토리지에서 웰컴 메시지 표시 여부와 채팅 리셋 여부를 확인
+    var hasShownWelcomeMessage = localStorage.getItem('hasShownWelcomeMessage');
+    var wasChatReset = localStorage.getItem('chatReset');
+
+    // 웰컴 메시지를 아직 보여주지 않았거나 채팅이 리셋된 경우
+    if (!hasShownWelcomeMessage || wasChatReset) {
+        // 웰컴 메시지 표시 함수 호출 (별도로 정의된 함수)
+        showWelcomeMessage();
+        // 채팅 리셋 상태를 로컬 스토리지에서 제거
+        localStorage.removeItem('chatReset');
+    }
+
+    // 현재 챗봇 상태를 저장하는 함수 호출
+    saveBotState();
+}
+
+// DOM이 로드된 후 initializeChatBot 함수 실행
+document.addEventListener('DOMContentLoaded', initializeChatBot);
 
 // 메시지 전송 버튼 클릭 이벤트 핸들러
 function btnMsgSendClicked() {
