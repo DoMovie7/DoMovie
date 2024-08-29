@@ -1,18 +1,12 @@
-const navvT = document.querySelectorAll('.nav-top>li');
-const navvS =document.querySelectorAll('.navtop-sub');
+document.addEventListener('DOMContentLoaded', function() {
+  const header = document.querySelector('header');
+  const scrollThreshold = 100; // 스크롤 임계값 (픽셀)
 
-for(let i =0;i<navvT.length;i++){
-	navvT[i].addEventListener('mouseover', function(){
-		navvS[i].classList.add('active');
-		
-		
-	});
-}
-
-for(let i=0;i<navvT.length;i++){
-	navvT[i],addEventListener('mouseout',function(){
-		navvS[i].classList.remove('active');
-		
-		
-	});
-}
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > scrollThreshold) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  });
+});
