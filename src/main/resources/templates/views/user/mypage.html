@@ -4,37 +4,83 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="/css/user/mypage.css">
-	<script src="/js/user/mypage.js"></script>
+	<script src="/js/user/mypage.js" defer></script>
 	<title>마이페이지</title>
 </head>
 
 <body>
 	<main>
+		<div class="profile-submenu">
+			<button id="profile-btn" class="active">내 프로필</button>
+			<button id="tier-btn">나의 등급</button>
+			<button id="my-posts-btn">내가 쓴 글</button>
+		</div>
 		<section class="profile-wrap">
-			<div class="mypage-title">
-				<h2>내 프로필</h2>
+			<div id="profile-content">
+				<div class="mypage-title">
+					<h2>내 프로필</h2>
+				</div>
+				<div class="profile-container">
+					<div class="profile-image-container">
+						<img id="profile-picture" src="/img/default-profile.jpg" alt="프로필 사진">
+						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
+					</div>
+					<form id="profile-form" class="profile-info">
+						<ul>
+							<li>
+								<span>이름 : </span><span id="name">홍길동</span>
+							</li>
+							<li>
+								<span>생년월일 : </span><span id="birthdate">2000.01.01</span>
+							</li>
+							<li>
+								<span>닉네임 : </span>
+								<span id="nickname">DOMOVIE</span>
+								<input type="text" id="nickname-input" style="display: none;">
+							</li>
+							<li>
+								<span>이메일 : </span><span id="email">test01@test.com</span>
+							</li>
+							<li>
+								<span>비밀번호 : </span>
+								<span id="password">********</span>
+								<input type="password" id="password-input" style="display: none;">
+							</li>
+						</ul>
+						<div class="button-group">
+							<button type="button" id="edit-btn">수정</button>
+							<button type="button" id="cancel-btn" style="display: none;">취소</button>
+							<button type="submit" id="save-btn" style="display: none;">수정완료</button>
+						</div>
+					</form>
+				</div>
 			</div>
-			<div class="profile-image">
-			    <img id="profile-picture" src="/img/default-profile.jpg" alt="프로필 사진" width="150" height="150">
-			    <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+			<!-- 나의 등급 -->
+			<div id="tier-content" style="display: none;">
+				<h2>나의 등급</h2>
+				<div id="tier-image-container">
+					<img id="tier-image" src="/img/tier/gold_tier.png" alt="등급 이미지">
+				</div>
+				<span id="my-post-count">내 게시글 수: </span><span id="my-post-count">10</span>
 			</div>
-			<div class="profile-content">
-				<ul>
-					<li>
-						<span>이름 : </span><span>홍길동</span>
+			<!-- 내가 쓴 글 -->
+			<div id="my-posts-content" style="display: none;">
+				<h2>내가 쓴 글</h2>
+				<ul class="my-post-list">
+					<!-- 게시글 항목들은 서버에서 동적으로 생성될 것입니다 -->
+					<li class="my-post-item">
+						<a href="#">
+							<span class="my-post-title">첫 번째 게시글 제목</span>
+							<span class="my-post-date">2024-03-15</span>
+						</a>
 					</li>
-					<li>
-						<span>생년월일 : </span><span>2000.01.01</span>
+					<li class="my-post-item">
+						<a href="#">
+							<span class="my-post-title">두 번째 게시글 제목</span>
+							<span class="my-post-date">2024-03-14</span>
+						</a>
 					</li>
-					<li>
-						<span>닉네임 : </span><span>DOMOVIE</span>
-					</li>
-					<li>
-						<span>이메일 : </span><span>test01@test.com</span>
-					</li>
-					<li>
-						<span>비밀번호 : </span><span>********</span>
-					</li>
+					<!-- 추가 게시글 항목들 -->
 				</ul>
 			</div>
 		</section>
