@@ -4,16 +4,20 @@
       th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
 <head>
     <title>홈시어터 정보 공유 게시판 - 두무비</title>
-    <link rel="stylesheet" th:href="@{/css/hometheater.css}">
+    <link rel="stylesheet" th:href="@{/css/hometheater/hometheater.css}">
 </head>
 <body>
 <main>
     <div class="container">
         <h1>홈시어터 정보 공유 게시판</h1>
+        <div class="button-container">
+            <a th:href="@{/hometheater/hometheater_create}" class="btn btn-primary">글 작성</a>
+        </div>
         <table class="board-table">
             <thead>
             <tr>
                 <th>번호</th>
+                <th>대표 이미지</th> <!-- 대표 이미지 컬럼 추가 -->
                 <th>제목</th>
                 <th>글쓴이</th>
                 <th>날짜</th>
@@ -22,6 +26,13 @@
             <tbody>
             <tr th:each="post : ${posts}">
                 <td th:text="${post.id}"></td>
+                <td>
+                    <!-- 대표 이미지 추가 -->
+                    <img th:src="@{/img/upload/{filename}(filename=${post.thumbnailImageUrl})}"
+                         alt="대표 이미지"
+                         class="post-thumbnail"
+                         style="width: 50px; height: 50px; margin-right: 10px;">
+                </td>
                 <td>
                     <a th:href="@{/hometheater/{id}(id=${post.id})}" th:text="${post.title}"></a>
                     <span th:if="${post.commentCount > 0}" th:text="'[' + ${post.commentCount} + ']'" class="comment-count"></span>

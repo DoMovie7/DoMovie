@@ -1,66 +1,69 @@
 package com.red.domovie.controller;
 
+import com.red.domovie.domain.dto.HomeTheaterDetailDTO;
+import com.red.domovie.domain.dto.HomeTheaterListDTO;
+import com.red.domovie.domain.dto.HomeTheaterSaveDTO;
+import com.red.domovie.domain.dto.HomeTheaterUpdateDTO;
+import com.red.domovie.domain.service.HomeTheaterService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/hometheater")
+@RequiredArgsConstructor
 public class HomeTheaterController {
+
+    private final HomeTheaterService homeTheaterService;
 
     @GetMapping
     public String homeTheaterMain() {
-        return "views/hometheater/hometheater";
+        return "views/hometheater/hometheater"; // 홈시어터 메인 페이지
     }
 
     @GetMapping("/list")
     public String listPosts(Model model) {
-        List<PostDto> posts = getDummyPosts();
+        List<HomeTheaterListDTO> posts = homeTheaterService.getAllPosts();
         model.addAttribute("posts", posts);
-        return "views/hometheater/hometheater_list";
+        return "views/hometheater/hometheater_list"; // 게시물 목록 페이지
     }
 
-    private List<PostDto> getDummyPosts() {
-        List<PostDto> posts = new ArrayList<>();
-        posts.add(new PostDto(1L, "홈시어터 스피커 추천", "user1", LocalDateTime.now(), 15, 3));
-        posts.add(new PostDto(2L, "4K 프로젝터 사용 후기", "user2", LocalDateTime.now().minusDays(1), 32, 7));
-        posts.add(new PostDto(3L, "서라운드 음향 설정 팁", "user3", LocalDateTime.now().minusDays(2), 28, 5));
-        posts.add(new PostDto(4L, "홈시어터용 리시버 고르는 법", "user4", LocalDateTime.now().minusDays(3), 41, 9));
-        posts.add(new PostDto(5L, "OLED vs QLED 비교", "user5", LocalDateTime.now().minusDays(4), 56, 12));
-        return posts;
+    @GetMapping("/hometheater_create")
+    public String createPostForm(Model model) {
+        model.addAttribute("homeTheaterSaveDTO", new HomeTheaterSaveDTO());
+        return "views/hometheater/hometheater_create"; // 글 작성 페이지
     }
 
-// 간단한 DTO 클래스
-private static class PostDto {
-    private Long id;
-    private String title;
-    private String author;
-    private LocalDateTime createdAt;
-    private int viewCount;
-    private int commentCount;
-
-    // 생성자, getter, setter 생략 (IDE에서 자동 생성 가능)
-
-    public PostDto(Long id, String title, String author, LocalDateTime createdAt, int viewCount, int commentCount) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.createdAt = createdAt;
-        this.viewCount = viewCount;
-        this.commentCount = commentCount;
+    @PostMapping("/create")
+    public String createPost(@ModelAttribute HomeTheaterSaveDTO homeTheaterSaveDTO,
+                             @RequestParam("file") MultipartFile file) {
+        homeTheaterService.createPost(homeTheaterSaveDTO, file); // 파일 포함
+        return "redirect:/hometheater/list"; // 목록으로 리다이렉트
     }
 
-    // getter 메서드들...
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public String getAuthor() { return author; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public int getViewCount() { return viewCount; }
-    public int getCommentCount() { return commentCount; }
-}
+    @GetMapping("/{id}/edit")
+    public String editPostForm(@PathVariable Long id, Model model) {
+        HomeTheaterUpdateDTO post = homeTheaterService.getPostForUpdate(id);
+        model.addAttribute("postForm", post);
+        return "views/hometheater/hometheater_edit"; // 수정 페이지
+    }
+
+    @PostMapping("/{id}/edit")
+    public String editPost(@PathVariable Long id,
+                           @ModelAttribute HomeTheaterUpdateDTO postForm,
+                           @RequestParam("file") MultipartFile file) {
+        homeTheaterService.updatePost(id, postForm, file); // 파일 포함
+        return "redirect:/hometheater/" + id; // 상세 페이지로 리다이렉트
+    }
+
+    @GetMapping("/{id}")
+    public String getPost(@PathVariable Long id, Model model) {
+        HomeTheaterDetailDTO post = homeTheaterService.getPostById(id);
+        model.addAttribute("post", post);
+        return "views/hometheater/hometheater_detail"; // 상세 페이지
+    }
 }
