@@ -1,41 +1,80 @@
 document.addEventListener('DOMContentLoaded', function() {
+	// DOM 요소 선택
 	const profilePic = document.getElementById('profile-picture');
 	const fileInput = document.getElementById('profile-upload');
+	const profileBtn = document.getElementById('profile-btn');
+	const tierBtn = document.getElementById('tier-btn');
+	const myPostsBtn = document.getElementById('my-posts-btn');
+	const profileContent = document.getElementById('profile-content');
+	const tierContent = document.getElementById('tier-content');
+	const myPostsContent = document.getElementById('my-posts-content');
+	const form = document.getElementById('profile-form');
+	const editBtn = document.getElementById('edit-btn');
+	const cancelBtn = document.getElementById('cancel-btn');
+	const saveBtn = document.getElementById('save-btn');
 
-	// 프로필 이미지를 클릭하면 파일 입력 창이 열리도록 설정
-	profilePic.addEventListener('click', function() {
-		fileInput.click();
-	});
+	// 컨텐츠 로드 함수
+	function loadContent(type) {
+		profileContent.style.display = type === 'profile' ? 'block' : 'none';
+		tierContent.style.display = type === 'tier' ? 'block' : 'none';
+		myPostsContent.style.display = type === 'my-posts' ? 'block' : 'none';
+	}
 
-	fileInput.addEventListener('change', function(event) {
-		const file = event.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				profilePic.src = e.target.result;
-				// 여기서 서버로 이미지를 업로드하는 함수를 호출할 수 있습니다.
-				uploadImageToServer(file);
-			};
-			reader.readAsDataURL(file);
-		}
-	});
-});
+	// 활성 버튼 설정 함수
+	function setActiveButton(button) {
+		[profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
+		button.classList.add('active');
+	}
 
-function uploadImageToServer(file) {
-	// FormData 객체 생성 및 파일 추가
-	const formData = new FormData();
-	formData.append('profileImage', file);
+	// 수정 모드 토글 함수
+	function toggleEditMode(isEditing) {
+		const nicknameDisplay = document.getElementById('nickname');
+		const nicknameInput = document.getElementById('nickname-input');
+		const passwordDisplay = document.getElementById('password');
+		const passwordInput = document.getElementById('password-input');
 
-	// fetch API를 사용하여 서버로 POST 요청 보내기
-	fetch('/api/user/profile-image', {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			console.log('프로필 이미지가 성공적으로 업로드되었습니다:', data);
-		})
-		.catch(error => {
-			console.error('프로필 이미지 업로드 중 오류 발생:', error);
+		[nicknameDisplay, nicknameInput, passwordDisplay, passwordInput].forEach(el => {
+			el.style.display = isEditing ? (el.tagName === 'INPUT' ? 'inline' : 'none')
+				: (el.tagName === 'INPUT' ? 'none' : 'inline');
 		});
-}
+
+		editBtn.style.display = isEditing ? 'none' : 'inline';
+		saveBtn.style.display = isEditing ? 'inline' : 'none';
+		cancelBtn.style.display = isEditing ? 'inline' : 'none';
+
+		if (isEditing) {
+			nicknameInput.value = nicknameDisplay.textContent;
+			passwordInput.value = '';
+		}
+	}
+
+	// 이벤트 리스너 설정
+	profileBtn.addEventListener('click', () => {
+		loadContent('profile');
+		setActiveButton(profileBtn);
+	});
+
+	tierBtn.addEventListener('click', () => {
+		loadContent('tier');
+		setActiveButton(tierBtn);
+	});
+
+	myPostsBtn.addEventListener('click', () => {
+		loadContent('my-posts');
+		setActiveButton(myPostsBtn);
+	});
+
+	editBtn.addEventListener('click', () => toggleEditMode(true));
+
+	cancelBtn.addEventListener('click', () => {
+		toggleEditMode(false);
+		form.reset();
+	});
+
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		updateProfile();
+	});
+
+	// 기타 함수들 (updateProfile, uploadImageToServer 등) 유지
+});

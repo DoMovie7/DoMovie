@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* 메인 영역 스타일 시작 */
+/* 메인 영역 스타일 */
 .profile-wrap {
 	max-width: 800px;
 	margin: 2rem auto;
@@ -8,56 +8,190 @@
 	background-color: var(--main-black);
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	border-radius: 8px;
-	color: var(--main-white); /* 텍스트 색상 설정 */
+	color: var(--main-white);
+}
+
+/* 서브메뉴 스타일 */
+.profile-submenu {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+	padding-top: 30px;
+}
+
+.profile-submenu button {
+	padding: 10px 20px;
+	margin: 0 10px;
+	background-color: var(--main-black);
+	color: var(--main-white);
+	border: 1px solid var(--main-white);
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.profile-submenu button.active {
+	background-color: var(--main-white);
+	color: var(--main-black);
 }
 
 /* 프로필 컨테이너 스타일 */
 .profile-container {
 	display: flex;
-	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+/* 프로필 이미지 컨테이너 스타일 */
+.profile-image-container {
+	width: 40%;
+	display: flex;
+	justify-content: center;
 	align-items: center;
 }
 
 /* 프로필 사진 */
-.profile-image {
-    width: 150px;
-    height: 150px;
-    cursor: pointer;
+#profile-picture {
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 50%;
+	cursor: pointer;
 }
 
-#profile-picture {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+/* 프로필 정보 스타일 */
+.profile-info {
+	width: 55%;
 }
 
 /* 마이페이지 제목 스타일 */
 .mypage-title h2 {
-	color: var(--main-white); /* 제목 색상 변경 */
-	border-bottom: 2px solid var(--main-white); /* 테두리 색상 변경 */
+	color: var(--main-white);
+	border-bottom: 2px solid var(--main-white);
 	padding-bottom: 10px;
 	text-align: center;
+	margin-bottom: 20px;
 }
 
-/* 프로필 내용 스타일 */
-.profile-content {
-	width: 100%;
-	margin-top: 20px;
+/* 나의 등급 제목 스타일 */
+#tier-content h2 {
+	color: var(--main-white);
+	border-bottom: 2px solid var(--main-white);
+	padding-bottom: 10px;
+	text-align: center;
+	margin-bottom: 20px;
 }
-	
+
 /* 프로필 리스트 스타일 */
-.profile-content ul {
+.profile-info ul {
 	list-style-type: none;
 	padding: 0;
 }
 
-.profile-content ul li {
+.profile-info ul li {
 	margin-bottom: 15px;
 	display: flex;
 }
 
-.profile-content ul li span:first-child {
+.profile-info ul li span:first-child {
 	font-weight: bold;
 	width: 100px;
+}
+
+/* 버튼 그룹 스타일 */
+.button-group {
+	margin-top: 20px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.button-group button {
+	margin-left: 10px;
+	padding: 8px 15px;
+	background-color: var(--main-white);
+	color: var(--main-black);
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+/* *************** 나의 등급 페이지 ***************** */
+#tier-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+#tier-image-container {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+	background-color: var(--main-black);
+	border-radius: 50%;
+	margin: 20px auto; /* 상하 여백 추가 및 가운데 정렬 */
+}
+
+#tier-image {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+#my-post-count {
+	color: var(--main-white);
+	margin-top: 10px;
+	font-size: 1.2em;
+}
+
+/* *************** 내가 쓴 글 페이지 ***************** */
+#my-posts-content {
+	width: 100%;
+}
+
+#my-posts-content > h2 {
+	color: var(--main-white);
+    border-bottom: 2px solid var(--main-white);
+    padding-bottom: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.my-post-list {
+	list-style-type: none;
+	padding: 0;
+}
+
+/* 게시물 항목 스타일 */
+.my-post-item {
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--main-white);
+}
+
+.my-post-item:hover {
+	cursor: pointer;
+	background-color: var(--main-grey2);
+}
+
+.my-post-item:hover span {
+	color: var(--main-black);
+}
+
+.my-post-title {
+	font-weight: bold;
+	color: var(--main-white);
+	flex-grow: 1; /* 가능한 많은 공간을 차지하도록 설정 */
+	margin-right: 10px; /* 날짜와의 간격을 위해 추가 */
+}
+
+/* 날짜 스타일 */
+.my-post-date span {
+	color: var(--main-grey2);
+	margin-left: 20px; /* 왼쪽 여백 추가로 제목과 날짜 간격 유지 */
+	white-space: nowrap; /* 줄바꿈 방지 */
+	text-align: right; /* 우측 정렬 */
 }

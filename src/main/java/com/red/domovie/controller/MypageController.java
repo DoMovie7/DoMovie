@@ -13,10 +13,6 @@ public class MypageController {
 		return "/views/user/mypage";
 	}
 	
-	@GetMapping("/mypage/detail")
-	public String update() {
-		return "/views/user/mypageDetail";
-	}
 	
 	
 }
