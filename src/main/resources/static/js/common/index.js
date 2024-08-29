@@ -80,4 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //변수지정
 
+//
+
+
 
