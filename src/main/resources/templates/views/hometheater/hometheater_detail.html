@@ -16,7 +16,7 @@
         </div>
         <div class="post-thumbnail">
             <!-- 첨부된 이미지 표시 -->
-            <img th:src="@{/img/upload/{filename}(filename=${post.thumbnailImageUrl})}"
+            <img th:src="@{'/img/upload/' + ${post.thumbnailImage}}"
                  alt="첨부 이미지"
                  class="thumbnail"
                  style="width: 100%; max-width: 600px;">
@@ -39,7 +39,7 @@
             </div>
             <form th:action="@{/hometheater/{id}/comment(id=${post.id})}" method="post" th:object="${commentForm}">
                 <textarea th:field="*{content}" rows="4" cols="50" placeholder="댓글을 입력하세요"></textarea>
-                <button type="submit" class="btn btn-edit">댓글 작성</button>
+                <button type="submit" class="btn btn-primary">댓글 작성</button>
             </form>
         </div>
     </div>

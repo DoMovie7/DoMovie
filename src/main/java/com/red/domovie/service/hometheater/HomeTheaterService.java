@@ -1,17 +1,15 @@
-package com.red.domovie.service;
+package com.red.domovie.service.hometheater;
 
-import com.red.domovie.domain.dto.*;
-import com.red.domovie.domain.entity.HomeTheater;
-import com.red.domovie.domain.repository.HomeTheaterRepository;
+import com.red.domovie.domain.dto.hometheater.*;
+import com.red.domovie.domain.entity.hometheater.Comment;
+import com.red.domovie.domain.entity.hometheater.HomeTheater;
+import com.red.domovie.domain.repository.hometheater.CommentRepository;
+import com.red.domovie.domain.repository.hometheater.HomeTheaterRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,9 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HomeTheaterService {
     private final HomeTheaterRepository homeTheaterRepository;
-
-    // 이미지 저장 경로
-    private final String imageUploadDir = "src/main/resources/static/img/upload/";
+    private final CommentRepository commentRepository;
 
     public List<HomeTheaterListDTO> getAllPosts() {
         return homeTheaterRepository.findAll().stream()
@@ -33,7 +29,7 @@ public class HomeTheaterService {
                         post.getCreatedDate(),
                         post.getViewCount(),
                         post.getCommentCount(),
-                        post.getThumbnailImageUrl() // 썸네일 이미지 추가
+                        post.getThumbnailImageUrl() // 썸네일 이미지 URL (필요한 경우 별도의 엔드포인트를 통해 이미지 데이터를 제공)
                 ))
                 .collect(Collectors.toList());
     }
@@ -51,15 +47,15 @@ public class HomeTheaterService {
                 .collect(Collectors.toList());
 
         return new HomeTheaterDetailDTO(
-                post.getId(),                // id
-                post.getTitle(),             // title
-                post.getAuthor(),            // author
-                post.getCreatedDate(),       // createdDate
-                post.getViewCount(),         // viewCount
-                post.getCommentCount(),      // commentCount
-                post.getContent(),           // content
-                comments,                    // comments
-                post.getThumbnailImageUrl()  // thumbnailImageUrl
+                post.getId(),
+                post.getTitle(),
+                post.getAuthor(),
+                post.getCreatedDate(),
+                post.getViewCount(),
+                post.getCommentCount(),
+                post.getContent(),
+                comments,
+                post.getThumbnailImageUrl() // 썸네일 이미지 URL
         );
     }
 
@@ -69,9 +65,8 @@ public class HomeTheaterService {
         homeTheater.setContent(homeTheaterSaveDTO.getContent());
         homeTheater.setCreatedDate(LocalDateTime.now());
 
-        // 이미지 저장 처리
         if (file != null && !file.isEmpty()) {
-            saveImage(file, homeTheater); // 이미지 저장
+            saveImage(file, homeTheater);
         }
 
         homeTheaterRepository.save(homeTheater);
@@ -84,7 +79,7 @@ public class HomeTheaterService {
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getThumbnailImageUrl()  // 썸네일 이미지 추가
+                post.getThumbnailImageUrl()
         );
     }
 
@@ -94,9 +89,8 @@ public class HomeTheaterService {
         homeTheater.setTitle(postForm.getTitle());
         homeTheater.setContent(postForm.getContent());
 
-        // 이미지가 업로드되면 새 이미지로 변경
         if (file != null && !file.isEmpty()) {
-            saveImage(file, homeTheater); // 이미지 저장
+            saveImage(file, homeTheater);
         }
 
         homeTheaterRepository.save(homeTheater);
@@ -104,15 +98,23 @@ public class HomeTheaterService {
 
     private void saveImage(MultipartFile file, HomeTheater homeTheater) {
         try {
-            // 저장할 파일의 경로 및 이름
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(imageUploadDir + fileName);
-
-            // 파일 저장
-            Files.copy(file.getInputStream(), path);
-            homeTheater.setThumbnailImageUrl(fileName); // 이미지 파일 이름 설정
+            homeTheater.setThumbnailImage(file.getBytes());
+            homeTheater.setThumbnailImageUrl(file.getOriginalFilename());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save image", e);
         }
+    }
+
+    public void addComment(Long postId, CommentSaveDTO commentForm) {
+        HomeTheater post = homeTheaterRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+
+        Comment comment = new Comment();
+        comment.setContent(commentForm.getContent());
+        comment.setHomeTheater(post);
+        comment.setCreatedDate(LocalDateTime.now());
+        comment.setAuthor("Anonymous"); // 실제로는 현재 로그인한 사용자의 정보를 사용해야 합니다
+
+        commentRepository.save(comment);
     }
 }

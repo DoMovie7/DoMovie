@@ -53,7 +53,7 @@ h1 {
 .board-table th,
 .board-table td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
@@ -69,6 +69,7 @@ h1 {
 .board-table a {
     color: #333;
     text-decoration: none;
+    display: inline;
 }
 
 .board-table a:hover {
@@ -143,13 +144,13 @@ h1 {
 }
 
 .btn-edit {
-    background-color: #f0a3a3;
+    background-color: #DB242D;
     color: white;
 }
 
 .btn-delete {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #A51F22;
+    color: white;
 }
 
 textarea {
@@ -165,7 +166,7 @@ textarea {
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background-color: #DB242D;
     color: white;
     padding: 10px 20px;
     text-decoration: none;
@@ -173,7 +174,7 @@ textarea {
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #DB242D;
 }
 .post-thumbnail {
     width: 50px;

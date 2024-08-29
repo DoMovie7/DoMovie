@@ -1,4 +1,4 @@
-package com.red.domovie.domain.entity;
+package com.red.domovie.domain.entity.hometheater;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,13 +17,16 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String author;
-
+    @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String author;
+
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_theater_id")
     private HomeTheater homeTheater;
 }
