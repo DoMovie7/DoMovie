@@ -4,6 +4,7 @@
 
 <head>
 <link rel="stylesheet" type="text/css" href="/css/common/index.css">
+
 <script src="/js/common/index.js" defer></script>
 
 
@@ -43,7 +44,7 @@
 
 				<div class="movie-grid">
 					<!-- 영화 포스터 항목들 -->
-					<div class="movie-item">
+					<div class="movie-item animate__animated animate__flipInY">
 						<div class="box-rank">1</div>
 						<a href="#"> <img src="/img/index/movie1.jpg" alt="">
 						</a>
@@ -55,25 +56,25 @@
 							<li><span>누적 관객</span></li>
 						</ul>
 					</div>
-					<div class="movie-item">
+					<div class="movie-item animate__animated animate__flipInY">
 						<div class="box-rank">2</div>
 						<a href="#"> <img src="/img/index/movie2.jpg" alt="">
 						</a>
 						<p>영화 제목 1</p>
 					</div>
-					<div class="movie-item">
+					<div class="movie-item animate__animated animate__flipInY">
 						<div class="box-rank">3</div>
 						<a href="#"> <img src="/img/index/movie3.jpg" alt="">
 						</a>
 						<p>영화 제목 1</p>
 					</div>
-					<div class="movie-item">
+					<div class="movie-item animate__animated animate__flipInY">
 						<div class="box-rank">4</div>
 						<a href="#"> <img src="/img/index/movie4.jpg" alt="">
 						</a>
 						<p>영화 제목 1</p>
 					</div>
-					<div class="movie-item">
+					<div class="movie-item animate__animated animate__flipInY">
 						<div class="box-rank">5</div>
 						<a href="#"> <img src="/img/index/movie5.jpg" alt="">
 						</a>
@@ -98,31 +99,31 @@
     <ul class="ranking-list">
         <li class="ranking-item">
             <span class="rank">1</span>
-            <img src="#" alt="" class="profile-img">
+            <img src="/img/index/profileicon.png" alt="" class="profile-img">
             <span class="name">박효민</span>
             <span class="points">232,448</span>
         </li>
         <li class="ranking-item">
             <span class="rank">2</span>
-            <img src="#" alt="" class="profile-img">
+            <img src="/img/index/profileicon.png" alt="" class="profile-img">
             <span class="name">김연두</span>
             <span class="points">186,225</span>
         </li>
         <li class="ranking-item">
             <span class="rank">3</span>
-            <img src="#" alt="" class="profile-img">
+            <img src="/img/index/profileicon.png" alt="" class="profile-img">
             <span class="name">김도영</span>
             <span class="points">165,730</span>
         </li>
         <li class="ranking-item">
             <span class="rank">4</span>
-            <img src="#" alt="" class="profile-img">
+            <img src="/img/index/profileicon.png" alt="" class="profile-img">
             <span class="name">전송희</span>
             <span class="points">154,982</span>
         </li>
         <li class="ranking-item">
             <span class="rank">5</span>
-            <img src="#" alt="" class="profile-img">
+            <img src="/img/index/profileicon.png" alt="" class="profile-img">
             <span class="name">유해리</span>
             <span class="points">143,675</span>
         </li>
@@ -136,19 +137,16 @@
 
 			<section class="movie-list">
 				<h2 class="index-title">최신 개봉작</h2>
-				<div class="movie-grid">
+				<div class="movie-grid" id="movieContainer">
 					<!-- 영화 포스터 항목들 -->
-					<div class="movie-item">
-						<img src="/img/index/movie1.jpg" alt="">
-						<ul class="movie-info">
-							<li><span>영화 제목 1</span></li>
-							<li><span>개봉일</span></li>
-							<li><span>국가</span></li>
-							<li><span>예매율</span></li>
-							<li><span>누적 관객</span></li>
-						</ul>
-					</div>
-					<!-- 추가 영화 항목들... -->
+					
+					
+					    <ul class="movie-info" id="movieInfoList">
+					        <!-- 여기에서 영화 정보가 렌더링됩니다 -->
+					    </ul>
+					    
+					
+
 				</div>
 			</section>
 
@@ -171,7 +169,7 @@
 			</section>
 
 			<section class="movie-list">
-				<h2 class="index-title">#공포 #스릴러</h2>
+				<h2 class="index-title">#여름엔 #공포 #스릴러</h2>
 
 				<div class="movie-grid">
 					<!-- 영화 포스터 항목들 -->
