@@ -7,12 +7,26 @@
     <title>영화추천 - 두무비</title>
     <!-- 추천 목록 페이지에 필요한 CSS 파일을 링크 -->
     <link rel="stylesheet" th:href="@{/css/recommend/list.css}">
+    <script src="/js/recommend.js"></script>
 </head>
 <body>
-<main>
+<main id="recommend">
     <div class="container">
         <!-- 페이지 제목 -->
-        <h1>영화&nbsp;추천</h1>
+        <p class="page-title">영화&nbsp;추천</p>
+        
+        <nav id="genre-menu">
+			<div class="tabs">
+				<ul>
+					<!-- 반복문을 사용하여 리스트 항목을 생성 -->
+					<!-- 인덱스가 0일 때 active 클래스를 추가 -->
+					<li onclick="" data-content="0" class="tab active" >ALL</li>
+				    <th:block th:each="genre, status : ${T(com.red.domovie.domain.entity.Genre).values()}">
+				        <li onclick="" th:data-content="${status.index+1}" class="tab" th:text="${genre.koName}">장르</li>
+				    </th:block>
+				</ul>
+			</div>
+        </nav>
         
         <!-- 영화 추천 목록을 담을 테이블 -->
         <table class="board-table">
@@ -21,7 +35,7 @@
                     <!-- 테이블 헤더 -->
                     <th>번호</th>
                     <th>포스터</th>
-                    <th>제목</th>
+                    <th class="title">제목</th>
                     <th>글쓴이</th>
                     <th>날짜</th>
                 </tr>
@@ -38,7 +52,7 @@
                     </td>
                     
                     <!-- RecommendListDTO 객체의 'title' 필드를 링크로 사용하고, 'commentCount'가 0보다 클 경우 댓글 수를 표시 -->
-                    <td>
+                    <td class="title content">
                         <a th:href="|/recommends/${dto.no}|" th:text="${dto.title}"></a>
                         <!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
                         <span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|" class="comment-count"></span>
