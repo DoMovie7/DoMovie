@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+<head>
+    <!-- 페이지 제목 -->
+    <title>영화추천 - 두무비</title>
+    <!-- 추천 목록 페이지에 필요한 CSS 파일을 링크 -->
+    <link rel="stylesheet" th:href="@{/css/recommend/list.css}">
+</head>
+<body>
+<main>
+    <div class="container">
+        <!-- 페이지 제목 -->
+        <h1>영화&nbsp;추천</h1>
+        
+        <!-- 영화 추천 목록을 담을 테이블 -->
+        <table class="board-table">
+            <thead>
+                <tr>
+                    <!-- 테이블 헤더 -->
+                    <th>번호</th>
+                    <th>포스터</th>
+                    <th>제목</th>
+                    <th>글쓴이</th>
+                    <th>날짜</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- list 변수에 담긴 RecommendListDTO 객체를 반복하여 테이블 행 생성 -->
+                <tr th:each="dto : ${list}">
+                    <!-- RecommendListDTO 객체의 'no' 필드를 테이블 셀에 출력 -->
+                    <td th:text="${dto.no}"></td>
+                    
+                    <!-- RecommendListDTO 객체의 'imgUrl' 필드를 이미지 소스로 사용 -->
+                    <td>
+                        <img th:src="${dto.imgUrl}" height="100px">
+                    </td>
+                    
+                    <!-- RecommendListDTO 객체의 'title' 필드를 링크로 사용하고, 'commentCount'가 0보다 클 경우 댓글 수를 표시 -->
+                    <td>
+                        <a th:href="|/recommends/${dto.no}|" th:text="${dto.title}"></a>
+                        <!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
+                        <span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|" class="comment-count"></span>
+                    	<!--
+						gt: Thymeleaf에서 두 값을 비교하는 연산자로, 조건부 렌더링을 위해 사용됩니다. 
+						여기서는 dto.commentCount가 0보다 큰 경우에만 특정 HTML 요소를 렌더링합니다.
+						
+						|[${dto.commentCount}]|: Thymeleaf의 문자열 템플릿 구문으로, 데이터를 형식화하여 문자열로 출력합니다. 
+						dto.commentCount 값을 대괄호로 감싸서 표시합니다.
+						 -->
+                    </td>
+                    
+                    <!-- RecommendListDTO 객체의 'user' 필드를 테이블 셀에 출력 -->
+                    <td th:text="${dto.user}"></td>
+                    
+                    <!-- RecommendListDTO 객체의 'createdAt' 필드를 지정된 형식으로 포맷하여 출력 -->
+                    <td th:text="${#temporals.format(dto.createdAt, 'yyyy.MM.dd')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>
