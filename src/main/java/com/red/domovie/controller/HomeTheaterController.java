@@ -4,7 +4,8 @@ import com.red.domovie.domain.dto.HomeTheaterDetailDTO;
 import com.red.domovie.domain.dto.HomeTheaterListDTO;
 import com.red.domovie.domain.dto.HomeTheaterSaveDTO;
 import com.red.domovie.domain.dto.HomeTheaterUpdateDTO;
-import com.red.domovie.domain.service.HomeTheaterService;
+import com.red.domovie.service.HomeTheaterService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
