@@ -1,4 +1,4 @@
-package com.red.domovie.domain.service;
+package com.red.domovie.service;
 
 import com.red.domovie.domain.dto.*;
 import com.red.domovie.domain.entity.HomeTheater;
