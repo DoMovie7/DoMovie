@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
 
 <head>
 	<meta charset="UTF-8">
@@ -11,28 +10,34 @@
 
 <body>
 	<main>
-		<div class="mypage-title">
-			<h2>내 프로필</h2>
-		</div>
-		<div class="profile-content">
-			<ul>
-				<li>
-					<span>이름 : </span><span>홍길동</span>
-				</li>
-				<li>
-					<span>생년월일 : </span><span>2000.01.01</span>
-				</li>
-				<li>
-					<span>닉네임 : </span><span>DOMOVIE</span>
-				</li>
-				<li>
-					<span>이메일 : </span><span>test01@test.com</span>
-				</li>
-				<li>
-					<span>비밀번호 : </span><span>********</span>
-				</li>
-			</ul>
-		</div>
+		<section class="profile-wrap">
+			<div class="mypage-title">
+				<h2>내 프로필</h2>
+			</div>
+			<div class="profile-image">
+			    <img id="profile-picture" src="/img/default-profile.jpg" alt="프로필 사진" width="150" height="150">
+			    <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+			</div>
+			<div class="profile-content">
+				<ul>
+					<li>
+						<span>이름 : </span><span>홍길동</span>
+					</li>
+					<li>
+						<span>생년월일 : </span><span>2000.01.01</span>
+					</li>
+					<li>
+						<span>닉네임 : </span><span>DOMOVIE</span>
+					</li>
+					<li>
+						<span>이메일 : </span><span>test01@test.com</span>
+					</li>
+					<li>
+						<span>비밀번호 : </span><span>********</span>
+					</li>
+				</ul>
+			</div>
+		</section>
 	</main>
 </body>
 
