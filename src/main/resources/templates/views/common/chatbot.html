@@ -1,0 +1,24 @@
+<section th:fragment="chatbot">
+    <!-- 챗봇 이미지 -->
+    <img class="animate__animated animate__pulse animate__slower animate__infinite" id="chat-icon" src="/img/chatbot-img.png" />
+
+    <!-- 챗봇 창 -->
+    <div id="bot-container">
+    	<div id="bot-top">
+    		<div class="chat-title">
+    			<h1>두비</h1>
+			    <h2>review Movie, enjoy Movie</h2>
+			    <!-- 챗봇 이미지 -->
+			    <figure class="avatar">
+			      <img src="img/chatbot-img.png" />
+			    </figure>
+    		</div>
+        	<button id="close-button"><i class="fa-solid fa-xmark"></i></button>
+    	</div>
+        <div id="chat-content"></div>
+        <div id="input-container">
+            <input type="text" id="question" placeholder="질문을 입력하세요." />
+            <button id="send-button" class="message-submit"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+</section>
