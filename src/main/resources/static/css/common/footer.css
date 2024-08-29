@@ -3,6 +3,7 @@
     color: var(--main-white);
     padding: 20px;
     font-size: 14px;
+    white-space: nowrap;
 }
 .footer-top{
     background-color: var(--main-black);
@@ -16,7 +17,6 @@
     max-width: 1200px;
     margin: 30px auto;
     margin-left: 270px;
-    margin-top: 120px;
 }
 .footer-row {
     margin-bottom: 10px;
