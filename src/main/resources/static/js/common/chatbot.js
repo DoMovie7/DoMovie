@@ -93,13 +93,13 @@ function showWelcomeMessage() {
 
 // WebSocket 연결을 설정하고 메시지 구독을 처리하는 함수
 function connect() {
-    client = Stomp.over(new SockJS('/bookBot'));
+    client = Stomp.over(new SockJS('/chatbot'));
     client.connect({}, (frame) => {
         console.log("Connected to WebSocket server with frame:", frame);
         
         key = new Date().getTime();  // 현재 시간을 기반으로 고유 키 생성
         client.subscribe(`/topic/bot/${key}`, (answer) => {
-            console.log("응답완료!!!");
+            console.log("응답완료");
             var msgObj = answer.body;
             console.log("Received message from server:", msgObj);
             
@@ -121,12 +121,11 @@ function connect() {
             showMessage(tag);
             
             // 특정 키워드에 따른 추가 버튼 또는 이미지 표시
-            if (msgObj.includes("배송조회")) {
+            if (msgObj.includes("배송조회")) {//includes ""가 포함되어있을경우
                 // 배송조회 버튼 HTML
                 var buttonHTML = `...`;  // (버튼 HTML 코드 생략)
                 showMessage(buttonHTML);
             }
-            // 다른 키워드에 대한 조건문들... (코드 생략)
         });
     });
 }
@@ -140,7 +139,7 @@ function disconnect() {
     }
 }
 
-// 챗봇 UI 상태를 로컬 스토리지에 저장하는 함수
+// 상태 저장 및 복원
 function saveBotState() {
     var isVisible = document.getElementById("bot-container").classList.contains('open');
     localStorage.setItem('botState', isVisible ? 'open' : 'closed');
@@ -182,8 +181,6 @@ window.addEventListener('beforeunload', function() {
 // 챗봇 닫기 버튼 클릭 이벤트 핸들러
 function btnCloseClicked() {
     const botContainer = document.getElementById("bot-container");
-    
-    // bounceOut 애니메이션 클래스 추가
     botContainer.classList.add('animate__animated', 'animate__bounceOut');
     
     // 애니메이션 종료 후 실행할 함수
@@ -319,7 +316,16 @@ function clearQuestion() {
 
 // 페이지 로드 시 초기화 및 이벤트 리스너 설정
 document.addEventListener('DOMContentLoaded', (event) => {
-    btnCloseClicked();  // 초기 상태에서 챗봇 UI 닫기
+    //btnCloseClicked();  // 초기 상태에서 챗봇 UI 닫기
+    botContainer.classList.remove('open', 'animate__animated', 'animate__bounceOut');
+        saveBotState();
+        disconnect();
+        flag = false;
+        document.getElementById("chat-content").innerHTML = ""; // 채팅 내용 초기화
+        localStorage.removeItem('chatContent');
+        localStorage.setItem('chatReset', 'true');
+        localStorage.removeItem('hasShownWelcomeMessage');
+        
     loadBotState();  // 저장된 챗봇 상태 로드
 
     // 각 버튼에 이벤트 리스너 추가
