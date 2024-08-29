@@ -1,10 +1,7 @@
 package com.red.domovie.controller;
 
-import com.red.domovie.domain.dto.HomeTheaterDetailDTO;
-import com.red.domovie.domain.dto.HomeTheaterListDTO;
-import com.red.domovie.domain.dto.HomeTheaterSaveDTO;
-import com.red.domovie.domain.dto.HomeTheaterUpdateDTO;
-import com.red.domovie.service.HomeTheaterService;
+import com.red.domovie.domain.dto.hometheater.*;
+import com.red.domovie.service.hometheater.HomeTheaterService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -65,6 +62,12 @@ public class HomeTheaterController {
     public String getPost(@PathVariable Long id, Model model) {
         HomeTheaterDetailDTO post = homeTheaterService.getPostById(id);
         model.addAttribute("post", post);
+        model.addAttribute("commentForm", new CommentSaveDTO());  // 이 줄을 추가합니다
         return "views/hometheater/hometheater_detail"; // 상세 페이지
+    }
+    @PostMapping("/{id}/comment")
+    public String addComment(@PathVariable Long id, @ModelAttribute CommentSaveDTO commentForm) {
+        homeTheaterService.addComment(id, commentForm);
+        return "redirect:/hometheater/" + id;
     }
 }
