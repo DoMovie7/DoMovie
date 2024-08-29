@@ -55,9 +55,9 @@ background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.7),rgba(0
 /********************************/
 
 .container{
-	width: 1400px;
+	width: 1200px;
 	margin: 0 auto;
-	padding: 10px;
+	
 }
 
 .review-event{
@@ -72,18 +72,11 @@ background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.7),rgba(0
     object-fit: contain;
 }
 
-.ranking-container {
-    max-width: 400px;
-    margin: 0 auto;
-    background-color: var(--main-black);
-    border-radius: 8px;
-    padding: 20px;
-}
 
 .index-title{
 	font-size: 28px;
-	margin-bottom: 20px;
-	padding: 5px;
+	padding: 20px 0px;
+	
 }
 
 h3 {
@@ -95,10 +88,10 @@ h3 {
 /**/
 .ranking-container {
     max-width: 500px;
-    margin: 0 auto;
+    
     background-color: var(--main-black);
     border-radius: 12px;
-    padding: 30px;
+    
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -121,6 +114,7 @@ h3 {
     justify-content: space-between;
     padding: 15px 0;
     border-bottom: 1px solid var(--main-grey2);
+    gap: 1em;
 }
 
 .ranking-item:last-child {
@@ -151,14 +145,14 @@ h3 {
 }
 
 .points {
-    color: var(--main-grey);
+    color: var(--main-red);
     font-size: 14px;
 }
 /**/
 .movie-list {
     width: 100%;
     border-radius: 10px;
-    padding: 20px; /* 여백을 동일하고 여유 있게 조정 */
+   
     color: var(--main-white);
     margin: 100px 0;
     
@@ -208,8 +202,10 @@ h3 {
 }
 .wrap{
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
+	padding: 20px 0px;
+	
 }
 
 /**/
