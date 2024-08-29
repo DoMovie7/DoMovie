@@ -8,9 +8,11 @@
 
 
 /*폰트적용*/
-body{font-family: "Noto Sans KR", sans-serif; }
+body{font-family: "Noto Sans KR", sans-serif; background-color: var(--main-grey);}
 .juafonts{font-family: "Jua", sans-serif;}
 .donglefonts{font-family: "Dongle", sans-serif;}
+
+main{padding-top: 110px}
 
 
 /*디자인을 위한 리셋 적용*/
@@ -32,7 +34,7 @@ button:hover{cursor: pointer;}
   /*메인 레드*/
   --main-red:#DB242D;
   --main-grey:#524747;
-  --main-grey:#f1f1f1;
+  --main-grey2:#f1f1f1;
   --main-black:#040707;
   --main-white:#FEFCF8;
   --sub-red:#A51F22;
