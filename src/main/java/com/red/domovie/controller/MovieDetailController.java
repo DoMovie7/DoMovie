@@ -10,7 +10,7 @@ public class MovieDetailController {
 	
 	@GetMapping("/movie/detail")
 	public String getMethodName() {
-		return "";
+		return "views/movieDetail/list";
 	}
 	
 

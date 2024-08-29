@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
-header{width: 100%; background-color:var(--main-black); color: var(--main-white); position: fixed; top: 0; left: 0; z-index: 1000; }
+header{width: 100%; background-color:var(--main-black); color: var(--main-white); position: fixed; top: 0; left: 0; z-index: 1000; 
+}
 
 .cmheader-wrap{width: 70%; margin: 0 auto;}
 
@@ -8,7 +9,6 @@ a{display: block;}
 
 header .header-top{ display: flex; justify-content: space-between; padding-top: 20px;border-bottom: 1px solid var(--main-white); height:73px;padding-bottom: 10px}
 
-.logo{}
 
 .logo a img{width: 190px; height: 30px}
 
@@ -39,7 +39,7 @@ header .header-top{ display: flex; justify-content: space-between; padding-top: 
 
 .navtop-sub>li>a:hover{font-weight: 600}
 
-.navtop-sub{justify-content: center; position: absolute;top: 43px;left: -15vw;width: 100vw; background-color:rgba(0, 0, 0, 0.7); color: #FFF;
+.navtop-sub{justify-content: center; position: absolute;top: 43px;left: -15vw;width: 100vw; background-color:rgba(50, 50, 50, 0.8); color: #FFF;
 			opacity: 0; height: 0; display:  flex;  overflow: hidden;  transition: all .4s; 	}
 
 .navtop-sub.active{opacity: 1; height: 44px;}

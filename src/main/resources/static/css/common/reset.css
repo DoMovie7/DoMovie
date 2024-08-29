@@ -33,11 +33,12 @@ button:hover{cursor: pointer;}
   --trans-background-color:rgba( 255, 255, 255, 0.55 );
   /*메인 레드*/
   --main-red:#DB242D;
-  --main-grey:#524747;
+  --main-grey:#303030;
   --main-grey2:#f1f1f1;
   --main-black:#040707;
   --main-white:#FEFCF8;
   --sub-red:#A51F22;
+  --footer:1B1D1F;
 
   /*글*/
   --font-color:#2B2D2F;
