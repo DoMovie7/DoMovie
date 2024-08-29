@@ -22,12 +22,15 @@
 	<!-- jQuery UI 라이브러리 -->
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-
 	<!-- FontAwesome 라이브러리 -->
 	<script src="https://kit.fontawesome.com/890a398c47.js" crossorigin="anonymous"></script>
     <script src="/js/common/common.js" defer></script>
-	
-
+    
+    <!-- 챗봇 js 및 라이브러리 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script src="/js/common/chatbot.js"></script>
 
 	<!-- 페이지 별로 다를 수 있는 헤드 요소 삽입 -->
 	<th:block th:replace="${pHead}" />
@@ -47,8 +50,10 @@
 
 		<!-- 푸터 -->
 		<th:block th:replace="~{views/common/cmfooter :: cmbottom}" />
-
-
+		
+		<!-- 챗봇 -->
+		<th:block th:replace="~{views/common/chatbot :: chatbot}" />
+		
 	</div>
 
 </body>

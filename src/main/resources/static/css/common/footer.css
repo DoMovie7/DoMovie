@@ -1,13 +1,22 @@
 .footer {
-    background-color: #333;
-    color: #fff;
+    background-color: #1B1D1F;
+    color: var(--main-white);
     padding: 20px;
-    font-family: Arial, sans-serif;
     font-size: 14px;
 }
+.footer-top{
+    background-color: var(--main-black);
+    height: 70px;
+    width: 100%;
+    position: absolute;
+    margin-left: -20px;
+}
+
 .footer-content {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 30px auto;
+    margin-left: 270px;
+    margin-top: 120px;
 }
 .footer-row {
     margin-bottom: 10px;
