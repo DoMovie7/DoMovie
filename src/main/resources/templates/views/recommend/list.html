@@ -55,7 +55,7 @@
                     <td class="title content">
                         <a th:href="|/recommends/${dto.no}|" th:text="${dto.title}"></a>
                         <!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
-                        <span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|" class="comment-count"></span>
+                        <span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|" class="commentEntity-count"></span>
                     	<!--
 						gt: Thymeleaf에서 두 값을 비교하는 연산자로, 조건부 렌더링을 위해 사용됩니다. 
 						여기서는 dto.commentCount가 0보다 큰 경우에만 특정 HTML 요소를 렌더링합니다.
