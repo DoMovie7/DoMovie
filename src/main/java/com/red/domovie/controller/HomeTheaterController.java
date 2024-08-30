@@ -43,20 +43,13 @@ public class HomeTheaterController {
         return "redirect:/hometheater/list"; // 목록으로 리다이렉트
     }
 
-    @GetMapping("/{id}/edit")
-    public String editPostForm(@PathVariable Long id, Model model) {
-        HomeTheaterUpdateDTO post = homeTheaterService.getPostForUpdate(id);
-        model.addAttribute("postForm", post);
-        return "views/hometheater/hometheater_edit"; // 수정 페이지
+    @PutMapping("/{id}")
+    public String editPostForm(@PathVariable Long id, @ModelAttribute HomeTheaterUpdateDTO updateDTO) {
+        homeTheaterService.updatePost(id,updateDTO);
+        return "redirect:/hometheater/{id}"; // 수정 페이지
     }
 
-    @PostMapping("/{id}/edit")
-    public String editPost(@PathVariable Long id,
-                           @ModelAttribute HomeTheaterUpdateDTO postForm,
-                           @RequestParam("file") MultipartFile file) {
-        homeTheaterService.updatePost(id, postForm, file); // 파일 포함
-        return "redirect:/hometheater/" + id; // 상세 페이지로 리다이렉트
-    }
+
 
     @GetMapping("/{id}")
     public String getPost(@PathVariable Long id, Model model) {
@@ -67,7 +60,7 @@ public class HomeTheaterController {
     }
     @PostMapping("/{id}/comment")
     public String addComment(@PathVariable Long id, @ModelAttribute CommentSaveDTO commentForm) {
-        homeTheaterService.addComment(id, commentForm);
+        homeTheaterService.addComment(id,commentForm);
         return "redirect:/hometheater/" + id;
     }
 }

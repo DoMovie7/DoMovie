@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class CommentDTO {
+public class CommentListDTO {
     private Long id;
     private String content;
     private String author;
