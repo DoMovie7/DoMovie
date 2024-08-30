@@ -21,18 +21,18 @@ import java.util.HashSet;
 @Entity
 @Table(name = "user")
 public class UserEntity {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId; // 사용자ID
 
     @Column(nullable = false)
     private String userName; // 사용자이름
-    
+
     @Column(nullable = false)
     private String nickName; // 닉네임
-    
-    @Column(nullable = false,unique = true)
+
+    @Column(nullable = false, unique = true)
     private String email; // 이메일
 
     @Column(nullable = false)
@@ -46,24 +46,27 @@ public class UserEntity {
 
     @Column(nullable = true)
     private long status; // 회원상태
-    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tier_id", nullable = false)
+    private TierEntity tier;
+
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "role", joinColumns = @JoinColumn(name = "userId"))
     @Builder.Default
     @Column(name = "role")
     private Set<Role> roles = new HashSet<Role>(); // 'Role' Enum 타입을 별도로 정의
-    
-	public UserEntity addRole(Role role) {
-		roles.add(role);
-		return this;
-	}
-    
-	public UserEntity addRoleByRange(String role) {
-		for(int i=0; i<=Role.valueOf(role).ordinal(); i++) { //.ordinal() == 범위
-			roles.add(Role.values()[i]); //addRole 메서드가 없는 경우
-		}
 
-		return this;
-	}
+    public UserEntity addRole(Role role) {
+        roles.add(role);
+        return this;
+    }
+
+    public UserEntity addRoleByRange(String role) {
+        for(int i=0; i<=Role.valueOf(role).ordinal(); i++) { //.ordinal() == 범위
+            roles.add(Role.values()[i]); //addRole 메서드가 없는 경우
+        }
+        return this;
+    }
 }
