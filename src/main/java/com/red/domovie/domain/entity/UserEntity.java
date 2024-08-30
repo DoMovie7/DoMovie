@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +48,9 @@ public class UserEntity {
 
     @Column(nullable = true)
     private long status; // 회원상태
+    
+    @Column(nullable = true)
+    private String profileImageUrl; // 프로필 이미지 URL
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tier_id", nullable = false)
@@ -69,4 +74,9 @@ public class UserEntity {
         }
         return this;
     }
+
+	public void update(ProfileUpdateDTO dto) {
+		this.nickName=dto.getNickName();
+		this.profileImageUrl=dto.getProfileImageUrl();
+	}
 }
