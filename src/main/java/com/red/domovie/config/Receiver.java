@@ -11,12 +11,12 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class Receiver {
 	
-	// RabbitMQ 사용시 주석해제
-	private final SimpMessagingTemplate smt;
 	
 	/*
+	private final SimpMessagingTemplate smt;
 	private final KomoranService komoranService;
 	private final TemplateEngine templateEngine; // Inject Thymeleaf template engine
+	
 	//RabbitTemplate template 에서 전달한 메세지가 전송된다.
 	public void receiveMessage(QuestionDTO dto) {
 		System.out.println(">>>>"+dto);

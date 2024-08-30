@@ -1,4 +1,4 @@
-p{
+.bot-container p {
 	font-size: 13px;
 	color: #323237;
  	font-weight: 400;
@@ -64,7 +64,8 @@ p{
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	height: 50px;
-	background: linear-gradient(to right, var(--main-red), #f6a4a3);
+	/* background: linear-gradient(to right, var(--main-red), #f6a4a3); */
+	background: rgba(219, 36, 45, 0.8);
 }
 
 
@@ -251,6 +252,7 @@ p{
 	margin-top: 6px;
 	margin-right: 5px;
 	z-index: 20;
+	color: var(--main-white);
 }
 
 
@@ -287,6 +289,7 @@ p{
 	color: #888;
 	text-align: right;
     margin-top: 5px;
+    margin-right: 5px;
 }
 
 /* 날짜 스타일 */
