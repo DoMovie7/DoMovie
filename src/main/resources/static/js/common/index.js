@@ -106,6 +106,14 @@ function fetchMovieInfo() {
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
+// 박스오피스 정보를 가져오는 함수
+function fetchBoxOfficeInfo() {
+    fetch('/movies/boxOffice') // 서버 API 엔드포인트에 요청
+        .then(response => response.json()) // JSON 형태로 변환
+        .then(data => renderBoxOfficeItems(data.boxOfficeResult.dailyBoxOfficeList)) // 데이터를 박스오피스 렌더링 함수에 전달
+        .catch(error => console.error('박스오피스 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
+
 // 영화 항목을 렌더링하는 함수
 function renderMovieItems(movieList) {
     const movieContainer = document.getElementById('movieContainer'); // 영화 아이템을 넣을 컨테이너 요소 선택
@@ -118,10 +126,8 @@ function renderMovieItems(movieList) {
                 <img src="${movie.image}" alt="${movie.movieNm}">
                 <ul class="movie-info">
                     <li><span>${movie.movieNm}</span></li>
-                    <li><span>${movie.openDt}</span></li>
+                    <li><span>${movie.prdtYear}</span></li>
                     <li><span>${movie.nationAlt}</span></li>
-                    <li><span>${movie.salesShare}%</span></li> <!-- 예매율(가상의 데이터) -->
-                    <li><span>${movie.audiAcc}</span></li> <!-- 누적 관객 수 -->
                 </ul>
             </div>
         `;
@@ -131,6 +137,31 @@ function renderMovieItems(movieList) {
     });
 }
 
-// 페이지가 로드되면 영화 정보를 가져오는 함수 호출
-document.addEventListener('DOMContentLoaded', fetchMovieInfo);
+// 박스오피스 항목을 렌더링하는 함수
+function renderBoxOfficeItems(boxOfficeList) {
+    const boxOfficeContainer = document.getElementById('boxOfficeContainer'); // 박스오피스 아이템을 넣을 컨테이너 요소 선택
+    boxOfficeContainer.innerHTML = ''; // 기존 내용을 지워서 초기화
 
+    boxOfficeList.forEach(movie => {
+        // 박스오피스 항목을 HTML로 구성
+        const boxOfficeItemHTML = `
+            <div class="movie-item animate__animated animate__flipInY">
+                <h4>${movie.rank}. ${movie.movieNm}</h4>
+                <ul class="box-office-info">
+                    <li><span>개봉일: ${movie.openDt}</span></li>
+                    <li><span>일일 관객수: ${movie.audiCnt}</span></li>
+                    <li><span>누적 관객수: ${movie.audiAcc}</span></li>
+                </ul>
+            </div>
+        `;
+        
+        // 생성한 HTML을 컨테이너에 추가
+        boxOfficeContainer.innerHTML += boxOfficeItemHTML;
+    });
+}
+
+// 페이지가 로드되면 영화 정보와 박스오피스 정보를 가져오는 함수 호출
+document.addEventListener('DOMContentLoaded', () => {
+    fetchMovieInfo();
+    fetchBoxOfficeInfo();
+});

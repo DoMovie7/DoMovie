@@ -18,4 +18,12 @@ public class IndexController {
         // 모든 영화 정보를 서비스로부터 받아옴
         return movieApiService.getAllMovies();
     }
+    
+    @GetMapping("/movies/boxOffice")
+    public String getboxOffice() {
+        // 모든 영화 정보를 서비스로부터 받아옴
+        return movieApiService.getboxOffice();
+    }
+    
+    
 }
