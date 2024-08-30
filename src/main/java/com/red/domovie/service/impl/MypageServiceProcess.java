@@ -37,7 +37,7 @@ public class MypageServiceProcess implements MypageService {
 	@Override
 	@Transactional
 	public void updateProcess(Long userId, ProfileUpdateDTO dto) {
-		userEntityRepository.findById(userId).orElseThrow().update(dto);
+		//userEntityRepository.findById(userId).orElseThrow().update(dto);
 	}
 
 
