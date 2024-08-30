@@ -4,9 +4,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.red.domovie.service.LoginService;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 @Controller
+@RequiredArgsConstructor
 public class SigInController {
+	
+	private final LoginService loginService;
 	
 	@GetMapping("/signin")
 	public String signIn() {
@@ -25,4 +36,11 @@ public class SigInController {
 	public String signup() {
 		return "views/login/signup";
 	}
+	
+	// 로그인 성공 시 리다이렉트될 페이지
+    @GetMapping("/")
+    public String home() {
+        return "/index";
+    }
+	
 }
