@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 페이지</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <link rel="stylesheet" href="/css/recommend/write.css"> <!-- 추가 스타일 시트 -->
+</head>
+<body>
+	<main>
+    <div class="container">
+        <p class="page-title">영화 추천 글쓰기</p>
+        <form id="writeForm" method="post" action="/submit">
+            <label for="title">제&nbsp;목</label>
+            <input type="text" id="title" name="title" required><br><br>
+            
+            <label for="editor">내&nbsp;용</label>
+            <div id="editor"></div><br><br>
+            <label for="file">파일&nbsp;업로드</label>
+            <input type="file" id="file" name="file"><br><br>
+            
+            <div class="button-group">
+                <button type="submit" id="submitButton">글 올리기</button>
+                <button type="button" id="cancelButton">취소</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script src="/js/write.js" defer></script>
+    </main>
+    
+</body>
+</html>
