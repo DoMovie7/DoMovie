@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+
 import java.util.HashSet;
 
 @Setter
@@ -19,6 +21,7 @@ import java.util.HashSet;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 @Table(name = "user")
 public class UserEntity {
 
@@ -44,12 +47,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String birthDate; // 생년월일
 
-    @Column(nullable = true)
-    private long status; // 회원상태
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tier_id", nullable = false)
-    private TierEntity tier;
+    @JoinColumn(name = "tier_id", nullable = true)
+    private TierEntity tierId;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -58,15 +58,11 @@ public class UserEntity {
     @Column(name = "role")
     private Set<Role> roles = new HashSet<Role>(); // 'Role' Enum 타입을 별도로 정의
 
-    public UserEntity addRole(Role role) {
-        roles.add(role);
-        return this;
-    }
+  //Role 등록하기 위한 편의 메서드 
+  	public UserEntity addRole(Role role) {
+  		roles.add(role);
+  		
+  		return this;
+  	}
 
-    public UserEntity addRoleByRange(String role) {
-        for(int i=0; i<=Role.valueOf(role).ordinal(); i++) { //.ordinal() == 범위
-            roles.add(Role.values()[i]); //addRole 메서드가 없는 경우
-        }
-        return this;
-    }
 }
