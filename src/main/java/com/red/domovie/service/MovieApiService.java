@@ -6,4 +6,6 @@ public interface MovieApiService {
 
 	String getAllMovies();
 
+	String getboxOffice();
+
 }
