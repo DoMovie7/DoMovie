@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+/* *************** 프로필 페이지 ***************** */
+
 /* 메인 영역 스타일 */
 .profile-wrap {
 	max-width: 800px;
@@ -55,7 +57,6 @@
 	height: 200px;
 	object-fit: cover;
 	border-radius: 50%;
-	cursor: pointer;
 }
 
 /* 프로필 정보 스타일 */
@@ -114,84 +115,196 @@
 	cursor: pointer;
 }
 
+/********************* 비밀번호 변경 ***********************/
+/* 비밀번호 변경 버튼 스타일 */
+#change-password-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: var(--main-white);
+    color: var(--main-black);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 오버레이 스타일 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 비밀번호 변경 팝업 컨테이너 스타일 */
+#password-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background-color: var(--main-black);
+    border: 2px solid var(--main-white);
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+#password-popup.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* 비밀번호 변경 폼 스타일 */
+#password-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 비밀번호 입력 필드 스타일 */
+#password-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--main-white);
+    background-color: var(--main-grey2);
+    color: var(--main-black);
+    border-radius: 5px;
+}
+
+/* 버튼 컨테이너 스타일 */
+.popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* 팝업 내 버튼 공통 스타일 */
+#password-form button {
+    padding: 8px 15px;
+    background-color: var(--main-white);
+    color: var(--main-black);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1; /* 버튼이 동일한 너비를 가지도록 설정 */
+    margin: 0 5px; /* 버튼 사이의 간격 */
+}
+
+/* 버튼 호버 효과 */
+#password-form button:hover {
+    background-color: var(--main-grey2);
+    color: var(--main-white);
+}
+
+/* 팝업 닫기(취소) 버튼 스타일 */
+#close-popup {
+    background-color: transparent;
+    color: var(--main-white);
+    border: 1px solid var(--main-white);
+}
+
+/* 팝업 닫기(취소) 버튼 호버 효과 */
+#close-popup:hover {
+    background-color: var(--main-white);
+    color: var(--main-black);
+}
+
 /* *************** 나의 등급 페이지 ***************** */
+/* 나의 등급 페이지 스타일 */
 #tier-content {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 #tier-image-container {
-	width: 200px;
-	height: 200px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	overflow: hidden;
-	background-color: var(--main-black);
-	border-radius: 50%;
-	margin: 20px auto; /* 상하 여백 추가 및 가운데 정렬 */
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: var(--main-black);
+    border-radius: 50%;
+    margin: 20px auto;
 }
 
 #tier-image {
-	max-width: 100%;
-	max-height: 100%;
-	object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-#my-post-count {
-	color: var(--main-white);
-	margin-top: 10px;
-	font-size: 1.2em;
+#tier-description {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: var(--main-white);
+}
+
+#post-count {
+    font-weight: bold;
 }
 
 /* *************** 내가 쓴 글 페이지 ***************** */
-#my-posts-content {
-	width: 100%;
-}
-
 #my-posts-content > h2 {
-	color: var(--main-white);
+    color: var(--main-white);
     border-bottom: 2px solid var(--main-white);
     padding-bottom: 10px;
     text-align: center;
     margin-bottom: 20px;
 }
 
-.my-post-list {
-	list-style-type: none;
-	padding: 0;
+#posts-list-container {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* 게시물 항목 스타일 */
-.my-post-item {
-	display: flex;
-	justify-content: space-between;
-	padding: 10px 0;
-	border-bottom: 1px solid var(--main-white);
-}
-
-.my-post-item:hover {
+#posts-list-container > li:hover {
 	cursor: pointer;
-	background-color: var(--main-grey2);
+	background-color: var(--main-grey);
+	filter: brightness(2.0) saturate(1.2);
 }
 
-.my-post-item:hover span {
-	color: var(--main-black);
+.post-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.my-post-title {
-	font-weight: bold;
-	color: var(--main-white);
-	flex-grow: 1; /* 가능한 많은 공간을 차지하도록 설정 */
-	margin-right: 10px; /* 날짜와의 간격을 위해 추가 */
+.post-item span {
+    color: var(--main-grey2);
+    flex: 1;
+    margin: 0;
+    margin-left: 5px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-/* 날짜 스타일 */
-.my-post-date span {
-	color: var(--main-grey2);
-	margin-left: 20px; /* 왼쪽 여백 추가로 제목과 날짜 간격 유지 */
-	white-space: nowrap; /* 줄바꿈 방지 */
-	text-align: right; /* 우측 정렬 */
+.post-item p {
+    margin: 0;
+    margin-right: 5px;
+    color: var(--main-grey2);
+    font-size: 0.9em;
+    white-space: nowrap;
 }

@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +49,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String birthDate; // 생년월일
 
+    @Column(nullable = true)
+    private String profileImageUrl; // 프로필 이미지 URL
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tier_id", nullable = true)
     private TierEntity tierId;
@@ -64,5 +69,4 @@ public class UserEntity {
   		
   		return this;
   	}
-
 }

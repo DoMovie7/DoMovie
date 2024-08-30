@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.red.domovie.service.RecommendService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 
 // 이 클래스는 Spring MVC의 컨트롤러 역할을 수행합니다.
 @Controller
@@ -48,4 +53,10 @@ public class RecommendController {
         // "views/recommend/list"라는 뷰를 반환합니다. 이 뷰는 Thymeleaf 템플릿을 참조합니다.
         return "views/recommend/list";
     }
+    
+   @GetMapping("/recommends/new")
+   public String newRecommend() {
+       return "views/recommend/write";
+   }
+   
 }

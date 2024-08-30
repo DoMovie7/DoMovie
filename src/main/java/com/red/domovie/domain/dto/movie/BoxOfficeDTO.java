@@ -1,4 +1,4 @@
-package com.red.domovie.domain.dto;
+package com.red.domovie.domain.dto.movie;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,14 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MovieDTO {
+public class BoxOfficeDTO {
 	
-    private String movieCd;
+    private long box_office_id;
     private String movieNm;
     private String openDt;
+    private long rank;
+    private long audiCnt;
+    private long audiAcc;
+    
 
 }

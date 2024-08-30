@@ -3,6 +3,8 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="_csrf" content="${_csrf.token}" />
+	<meta name="_csrf_header" content="${_csrf.headerName}" />
 	<link rel="stylesheet" href="/css/user/mypage.css">
 	<script src="/js/user/mypage.js" defer></script>
 	<title>마이페이지</title>
@@ -22,29 +24,37 @@
 				</div>
 				<div class="profile-container">
 					<div class="profile-image-container">
-						<img id="profile-picture" src="/img/default-profile.jpg" alt="프로필 사진">
+						<img id="profile-picture"
+						src="/img/default-profile.jpg"
+						     alt="프로필 사진">
 						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
 					</div>
 					<form id="profile-form" class="profile-info">
 						<ul>
 							<li>
-								<span>이름 : </span><span id="name">홍길동</span>
+								<span>이름 : </span><span id="name" th:text="${user.userName}"></span>
 							</li>
 							<li>
-								<span>생년월일 : </span><span id="birthdate">2000.01.01</span>
+								<span>생년월일 : </span>								
+								<span id="birthdate" th:text="${user.birthDate}"></span>
 							</li>
 							<li>
 								<span>닉네임 : </span>
-								<span id="nickname">DOMOVIE</span>
-								<input type="text" id="nickname-input" style="display: none;">
+								<span id="nickname" th:text="${user.nickName}"></span>
+								<input type="text" id="nickname-input" th:value="${user.nickName}" style="display: none;">
 							</li>
 							<li>
-								<span>이메일 : </span><span id="email">test01@test.com</span>
+								<span>핸드폰 : </span>
+								<span id="phoneNumber" th:text="${user.phoneNumber}"></span>
+								<input type="text" id="nickname-input" th:value="${user.phoneNumber}" style="display: none;">
+							</li>
+							<li>
+								<span>이메일 : </span><span id="email" th:text="${user.email}"></span>
 							</li>
 							<li>
 								<span>비밀번호 : </span>
-								<span id="password">********</span>
-								<input type="password" id="password-input" style="display: none;">
+								<span>********</span>
+								<button type="button" id="change-password-btn">변경</button>
 							</li>
 						</ul>
 						<div class="button-group">
@@ -59,29 +69,44 @@
 			<div id="tier-content" style="display: none;">
 				<h2>나의 등급</h2>
 				<div id="tier-image-container">
-					<img id="tier-image" src="/img/tier/gold_tier.png" alt="등급 이미지">
+					<img id="tier-image" src="" alt="등급 이미지">
 				</div>
-				<span id="my-post-count">내 게시글 수: </span><span id="my-post-count">10</span>
+				<p id="tier-description"></p>
+				<p>내 게시글 수: <span id="post-count"></span></p>
 			</div>
 			<!-- 내가 쓴 글 -->
 			<div id="my-posts-content" style="display: none;">
 				<h2>내가 쓴 글</h2>
-				<ul class="my-post-list">
-					<!-- 게시글 항목들은 서버에서 동적으로 생성될 것입니다 -->
-					<li class="my-post-item">
-						<a href="#">
-							<span class="my-post-title">첫 번째 게시글 제목</span>
-							<span class="my-post-date">2024-03-15</span>
-						</a>
+				<!-- 게시글 목록을 표시할 컨테이너 -->
+				<ul id="posts-list-container">
+					<!-- 임시 게시글 데이터 -->
+					<li class="post-item">
+						<span><a href="#">띵작 영화 추천</a></span>
+						<p>2024-08-25</p>
 					</li>
-					<li class="my-post-item">
-						<a href="#">
-							<span class="my-post-title">두 번째 게시글 제목</span>
-							<span class="my-post-date">2024-03-14</span>
-						</a>
+					<li class="post-item">
+						<span><a href="#">최근 본 영화 TOP 5</a></span>
+						<p>2024-08-10</p>
 					</li>
-					<!-- 추가 게시글 항목들 -->
+					<li class="post-item">
+						<span><a href="#">이 영화는 좀 짜친다</a></span>
+						<p>2024-08-05</p>
+					</li>
 				</ul>
+			</div>
+			<!-- 비밀번호 변경 팝업 오버레이 -->
+			<div class="popup-overlay"></div>
+			<!-- 비밀번호 변경 팝업 -->
+			<div id="password-popup">
+				<form id="password-form">
+					<input type="password" id="current-password" placeholder="현재 비밀번호" required>
+					<input type="password" id="new-password" placeholder="새 비밀번호" required>
+					<input type="password" id="confirm-password" placeholder="새 비밀번호 확인" required>
+					<div class="popup-buttons">
+						<button type="submit">확인</button>
+						<button type="button" id="close-popup">취소</button>
+					</div>
+				</form>
 			</div>
 		</section>
 	</main>
