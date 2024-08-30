@@ -74,8 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 
-
-
 });
 
 //변수지정
@@ -97,70 +95,58 @@ document.addEventListener('DOMContentLoaded', function() {
 */
 
 // movieInfo.js
-
-// 영화 정보를 가져오는 함수
+// 클라이언트 측 코드 (JavaScript)
 function fetchMovieInfo() {
-    fetch('/movies/all') // 서버 API 엔드포인트에 요청
-        .then(response => response.json()) // JSON 형태로 변환
-        .then(data => renderMovieItems(data.movieListResult.movieList)) // 데이터를 렌더링 함수에 전달
+    fetch('/movies/new')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer = document.getElementById('movieContainer');
+            movieContainer.innerHTML =data;
+        })
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-// 박스오피스 정보를 가져오는 함수
+
 function fetchBoxOfficeInfo() {
-    fetch('/movies/boxOffice') // 서버 API 엔드포인트에 요청
-        .then(response => response.json()) // JSON 형태로 변환
-        .then(data => renderBoxOfficeItems(data.boxOfficeResult.dailyBoxOfficeList)) // 데이터를 박스오피스 렌더링 함수에 전달
+    fetch('/movies/boxOffice')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            if (data.boxOfficeResult && data.boxOfficeResult.dailyBoxOfficeList) { // 박스오피스 결과 확인
+                renderBoxOfficeItems(data.boxOfficeResult.dailyBoxOfficeList);
+            } else {
+                console.error('Unexpected data structure:', data);
+            }
+        })
         .catch(error => console.error('박스오피스 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-// 영화 항목을 렌더링하는 함수
-function renderMovieItems(movieList) {
-    const movieContainer = document.getElementById('movieContainer'); // 영화 아이템을 넣을 컨테이너 요소 선택
-    movieContainer.innerHTML = ''; // 기존 내용을 지워서 초기화
-
-    movieList.forEach(movie => {
-        // 영화 항목을 HTML로 구성
-        const movieItemHTML = `
-            <div class="movie-item">
-                <img src="${movie.image}" alt="${movie.movieNm}">
-                <ul class="movie-info">
-                    <li><span>${movie.movieNm}</span></li>
-                    <li><span>${movie.prdtYear}</span></li>
-                    <li><span>${movie.nationAlt}</span></li>
-                </ul>
-            </div>
-        `;
-        
-        // 생성한 HTML을 컨테이너에 추가
-        movieContainer.innerHTML += movieItemHTML;
-    });
-}
-
-// 박스오피스 항목을 렌더링하는 함수
 function renderBoxOfficeItems(boxOfficeList) {
-    const boxOfficeContainer = document.getElementById('boxOfficeContainer'); // 박스오피스 아이템을 넣을 컨테이너 요소 선택
-    boxOfficeContainer.innerHTML = ''; // 기존 내용을 지워서 초기화
+    const boxOfficeContainer = document.getElementById('boxOfficeContainer');  // 박스오피스 아이템을 넣을 컨테이너 요소 선택
+    boxOfficeContainer.innerHTML = '';  // 기존 내용을 지워서 초기화
 
     boxOfficeList.forEach(movie => {
-        // 박스오피스 항목을 HTML로 구성
-        const boxOfficeItemHTML = `
-            <div class="movie-item animate__animated animate__flipInY">
-                <h4>${movie.rank}. ${movie.movieNm}</h4>
-                <ul class="box-office-info">
-                    <li><span>개봉일: ${movie.openDt}</span></li>
-                    <li><span>일일 관객수: ${movie.audiCnt}</span></li>
-                    <li><span>누적 관객수: ${movie.audiAcc}</span></li>
-                </ul>
-            </div>
+        const boxOfficeItem = document.createElement('div');  // 새로운 div 요소 생성
+        boxOfficeItem.className = 'movie-item animate__animated animate__flipInY';
+        boxOfficeItem.innerHTML = `
+            <h4>${movie.rank}. ${movie.movieNm}</h4>
+            <ul class="box-office-info">
+                <li><span>개봉일: ${movie.openDt}</span></li>
+                <li><span>일일 관객수: ${movie.audiCnt}</span></li>
+                <li><span>누적 관객수: ${movie.audiAcc}</span></li>
+            </ul>
         `;
-        
-        // 생성한 HTML을 컨테이너에 추가
-        boxOfficeContainer.innerHTML += boxOfficeItemHTML;
+        boxOfficeContainer.appendChild(boxOfficeItem);  // 생성된 요소를 컨테이너에 추가
     });
 }
 
-// 페이지가 로드되면 영화 정보와 박스오피스 정보를 가져오는 함수 호출
 document.addEventListener('DOMContentLoaded', () => {
     fetchMovieInfo();
     fetchBoxOfficeInfo();
