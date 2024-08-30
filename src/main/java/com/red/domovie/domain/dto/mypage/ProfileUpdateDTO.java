@@ -21,7 +21,7 @@ public class ProfileUpdateDTO {
 		return UserEntity.builder()
 				.userId(userId)
 				.nickName(nickName)
-				.profileImageUrl(profileImageUrl)
+				//.profileImageUrl(profileImageUrl)
 				.build();
 	}
 	
