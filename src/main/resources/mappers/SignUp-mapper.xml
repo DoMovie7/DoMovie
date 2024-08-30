@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.red.domovie.domain.mapper.LoginMapper">
+	<insert id="saveUser"
+		parameterType="com.red.domovie.domain.entity.UserEntity">
+		INSERT INTO user (user_name, nick_name, email, phone_number, password,
+		birth_date, tier_id)
+		VALUES (#{userName}, #{nickName}, #{email}, #{phoneNumber}, #{password},
+		#{birthDate}, #{tierId.tierId})
+	</insert>
+</mapper>

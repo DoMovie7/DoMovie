@@ -21,7 +21,7 @@ public class TierEntity {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long tierId;
+    private Long tierId;
 	@Column(nullable = true)
 	private int minPostCount;
 	@Column(nullable = true)
