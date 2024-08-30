@@ -5,40 +5,53 @@
 <head>
     <title>홈시어터 정보 공유 게시판 - 두무비</title>
     <link rel="stylesheet" th:href="@{/css/hometheater/hometheater.css}">
+    <script src="/js/hometheater/hometheater.js"></script>
 </head>
 <body>
-<main>
+<main id="hometheater">
     <div class="container">
-        <h1>퇴근 정보 공유 게시판</h1>
+        <p class="page-title">홈시어터 정보 공유 게시판</p>
+
+        <nav id="category-menu">
+            <div class="tabs">
+                <ul>
+                    <li onclick="" data-content="0" class="tab active">ALL</li>
+                    <li onclick="" data-content="1" class="tab">TV</li>
+                    <li onclick="" data-content="2" class="tab">오디오</li>
+                    <li onclick="" data-content="3" class="tab">프로젝터</li>
+                </ul>
+            </div>
+        </nav>
+
         <div class="button-container">
             <a th:href="@{/hometheater/hometheater_create}" class="btn btn-primary">글 작성</a>
         </div>
+
         <table class="board-table">
             <thead>
             <tr>
                 <th>번호</th>
-                <th>대표 이미지</th> <!-- 대표 이미지 컬럼 추가 -->
-                <th>제목</th>
+                <th>대표 이미지</th>
+                <th class="title">제목</th>
                 <th>글쓴이</th>
                 <th>날짜</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="post : ${posts}">
+            <tr th:each="post : ${posts}" th:data-category="${post.category}">
                 <td th:text="${post.id}"></td>
                 <td>
-                    <!-- 대표 이미지 추가 -->
-                    <img th:src="@{/img/upload/{filename}(filename=${post.thumbnailImageUrl})}"
+                    <img th:if="${post.thumbnailImageUrl != null}" th:src="@{/img/upload/{filename}(filename=${post.thumbnailImageUrl})}"
                          alt="대표 이미지"
                          class="post-thumbnail"
                          style="width: 50px; height: 50px; margin-right: 10px;">
                 </td>
-                <td>
+                <td class="title content">
                     <a th:href="@{/hometheater/{id}(id=${post.id})}" th:text="${post.title}"></a>
-                    <span th:if="${post.commentCount > 0}" th:text="'[' + ${post.commentCount} + ']'" class="comment-count"></span>
+                    <span th:if="${post.commentCount > 0}" th:text="'[' + ${post.commentCount} + ']'" class="commentEntity-count"></span>
                 </td>
                 <td th:text="${post.author}"></td>
-                <td th:text="${#temporals.format(post.createdAt, 'yy.MM.dd')}"></td>
+                <td th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd')}"></td>
             </tr>
             </tbody>
         </table>

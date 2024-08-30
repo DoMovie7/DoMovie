@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class HomeTheaterSaveDTO {
     private String title;
     private String content;
-    private MultipartFile thumbnailImageUrl;  // 이미지 파일 추가
+    //private MultipartFile thumbnailImageUrl;  // 이미지 파일 추가
 }
