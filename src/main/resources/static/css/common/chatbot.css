@@ -3,6 +3,9 @@
 	color: #323237;
  	font-weight: 400;
 }
+#question::placeholder{
+	font-size: 12px;
+}
 
 
 /*/////////////////////////*/
@@ -311,7 +314,11 @@
     width: 150px;
     font-size: 12px;
     border-radius: 6px;
+    text-align: center;
 }
 .final-category-btn{
 	margin-bottom: 10px;
+}
+.first-category-btn{
+	margin-top: 10px;
 }

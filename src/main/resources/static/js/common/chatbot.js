@@ -4,33 +4,34 @@ let flag = false;  // 챗봇 UI가 열려있는지 추적하는 플래그
 let botContainer = document.getElementById("bot-container");
 let userId = 0;
 let userName = "guest";
-let isConnectedToAgent = false;
+let websocketStatus = 0; //0:기본 채팅, 1:문의 상담, 2:AI모드
+let categories = [];
 
 // 챗봇 초기 메세지
 async function showWelcomeMessage(forceShow = false) {
     const now = new Date();
     const today = formatDate(now);
-	var time = formatTime(now);
+    var time = formatTime(now);
 
     const welcomeMessage = `<div class="msg bot flex">
                                 <div class="icon">
                                     <img src="/img/chatbot-img.png">
                                 </div>
                                 <div class="message">
-                                	<div class="bot-name">두비</div>
+                                    <div class="bot-name">두비</div>
                                     <div class="part chatbot">
                                         <p>
-											안녕하세요. 영화를 '하다', DoMovie입니다.<br><br>
-	
-											무엇을 도와드릴까요?<br>
+                                            안녕하세요. 영화를 '하다', DoMovie입니다.<br><br>
+    
+                                            무엇을 도와드릴까요?<br>
                                         </p>
                                         <div class="button-containers">
-		                                    <button class="bot-category-btn" id="FAQs">자주 묻는 질문</button>
-		                                    <button class="bot-category-btn" id="inquery">1:1 문의</button>
-		                                    <button class="bot-category-btn final-category-btn" id="movieRecommend">영화 추천</button>
-		                                </div>
+                                            <button class="bot-category-btn" data-action="FAQs">자주 묻는 질문</button>
+                                            <button class="bot-category-btn" data-action="inquery">1:1 문의</button>
+                                            <button class="bot-category-btn final-category-btn" data-action="movieRecommend">영화 추천</button>
+                                        </div>
                                     </div>
-									<div class="time">${time}</div>
+                                    <div class="time">${time}</div>
                                 </div>
                             </div>`;
     
@@ -44,59 +45,148 @@ async function showWelcomeMessage(forceShow = false) {
 
     localStorage.setItem('lastOpenedDate', today);
     showDateIfNew();
-    setupButtonListeners();
 }
 
-function setupButtonListeners() {
-    // '자주 묻는 질문' 버튼 클릭 시
-    document.getElementById('FAQs').addEventListener('click', function() {
-        userChat("자주 묻는 질문");
-        fAQsInfo();
-    });
-    
-    // '1:1 문의' 버튼 클릭 시
-    document.getElementById('inquery').addEventListener('click', async function() {
-        userChat("1:1 문의");
-        const userId = await checkAuthStatus();
-        
-        if(userId != 0){
-            botChat(`<p>${userName} 고객님, 안녕하세요!<br> 상담사를 연결해드릴까요?</p>
-                    <div class="button-containers">
-                        <button class="bot-category-btn" id="login-query">상담사 새로 연결</button>
-                        <button class="bot-category-btn" id="past-query-list">이전 문의 보기</button>
-                        <button class="bot-category-btn final-category-btn" id="go-back">돌아가기</button>
-                    </div>`);
-        } else {
-            botChat(`<p>현재 로그인되지 않았습니다. <br><br>비회원으로 문의 시 채팅 화면을 끄면 문의 내용이 모두 삭제됩니다. 괜찮으십니까?</p>
-                    <div class="button-containers">
-                        <button class="bot-category-btn" id="not-login-query">비회원 문의</button>
-                        <button class="bot-category-btn final-category-btn" onclick="location.href='/signin'">로그인 하러 가기</button>
-                    </div>`);
+//버튼 클릭 처리
+document.addEventListener('click', async function(e) {
+    if (e.target.classList.contains('bot-category-btn')) {
+        const action = e.target.getAttribute('data-action');
+        switch(action) {
+            case 'FAQs':
+                userChat("자주 묻는 질문");
+                fetchCategories()
+                break;
+            case 'inquery':
+                userChat("1:1 문의");
+                await handleInquery();
+                break;
+            case 'movieRecommend':
+                userChat("영화 추천");
+                botChat("<p>어떤 영화를 추천해드릴까요?<br><br> 장르나 출연 배우 등 선호하는 영화와 관련된 정보를 뭐든 입력해주세요!</p>");
+                break;
+            case 'login-query':
+                websocketStatus = 1;
+                botChat("<p>상담사 연결중입니다.<br> 문의 내용을 입력해주세요.</p>");
+                break;
+            case 'past-query-list':
+				websocketStatus = 1;
+                botChat("<p>이전 채팅문의 내역입니다.</p>");
+                break;
+            case 'go-back':
+                showWelcomeMessage(true);
+                break;
+            case 'not-login-query':
+                websocketStatus = 1;
+                botChat("<p>비회원 문의를 시작합니다. 문의 내용을 입력해주세요.</p>");
+                break;
         }
-        
-        // '돌아가기' 버튼에 대한 이벤트 리스너
-        document.getElementById('go-back').addEventListener('click', function() {
-            showWelcomeMessage(true);  // 강제로 환영 메시지 표시
-        });
-        
-        document.getElementById('login-query').addEventListener('click', function() {
-            isConnectedToAgent = true;
-            botChat("<p>상담사 연결중입니다.<br> 문의 내용을 입력해주세요.</p>");
-        });
-        
-        document.getElementById('past-query-list').addEventListener('click', function() {
-            isConnectedToAgent = true;
-            botChat("<p>이전 채팅문의 내역입니다.</p>");
-        });
-    });
+    }
+});
+
+async function handleInquery() {
+    const userId = await checkAuthStatus();
     
-    // '영화 추천' 버튼 클릭 시
-    document.getElementById('movieRecommend').addEventListener('click', function() {
-        userChat("영화 추천");
-        botChat("<p>어떤 영화를 추천해드릴까요?<br><br> 장르나 출연 배우 등 선호하는 영화와 관련된 정보를 뭐든 입력해주세요!</p>");
-    });
+    if(userId != 0){
+        botChat(`<p>${userName} 고객님, 안녕하세요!<br> 상담사를 연결해드릴까요?</p>
+                <div class="button-containers">
+                    <button class="bot-category-btn" data-action="login-query">상담사 새로 연결</button>
+                    <button class="bot-category-btn" data-action="past-query-list">이전 문의 보기</button>
+                    <button class="bot-category-btn final-category-btn" data-action="go-back">돌아가기</button>
+                </div>`);
+    } else {
+        botChat(`<p>현재 로그인되지 않았습니다. <br><br>비회원으로 문의 시 채팅 화면을 끄면 문의 내용이 모두 삭제됩니다. 괜찮으십니까?</p>
+                <div class="button-containers">
+                    <button class="bot-category-btn" data-action="not-login-query">비회원 문의</button>
+                    <button class="bot-category-btn final-category-btn" onclick="location.href='/signin'">로그인 하러 가기</button>
+                </div>`);
+    }
 }
 
+// 카테고리 데이터를 서버로부터 가져오는 함수
+function fetchCategories() {
+    fetch('/api/categories')
+        .then(response => response.json())
+        .then(data => {
+            categories = data;
+            // 최상위 카테고리를 화면에 렌더링하는 함수 호출
+            renderTopLevelCategories();
+        })
+        .catch(error => console.error('Error fetching categories:', error));
+}
+
+// 최상위 카테고리만 화면에 렌더링하는 함수
+function renderTopLevelCategories() {
+	let buttonsHtml = categories.map((category, index) => 
+	  `<button class="${index === categories.length - 1 ? 'bot-category-btn final-category-btn' : 'bot-category-btn'}" onclick="showSubcategories(${category.id})">${category.name}</button>`
+	).join('');
+
+    botChat(`
+        <p>자주 묻는 질문 리스트입니다. <br><br>원하시는 카테고리를 선택해주세요!</p>
+        <div class="button-containers">
+            ${buttonsHtml}
+        </div>
+    `);
+}
+
+// 선택된 카테고리의 서브카테고리를 표시하는 함수
+function showSubcategories(categoryId) {
+    const category = categories.find(cat => cat.id === categoryId);
+    if (category && category.children && category.children.length > 0) {
+		
+		let subCategoryButtons = category.children.map((subCategory, index) => 
+		  `<button class="${index === category.children.length - 1 ? 'bot-category-btn final-category-btn' : 'bot-category-btn'}" onclick="showContent(${subCategory.id})">${subCategory.name}</button>`
+		).join('');
+
+        botChat(`
+            <p>${category.name}의 세부 카테고리입니다</p>
+            <div class="button-containers">
+                ${subCategoryButtons}
+            </div>
+        `);
+    } else {
+        botChat(`<p>${category.name}에 대한 세부 카테고리가 없습니다.</p>`);
+    }
+}
+
+// 선택된 서브카테고리의 내용을 표시하는 함수
+function showContent(subCategoryId) {
+    let content = '';
+    for (let category of categories) {
+        for (let subCategory of category.children) {
+            if (subCategory.id === subCategoryId) {
+                content = subCategory.content;
+                break;
+            }
+        }
+        if (content) break;
+    }
+
+    if (content) {
+        botChat(`<p>${content}</p>`);
+        if (content.includes('아이디 찾기')) {
+			chatLink('아이디 찾기', '/findId');
+		} else if (content.includes('비밀번호 찾기')) {
+			chatLink('비밀번호 찾기', '/findPassword');
+		} else if (content.includes('비밀번호 변경')) {
+			chatLink('비밀번호 변경', '/mypage');	
+        } else if (content.includes('돌아가기')) {
+            botChat(`<div class="button-containers">
+						<button class="bot-category-btn first-category-btn final-category-btn" data-action="go-back">돌아가기</button>
+					 </div>`);
+        }
+    } else {
+        botChat(`<p>선택하신 항목에 대한 정보를 찾을 수 없습니다.</p>`);
+    }
+}
+
+//링크 연결이 포함된 챗봇 응답
+function chatLink(includeText, link){
+	
+	botChat(`<div class="button-containers">
+				<a class="bot-category-btn first-category-btn" href=${link}>${includeText} 링크</a>
+				<button class="bot-category-btn final-category-btn" data-action="go-back">돌아가기</button>
+			 </div>`);
+}
 
 
 // WebSocket 연결을 설정하고 메시지 구독을 처리하는 함수
@@ -179,13 +269,14 @@ function btnMsgSendClicked() {
         userId: userId // 사용자 ID
     };
     
-    if (isConnectedToAgent) {
-        // 상담사와 연결된 경우 다른 경로로 메시지 전송
-        client.send(`/message/agent`, {}, JSON.stringify(data));
-    } else {
-        // 일반 챗봇 대화
-        client.send(`/message/question`, {}, JSON.stringify(data));
-    }
+	if(websocketStatus == 1){
+		client.send(`/message/agent`, {}, JSON.stringify(data));
+	} else if(websocketStatus == 2){
+		client.send(`/message/openai`, {}, JSON.stringify(data));
+	} else{
+		client.send(`/message/question`, {}, JSON.stringify(data));
+	}
+
     
     clearQuestion();
 }

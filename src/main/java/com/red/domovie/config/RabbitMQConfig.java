@@ -15,6 +15,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableRabbit
 @Slf4j
 public class RabbitMQConfig {
+	
 	// 메세지 브로커
 	
 	//스프링 부트의 자동 구성 기능을 통해 RabbitMQ와 연동할 수 있도록 설정됨.
@@ -71,6 +73,7 @@ public class RabbitMQConfig {
         return factory;
     }
     */
+    
 	
 	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의
 	@Bean
@@ -81,6 +84,7 @@ public class RabbitMQConfig {
         return factory;
     }
 	
+	/*
 	//RabbitMQ 메시지 리스너 컨테이너를 정의
 	@Bean
     SimpleMessageListenerContainer container(Receiver receiver) {
@@ -90,6 +94,17 @@ public class RabbitMQConfig {
 		container.setMessageListener(messageListenerAdapter(receiver)); // 메시지 리스너 어댑터 설정
 		return container;
 	}
+	*/
+	
+	@Bean
+    @ConditionalOnProperty(name = "rabbitmq.listener.enabled", havingValue = "true", matchIfMissing = true)
+    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, Receiver receiver) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.setQueueNames(queue);
+        container.setMessageListener(new MessageListenerAdapter(receiver, "receiveMessage"));
+        return container;
+    }
 	
 	
 	// 메시지 리스너 어댑터를 정의
@@ -102,11 +117,14 @@ public class RabbitMQConfig {
 		return messageListenerAdapter;
 	}
 	
+	
+	
 	//RabbitMQ 메시지 변환기를 정의
 	// 메시지를 JSON 형식으로 변환하는 Jackson2JsonMessageConverter를 사용
 	@Bean
 	MessageConverter messageConverter() {
 		return new Jackson2JsonMessageConverter();
 	}
+	
 	
 }

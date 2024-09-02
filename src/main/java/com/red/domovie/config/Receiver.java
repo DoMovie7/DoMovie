@@ -39,7 +39,6 @@ public class Receiver {
 	public void receiveMessage(String message) throws JsonProcessingException {
 		
 		try {
-			
 			ResponseDTO dto = objectMapper.readValue(message, ResponseDTO.class);
 			messagingTemplate.convertAndSend("/topic/bot/" + dto.getKey(), dto.getMessage());
 			
