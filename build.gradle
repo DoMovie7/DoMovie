@@ -14,6 +14,20 @@ bootJar{
 
 jar{
 	enabled = false
+	
+	from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    from('user.dic') {// JAR 파일의 루트에 'user.dic' 파일을 포함
+        into('/') // JAR 파일의 루트에 포함되도록 설정
+    }
+
+    manifest {
+        attributes(
+            'Main-Class': 'com.project.bookbook' // 메인 클래스 설정
+        )
+    }
 }
 
 java {
@@ -30,6 +44,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -42,9 +57,10 @@ dependencies {
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'com.github.shin285:KOMORAN:3.3.9'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	//이미지 처리를 위한 s3 추가
-  implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
+  	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

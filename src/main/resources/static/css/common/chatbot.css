@@ -31,9 +31,7 @@
 #chat-content::-webkit-scrollbar-thumb:hover {
 	background: #fc9998; /* 핸들을 호버했을 때의 색상 */
 }
-/*/////////////////////////*/
-/*/////////////////////////*/
-/*/////////////////////////*/
+
 
 /*/////////////////////////*/
 /*/////// 챗봇 바디 /////////*/
@@ -64,7 +62,6 @@
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	height: 50px;
-	/* background: linear-gradient(to right, var(--main-red), #f6a4a3); */
 	background: rgba(219, 36, 45, 0.8);
 }
 
@@ -83,6 +80,7 @@
   padding: 10px 10px 10px 50px;
   height: 100%;
 }
+
 .chat-title h1, .chat-title h2 {
   font-weight: normal;
   font-size: 10px;
@@ -152,6 +150,10 @@
 	border-bottom-right-radius: 5px;
 }
 
+#send-button > i {
+	color: var(--main-red);
+}
+
 /*/////////////////////////*/
 /*/////////////////////////*/
 /*/////////////////////////*/
@@ -167,16 +169,14 @@
 	border-top-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
-	/* background: linear-gradient(to right,#f7d2b7, #fdc298);  */
 	background:  #f7d2b7;
 	word-wrap: break-word; /* 줄바꿈 허용 */
-	max-width: 170px;
+	width: 170px;
 }
 #chat-content>div>div>div.part.guest {
 	border-top-left-radius: 10px;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
-	/* background: linear-gradient(to right, #ffc8c7, #f6a4a3);  */
 	background:  #ffc8c7;
 	word-wrap: break-word; /* 줄바꿈 허용 */
 	max-width: 170px;
@@ -229,13 +229,13 @@
 /*/////////////////////////*/
 
 #chat-icon {
-    margin-top: 20px; /* 챗봇 로고와 말풍선 사이 간격 */
-	position: fixed; /* 부모 요소를 기준으로 위치를 설정 */
+    margin-top: 20px;
+	position: fixed;
 	bottom: 10%;
 	right: 60px;
 	cursor: pointer;
-	width: 70px; /* 이미지 크기 */
-	height: 70px; /* 이미지 크기 */
+	width: 70px;
+	height: 70px;
 	z-index: 1;
 }
 
@@ -246,9 +246,9 @@
 	background: none;
 	border: none;
 	border-radius: 4px;
-	position: absolute; /* 부모 요소를 기준으로 위치 조정 */
-	top: 10px; /* 상단에서 10px 위치 */
-	right: 10px; /* 오른쪽에서 10px 위치 */
+	position: absolute;
+	top: 10px;
+	right: 10px;
 	margin-top: 6px;
 	margin-right: 5px;
 	z-index: 20;
@@ -259,18 +259,8 @@
 
 #chat-content {
 	max-height: 395px;
-	overflow-y: auto; /* 수직 스크롤이 필요할 때만 나타나게 함 */
-	overflow-x: hidden; /* 수평 스크롤 숨기기 */
-}
-
-
-.flex {
-	display: flex;
-}
-
-.center {
-	justify-content: center;
-	align-items: center;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 /* 메시지 스타일 */
@@ -297,6 +287,9 @@
 	font-size: 0.9em;
 	color: #AAA;
 	margin-top: 10px;
+	display: flex;
+    justify-content: center;
+    font-size: 13px;
 }
 
 /* 버튼 아이콘 스타일 */
@@ -304,23 +297,21 @@
 	font-size: 18px;
 }
 
-.button-container {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
+.button-containers{
+	display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-
-.button-container button {
-    padding: 5px 10px;
-    border: 1px solid #007bff;
-    background-color: #ffffff;
-    color: #007bff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+.bot-category-btn{
+	display: block;
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    background-color: var(--main-white);
+    width: 150px;
+    font-size: 12px;
+    border-radius: 6px;
 }
-
-.button-container button:hover {
-    background-color: #007bff;
-    color: #ffffff;
+.final-category-btn{
+	margin-bottom: 10px;
 }

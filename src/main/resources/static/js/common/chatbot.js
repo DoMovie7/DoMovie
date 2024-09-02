@@ -2,57 +2,12 @@ let client;  // WebSocket 클라이언트 객체
 let key;     // 각 세션을 구분하기 위한 고유 키
 let flag = false;  // 챗봇 UI가 열려있는지 추적하는 플래그
 let botContainer = document.getElementById("bot-container");
+let userId = 0;
+let userName = "guest";
+let isConnectedToAgent = false;
 
-// WebSocket 지원 여부를 확인하는 함수
-function isWebSocketSupported() {
-    return 'WebSocket' in window;
-}
-
-// WebSocket 지원 여부를 콘솔에 출력
-if (isWebSocketSupported()) {
-    console.log("이 브라우저는 WebSocket을 지원합니다.");
-} else {
-    console.log("이 브라우저는 WebSocket을 지원하지 않습니다.");
-}
-
-// 현재 시간을 "오전/오후 HH:MM" 형식으로 포맷팅하는 함수
-function formatTime(now) {
-    var ampm = (now.getHours() > 11) ? "오후" : "오전";
-    var hour = now.getHours() % 12;
-    if (hour == 0) hour = 12;
-    var minute = now.getMinutes();
-    var formattedMinute = String(minute).padStart(2, '0');
-    return `${ampm} ${hour}:${formattedMinute}`;
-}
-
-// 현재 날짜를 "YYYY년 MM월 DD일 요일" 형식으로 포맷팅하는 함수
-function formatDate(now) {
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
-    const date = now.getDate();
-    const dayOfWeek = now.getDay();
-    const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-    return `${year}년 ${month}월 ${date}일 ${days[dayOfWeek]}`;
-}
-
-// 새로운 날짜인 경우 날짜를 표시하는 함수
-function showDateIfNew() {
-    var now = new Date();
-    var today = formatDate(now);
-    
-    // 로컬 스토리지에서 마지막으로 표시된 날짜를 가져옴
-    var savedDate = localStorage.getItem('lastDisplayedDate');
-    
-    if (savedDate !== today) {
-        var dateTag = `<div class="flex center date">${today}</div>`;
-        var chatContent = document.getElementById("chat-content");
-        chatContent.innerHTML = dateTag + chatContent.innerHTML;
-        localStorage.setItem('lastDisplayedDate', today);  // 현재 날짜를 로컬 스토리지에 저장
-    }
-}
-
-// 환영 메시지를 표시하고 저장하는 함수
-function showWelcomeMessage() {
+// 챗봇 초기 메세지
+async function showWelcomeMessage(forceShow = false) {
     const now = new Date();
     const today = formatDate(now);
 	var time = formatTime(now);
@@ -65,11 +20,15 @@ function showWelcomeMessage() {
                                 	<div class="bot-name">두비</div>
                                     <div class="part chatbot">
                                         <p>
-											안녕하세요. 영화를 '하다', DoMovie입니다.<br>
-											반갑습니다. 000님.<br><br>
+											안녕하세요. 영화를 '하다', DoMovie입니다.<br><br>
 	
 											무엇을 도와드릴까요?<br>
                                         </p>
+                                        <div class="button-containers">
+		                                    <button class="bot-category-btn" id="FAQs">자주 묻는 질문</button>
+		                                    <button class="bot-category-btn" id="inquery">1:1 문의</button>
+		                                    <button class="bot-category-btn final-category-btn" id="movieRecommend">영화 추천</button>
+		                                </div>
                                     </div>
 									<div class="time">${time}</div>
                                 </div>
@@ -78,137 +37,108 @@ function showWelcomeMessage() {
     // 환영 메시지를 이미 표시했는지 확인
     var hasShownWelcomeMessage = localStorage.getItem('hasShownWelcomeMessage');
     
-    if (!hasShownWelcomeMessage) {
+    if (!hasShownWelcomeMessage || forceShow) {
         showMessage(welcomeMessage);
         localStorage.setItem('hasShownWelcomeMessage', 'true');
     }
 
     localStorage.setItem('lastOpenedDate', today);
     showDateIfNew();
+    setupButtonListeners();
 }
 
-// 채팅 메시지를 UI에 표시하는 함수
-function showMessage(tag) {
-    var chatContent = document.getElementById("chat-content");
-    chatContent.innerHTML += tag;
-    chatContent.scrollTop = chatContent.scrollHeight;  // 스크롤을 최하단으로 이동
+function setupButtonListeners() {
+    // '자주 묻는 질문' 버튼 클릭 시
+    document.getElementById('FAQs').addEventListener('click', function() {
+        userChat("자주 묻는 질문");
+        fAQsInfo();
+    });
+    
+    // '1:1 문의' 버튼 클릭 시
+    document.getElementById('inquery').addEventListener('click', async function() {
+        userChat("1:1 문의");
+        const userId = await checkAuthStatus();
+        
+        if(userId != 0){
+            botChat(`<p>${userName} 고객님, 안녕하세요!<br> 상담사를 연결해드릴까요?</p>
+                    <div class="button-containers">
+                        <button class="bot-category-btn" id="login-query">상담사 새로 연결</button>
+                        <button class="bot-category-btn" id="past-query-list">이전 문의 보기</button>
+                        <button class="bot-category-btn final-category-btn" id="go-back">돌아가기</button>
+                    </div>`);
+        } else {
+            botChat(`<p>현재 로그인되지 않았습니다. <br><br>비회원으로 문의 시 채팅 화면을 끄면 문의 내용이 모두 삭제됩니다. 괜찮으십니까?</p>
+                    <div class="button-containers">
+                        <button class="bot-category-btn" id="not-login-query">비회원 문의</button>
+                        <button class="bot-category-btn final-category-btn" onclick="location.href='/signin'">로그인 하러 가기</button>
+                    </div>`);
+        }
+        
+        // '돌아가기' 버튼에 대한 이벤트 리스너
+        document.getElementById('go-back').addEventListener('click', function() {
+            showWelcomeMessage(true);  // 강제로 환영 메시지 표시
+        });
+        
+        document.getElementById('login-query').addEventListener('click', function() {
+            isConnectedToAgent = true;
+            botChat("<p>상담사 연결중입니다.<br> 문의 내용을 입력해주세요.</p>");
+        });
+        
+        document.getElementById('past-query-list').addEventListener('click', function() {
+            isConnectedToAgent = true;
+            botChat("<p>이전 채팅문의 내역입니다.</p>");
+        });
+    });
+    
+    // '영화 추천' 버튼 클릭 시
+    document.getElementById('movieRecommend').addEventListener('click', function() {
+        userChat("영화 추천");
+        botChat("<p>어떤 영화를 추천해드릴까요?<br><br> 장르나 출연 배우 등 선호하는 영화와 관련된 정보를 뭐든 입력해주세요!</p>");
+    });
 }
+
+
 
 // WebSocket 연결을 설정하고 메시지 구독을 처리하는 함수
 function connect() {
     client = Stomp.over(new SockJS('/chatbot')); // Stomp 라이브러리와 SockJS를 사용하여 WebSocket 연결 생성
+    
     client.connect({}, (frame) => {
-        console.log("Connected to WebSocket server with frame:", frame);
-        
-        key = new Date().getTime();  // 현재 시간을 기반으로 고유 키 생성
+        key = generateUniqueKey();  //고유 키 생성
+        console.log(key);
         client.subscribe(`/topic/bot/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
-            var msgObj = answer.body; //서버로부터 받은 메세지 객체
-            console.log("Received message from server:", msgObj);
-            
+          var response = answer.body; //서버로부터 받은 메세지 객체
+        //client.subscribe(`/exchange/chatbot-exchange/chatbot.key`, (message) => {
+			//var response = message.body;
+            //var response = JSON.parse(message.body);
             var now = new Date();
             var time = formatTime(now);
             
             // 봇의 응답 메시지 HTML 생성
             var tag = `<div class="msg bot flex">
                         <div class="icon">
-                            <img src="/img/bot/bot-img.png">
+                            <img src="/img/chatbot-img.png">
                         </div>
                         <div class="message">
                         <div class="bot-name">두비</div>
                             <div class="part chatbot">
-                                <p>${msgObj}</p>
+                                <p>${response}</p>
                             </div>
+                            <div class="time">${time}</div>
                         </div>
                     </div>`;
             showMessage(tag);
             
+            /*
             // 특정 키워드에 따른 추가 버튼 또는 이미지 표시
-            if (msgObj.includes("배송조회")) {//includes ""가 포함되어있을경우
+            if (responseMessage.includes("배송조회")) {//includes ""가 포함되어있을경우
                 // 배송조회 버튼 HTML
                 var buttonHTML = `...`;  // (버튼 HTML 코드 생략)
                 showMessage(buttonHTML);
             }
+            */
         });
     });
-}
-
-// 닫기버튼 : WebSocket 연결 종료
-function disconnect() {
-    if (client) {
-        client.disconnect(() => {
-            console.log("Disconnected...");
-        });
-    }
-}
-
-// 챗봇이 열려있는지 아닌지를 로컬 스토리지에 저장하는 함수
-function saveBotState() {
-    var isVisible = document.getElementById("bot-container").classList.contains('open');
-    localStorage.setItem('botState', isVisible ? 'open' : 'closed');
-}
-
-// 저장된 챗봇 UI 상태를 불러오고 적용하는 함수
-function loadBotState() {
-    var botState = localStorage.getItem('botState'); // 로컬 스토리지에서 챗봇 상태 불러오기
-    
-
-    if (botState === 'open') { // 챗봇이 열려있는 상태라면
-        botContainer.classList.add('open');
-        flag = true;
-        connect();
-    } else {
-        botContainer.classList.remove('open');
-        flag = false;
-        disconnect();
-    }
-
-    // 환영 메시지 표시 여부 확인 및 처리
-    var hasShownWelcomeMessage = localStorage.getItem('hasShownWelcomeMessage');
-    var wasChatReset = localStorage.getItem('chatReset');
-    
-    if (!hasShownWelcomeMessage || wasChatReset) {
-        if (botState === 'open') {
-            showWelcomeMessage();
-            localStorage.removeItem('chatReset');
-        }
-    }
-}
-
-// 페이지를 떠날 때 챗봇 상태를 저장하는 이벤트 리스너
-window.addEventListener('beforeunload', function() {
-    saveBotState();
-    localStorage.removeItem('chatContent');  // 대화 내용 초기화
-});
-
-
-// 챗봇 열기 버튼 클릭 이벤트 핸들러
-function btnBotClicked() {
-	
-    if (flag) return; // 이미 열려있으면 무시
-
-    botContainer.classList.add('open');
-    botContainer.classList.add('animate__animated', 'animate__bounceIn');
-    connect();
-    flag = true;
-
-    // 로컬 스토리지에서 웰컴 메시지 표시 여부와 채팅 리셋 여부를 확인
-    var hasShownWelcomeMessage = localStorage.getItem('hasShownWelcomeMessage');
-    var wasChatReset = localStorage.getItem('chatReset');
-
-    // 웰컴 메시지를 아직 보여주지 않았거나 채팅이 리셋된 경우
-    if (!hasShownWelcomeMessage || wasChatReset) {
-        // 웰컴 메시지 표시 함수 호출 (별도로 정의된 함수)
-        showWelcomeMessage();
-        // 채팅 리셋 상태를 로컬 스토리지에서 제거
-        localStorage.removeItem('chatReset');
-    }
-	
-	botContainer.addEventListener('animationend', () => {
-      botContainer.classList.remove('animate__animated', 'animate__bounceIn');
-    });
-
-    // 현재 챗봇 상태를 저장하는 함수 호출
-    saveBotState();
 }
 
 
@@ -233,7 +163,7 @@ function btnMsgSendClicked() {
     var tag = `<div class="msg user flex">
                 <div class="message">
                     <div class="part guest">
-                        <p>${question}</p>
+                        <p class="user-chat">${question}</p>
                     </div>
                     <div class="time">${time}</div>
                 </div>
@@ -246,66 +176,16 @@ function btnMsgSendClicked() {
     var data = {
         key: key,
         content: question, // 사용자 질문 내용
-        userId: 1 // 사용자 ID (예시로 '1'을 사용)
+        userId: userId // 사용자 ID
     };
-    client.send(`/message/bot/question`, {}, JSON.stringify(data));
-    clearQuestion();
-}
-
-// 입력 필드 초기화 함수
-function clearQuestion() {
-    document.getElementById("question").value = "";
-}
-
-// 챗봇 닫기 버튼 클릭 이벤트 핸들러
-function btnCloseClicked() {
-    //const botContainer = document.getElementById("bot-container");
-    botContainer.classList.add('animate__animated', 'animate__bounceOut');
     
-    // 애니메이션 종료 후 실행할 함수
-    function onAnimationEnd() {
-        botContainer.classList.remove('open', 'animate__animated', 'animate__bounceOut');
-        saveBotState();
-        disconnect();
-        flag = false;
-        document.getElementById("chat-content").innerHTML = ""; // 채팅 내용 초기화
-        localStorage.removeItem('chatContent');
-        localStorage.setItem('chatReset', 'true');
-        localStorage.removeItem('hasShownWelcomeMessage');
-        
-        // 이벤트 리스너 제거
-        botContainer.removeEventListener('animationend', onAnimationEnd);
+    if (isConnectedToAgent) {
+        // 상담사와 연결된 경우 다른 경로로 메시지 전송
+        client.send(`/message/agent`, {}, JSON.stringify(data));
+    } else {
+        // 일반 챗봇 대화
+        client.send(`/message/question`, {}, JSON.stringify(data));
     }
     
-    // 애니메이션 종료 이벤트 리스너 추가
-    botContainer.addEventListener('animationend', onAnimationEnd);
+    clearQuestion();
 }
-
-// 페이지 로드 시 초기화 및 이벤트 리스너 설정
-document.addEventListener('DOMContentLoaded', (event) => {
-    //btnCloseClicked();  // 초기 상태에서 챗봇 UI 닫기
-	botContainer = document.getElementById("bot-container");
-    botContainer.classList.remove('open', 'animate__animated', 'animate__bounceOut');
-        saveBotState();
-        disconnect();
-        flag = false;
-        document.getElementById("chat-content").innerHTML = ""; // 채팅 내용 초기화
-        localStorage.removeItem('chatContent');
-        localStorage.setItem('chatReset', 'true');
-        localStorage.removeItem('hasShownWelcomeMessage');
-        
-    loadBotState();  // 저장된 챗봇 상태 로드
-
-    // 각 버튼에 이벤트 리스너 추가
-    document.getElementById("chat-icon").addEventListener('click', btnBotClicked);
-    document.getElementById("close-button").addEventListener('click', btnCloseClicked);
-    document.getElementById("send-button").addEventListener('click', btnMsgSendClicked);
-
-    // 입력 필드에서 Enter 키 입력 시 메시지 전송
-    document.getElementById("question").addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            btnMsgSendClicked();
-        }
-    });
-});
