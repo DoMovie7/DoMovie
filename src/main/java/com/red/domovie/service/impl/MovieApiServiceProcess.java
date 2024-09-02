@@ -128,12 +128,11 @@ public class MovieApiServiceProcess implements MovieApiService {
             if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
                 JSONArray dataArray = jsonResponse.getJSONArray("Data");
                 JSONObject firstData = dataArray.getJSONObject(0);
-                System.out.println(">>>>:" + firstData);
+                //System.out.println(">>>>:" + firstData);
                 
                 ObjectMapper objectMapper = new ObjectMapper();
                 KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
-
-                System.out.println("***:" + kmdbMovieResponse);
+                //System.out.println("***:" + kmdbMovieResponse);
                 model.addAttribute("list", kmdbMovieResponse.getResult());
             }
         } catch (JSONException e) {
