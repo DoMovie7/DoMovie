@@ -64,5 +64,11 @@ public class UserEntity {
   		
   		return this;
   	}
+  	@Column(name = "provider")
+    private String provider;
+  	@Column(name = "social_id")
+  	private String socialId;
+
+	
 
 }

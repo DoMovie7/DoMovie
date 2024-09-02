@@ -38,67 +38,117 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private OAuth2User processSocialLogin(OAuth2User oAuth2User, String registrationId) {
         String email = extractEmail(oAuth2User, registrationId);
         String name = extractName(oAuth2User, registrationId);
-        UserEntity user = userRepository.findByEmail(email)
-                .map(existingUser -> updateExistingUser(existingUser, name))
-                .orElseGet(() -> createSocialUser(email, name));
+        String socialId = extractSocialId(oAuth2User, registrationId);
+        
+        UserEntity user = userRepository.findByEmailOrSocialId(email, socialId)
+                .map(existingUser -> updateExistingUser(existingUser, name, registrationId, socialId))
+                .orElseGet(() -> createSocialUser(email, name, registrationId, socialId));
+        
         return new CustomUserDetails(user, oAuth2User.getAttributes());
     }
     
-    private String extractEmail(OAuth2User oAuth2User, String registrationId) {
-        Map<String, Object> attributes = oAuth2User.getAttributes();
-        switch (registrationId) {
-            case "google":
-                return (String) attributes.get("email");
-            case "naver":
-                Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-                return (String) response.get("email");
-            case "kakao":
-                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-                return (String) kakaoAccount.get("email");
-            default:
-                throw new OAuth2AuthenticationException("Unsupported registration ID: " + registrationId);
-        }
-    }
-    
     private String extractName(OAuth2User oAuth2User, String registrationId) {
-        Map<String, Object> attributes = oAuth2User.getAttributes();
+    	Map<String, Object> attributes = oAuth2User.getAttributes();
+        String name = null;
         switch (registrationId) {
             case "google":
-                return (String) attributes.get("name");
+                name = (String) attributes.get("name");
+                break;
             case "naver":
                 Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-                return (String) response.get("name");
+                name = (String) response.get("name");
+                break;
             case "kakao":
                 Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
                 Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-                return (String) profile.get("nickname");
+                name = (String) profile.get("nickname");
+                break;
             default:
                 throw new OAuth2AuthenticationException("Unsupported registration ID: " + registrationId);
         }
+        
+        if (name == null || name.isEmpty()) {
+            log.warn("Name not provided by {}. Using default name.", registrationId);
+            name = "User_" + UUID.randomUUID().toString().substring(0, 8);
+        }
+        
+        return name;
+	}
+
+	private String extractEmail(OAuth2User oAuth2User, String registrationId) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        String email = null;
+        switch (registrationId) {
+            case "google":
+                email = (String) attributes.get("email");
+                break;
+            case "naver":
+                Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+                email = (String) response.get("email");
+                break;
+            case "kakao":
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                email = (String) kakaoAccount.get("email");
+                break;
+            default:
+                throw new OAuth2AuthenticationException("Unsupported registration ID: " + registrationId);
+        }
+        return email;
     }
     
-    private UserEntity createSocialUser(String email, String name) {
-        log.info("Creating new social user: {}", email);
+    private String extractSocialId(OAuth2User oAuth2User, String registrationId) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        String id = null;
+        switch (registrationId) {
+            case "google":
+                id = (String) attributes.get("sub");
+                break;
+            case "naver":
+                Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+                id = (String) response.get("id");
+                break;
+            case "kakao":
+                id = String.valueOf(attributes.get("id"));
+                break;
+            default:
+                throw new OAuth2AuthenticationException("Unsupported registration ID: " + registrationId);
+        }
+        return registrationId + "_" + id;
+    }
+    
+    // extractName 메서드는 그대로 유지
+
+    private UserEntity createSocialUser(String email, String name, String provider, String socialId) {
+        log.info("Creating new social user: {} with provider: {}", email, provider);
         TierEntity defaultTier = tierRepository.findById(1L)
             .orElseThrow(() -> new RuntimeException("Default tier not found"));
 
         UserEntity entity = UserEntity.builder()
-                .email(email)
+                .email(email != null ? email : socialId)
                 .userName(name)
                 .nickName(name)
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                 .phoneNumber("미입력")
                 .birthDate("미입력")
                 .tierId(defaultTier)
+                .provider(provider)
+                .socialId(socialId)
                 .build()
                 .addRole(Role.USER);
 
         return userRepository.save(entity);
     }
 
-    private UserEntity updateExistingUser(UserEntity existingUser, String name) {
-        log.info("Updating existing user: {}", existingUser.getEmail());
+    private UserEntity updateExistingUser(UserEntity existingUser, String name, String provider, String socialId) {
+        log.info("Updating existing user: {} with provider: {}", existingUser.getEmail(), provider);
         existingUser.setUserName(name);
+        if (existingUser.getProvider() == null || existingUser.getProvider().isEmpty()) {
+            existingUser.setProvider(provider);
+            existingUser.setSocialId(socialId);
+        } else if (!existingUser.getProvider().equals(provider)) {
+            log.warn("User {} already exists with different provider: {}", existingUser.getEmail(), existingUser.getProvider());
+            // 여기서 필요한 경우 추가적인 처리를 할 수 있습니다.
+        }
         return userRepository.save(existingUser);
     }
 }
