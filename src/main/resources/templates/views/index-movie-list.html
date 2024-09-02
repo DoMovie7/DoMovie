@@ -13,7 +13,8 @@
             <ul class="movie-info">
                 <li><span th:text="${dto.movieNm}"></span></li>
                 <li><span th:text="${dto.nation}"></span></li>
-                <li><span>개봉일:</span><span th:text="${dto.openDt}"></span></li>
+                <li><span>개봉일:</span><span th:text="${#strings.substring(dto.openDt, 0, 4) + '-' + #strings.substring(dto.openDt, 4, 6) + '-' + #strings.substring(dto.openDt, 6, 8)}"></span></li>
+                 
                 
             </ul>
         </div>

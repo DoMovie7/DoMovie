@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.red.domovie.domain.dto.movie.BoxOfficeDTO;
 import com.red.domovie.domain.dto.movie.KmdbMovieResponse;
@@ -149,7 +150,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder urlBuilder = new StringBuilder(MOVIE_LIST_API_URL);
         urlBuilder.append("?key=").append(kobisApiKey);
-        urlBuilder.append("&openStartDt=").append(formattedDate);
+        urlBuilder.append("&openEndDt=").append(formattedDate);
         urlBuilder.append("&itemPerPage=10");
 
         String url = urlBuilder.toString();
@@ -165,7 +166,7 @@ public class MovieApiServiceProcess implements MovieApiService {
 
             for (int i = 0; i < movieList.length(); i++) {
                 JSONObject movie = movieList.getJSONObject(i);
-                System.out.println("<<<>>>" + movie.toString());
+                //System.out.println("<<<>>>" + movie.toString());
                 MovieDTO movieDTO = objectMapper.readValue(movie.toString(), MovieDTO.class);
 
                 // KMDB API를 통해 포스터와 영화 ID 매핑
@@ -189,65 +190,46 @@ public class MovieApiServiceProcess implements MovieApiService {
 
 
     //개봉일 최신순, 장르 공포영화
+    
     @Override
     public void getHorrorMovies(Model model) {
         LocalDate date = LocalDate.now().minusDays(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");  // 날짜 형식 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = date.format(formatter);
 
         RestTemplate restTemplate = new RestTemplate();
-        StringBuilder urlBuilder = new StringBuilder(MOVIE_LIST_API_URL);
-        urlBuilder.append("?key=").append(kobisApiKey);
-        urlBuilder.append("&openStartDt=").append(formattedDate);
-        urlBuilder.append("&itemPerPage=10");
+        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        strBuilder.append("&detail=y");
+        strBuilder.append("&genre=공포");
+        strBuilder.append("&releaseDte=").append(formattedDate);
+        strBuilder.append("&listCount=10");
+        strBuilder.append("&ServiceKey=").append(kmdbApiKey);
+        strBuilder.append("&sort=prodYear,1");
 
-        String url = urlBuilder.toString();
-        List<MovieDTO> movieDTOs = new ArrayList<>();
+        String url = strBuilder.toString();
 
         try {
             String response = restTemplate.getForObject(url, String.class);
             JSONObject jsonResponse = new JSONObject(response);
 
-            // "movieListResult" 키가 있는지 확인
-            if (jsonResponse.has("movieListResult")) {
-                JSONObject movieListResult = jsonResponse.getJSONObject("movieListResult");
+            if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
+                JSONArray dataArray = jsonResponse.getJSONArray("Data");
+                JSONObject firstData = dataArray.getJSONObject(0);
+                System.out.println(">>>>:" + firstData);
 
-                if (movieListResult.has("movieList")) {
-                    JSONArray movieList = movieListResult.getJSONArray("movieList");
-                    ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper objectMapper = new ObjectMapper();
+                KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
 
-                    for (int i = 0; i < movieList.length(); i++) {
-                        JSONObject movie = movieList.getJSONObject(i);
-                        System.out.println("<<<>>>" + movie.toString());
-                        
-                        MovieDTO movieDTO = objectMapper.readValue(movie.toString(), MovieDTO.class);
-                     // 장르가 '공포'인 영화만 필터링
-                        if (movieDTO.getRepGenreNm() != null &&
-                        	    (movieDTO.getRepGenreNm().contains("공포") || movieDTO.getRepGenreNm().contains("호러"))) {
-                        // KMDB API를 통해 포스터 매핑
-                        Map<String, String> posterData = fetchPosterFromKMDB(movieDTO.getMovieNm(), movieDTO.getOpenDt());
-                        movieDTO.setPoster(posterData.get("poster"));
-                        movieDTO.setDOCID(posterData.get("DOCID"));
-                        movieDTOs.add(movieDTO);
-                        }
-                    }
-                } else {
-                    System.out.println("movieList key is missing in movieListResult.");
-                }
-            } else {
-                System.out.println("movieListResult key is missing in JSON response.");
+                System.out.println("***:" + kmdbMovieResponse);
+                model.addAttribute("list", kmdbMovieResponse.getResult());
             }
-
-            // 영화 목록을 개봉일 기준으로 최신순 정렬
-            movieDTOs.sort(Comparator.comparing(MovieDTO::getOpenDt).reversed());
-            model.addAttribute("list", movieDTOs);
-
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
     }
+
+    
     
 }
