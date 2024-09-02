@@ -24,4 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('cancelButton').addEventListener('click', function() {
         window.location.href = '/recommends'; // 이동할 페이지 URL로 변경
     });
+    document.querySelector('#writeForm').addEventListener('submit', function(e) {
+        const content = editor.getMarkdown();
+        document.querySelector('#content').value = content;
+    });
 });
