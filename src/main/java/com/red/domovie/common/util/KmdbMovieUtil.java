@@ -69,6 +69,8 @@ public class KmdbMovieUtil {
         // JsonNode를 포함하는 ResponseEntity를 반환
         return new ResponseEntity<>(jsonNode, response.getStatusCode());
     }
+    
+    
     }
     
     
