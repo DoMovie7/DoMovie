@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Movie Information</title>
+</head>
+<body>
+    <div th:each="dto : ${list}">
+        <div class="movie-item" th:data-docid="${dto.DOCID}">
+            <a th:href="@{'/contents/' + ${dto.DOCID}}">
+                <img th:src="${dto.poster}" th:alt="${dto.movieNm}" /> 
+            </a>
+            <ul class="movie-info">
+                <li><span th:text="${dto.movieNm}"></span></li>
+                <li><span th:text="${dto.prdtYear}"></span></li>
+                <li><span th:text="${dto.nation}"></span></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
