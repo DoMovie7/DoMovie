@@ -1,0 +1,154 @@
+/* 전체 컨테이너 스타일 */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 페이지 제목 스타일 */
+.page-title {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold; /* 제목을 더 두드러지게 하기 위해 글씨 굵기 추가 */
+}
+
+/* 이미지 스타일 */
+img.recommend-image {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* 제목 및 작성자 스타일 */
+.details-header {
+    margin-bottom: 20px;
+}
+
+.details-header h1 {
+    font-size: 28px;
+    color: #333;
+    margin: 0;
+}
+
+.details-header p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 본문 스타일 */
+.content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* 버튼 스타일 */
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #DB242D;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c21a1d; /* 버튼 호버 시 색상 변화 */
+}
+
+/* 댓글 영역 스타일 */
+.comment-section {
+    margin-top: 30px;
+}
+
+.comment-section h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.comment-section .comment {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.comment-section .comment p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.comment-section .comment .comment-author {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-section .comment .comment-date {
+    font-size: 12px;
+    color: #999;
+}
+
+/* 버튼 그룹 스타일 */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Toast 메시지 스타일 */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    white-space: nowrap;
+    padding: 16px;
+}
+
+.toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 4s;
+    animation: fadein 0.5s, fadeout 0.5s 4s;
+}
+
+@-webkit-keyframes fadein {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+
+@keyframes fadein {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {opacity: 1;} 
+    to {opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {opacity: 1;} 
+    to {opacity: 0;}
+}

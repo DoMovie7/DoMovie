@@ -69,5 +69,10 @@ public class RecommendController {
         return "redirect:/recommends"; // 저장 후 추천 목록 페이지로 리다이렉트합니다.
     }
    
-
+    @GetMapping("/recommends/{id}")
+    public String viewRecommend(@PathVariable("id") Long id, Model model) {
+        RecommendEntity recommendEntity = recommendService.getPost(id);
+        model.addAttribute("recommend", recommendEntity);
+        return "views/recommend/detail"; // 상세 페이지를 반환합니다.
+    }
 }

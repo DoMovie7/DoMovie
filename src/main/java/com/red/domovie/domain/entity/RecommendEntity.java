@@ -1,7 +1,6 @@
 package com.red.domovie.domain.entity;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,5 +30,6 @@ public class RecommendEntity {
     private String author; // 작성자
     private int commentCount; // 조회수
     private LocalDateTime createdDate; // 날짜
+    private String imgUrl; // 항목 이미지 url
 }
 
