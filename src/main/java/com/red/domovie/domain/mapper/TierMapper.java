@@ -11,11 +11,7 @@ import com.red.domovie.domain.entity.Role;
 import com.red.domovie.domain.entity.UserEntity;
 
 @Mapper
-public interface LoginMapper {
-	void saveUser(UserEntity user);
-    // 이메일 중복 체크를 위한 메소드 추가
-	int countByEmail(String email);
-	
-	String findEmailByNameAndBirthDate(FindIdDTO request);
+public interface TierMapper {
+
 	
 }

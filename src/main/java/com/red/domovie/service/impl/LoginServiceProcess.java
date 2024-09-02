@@ -8,12 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.SignUpDTO;
 import com.red.domovie.domain.entity.Role;
 import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.mapper.LoginMapper;
+import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.LoginService;
 
 import jakarta.transaction.Transactional;
@@ -71,6 +73,5 @@ public class LoginServiceProcess implements LoginService {
 	public String findEmailByNameAndBirthDate(FindIdDTO request) {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
-
 
 }

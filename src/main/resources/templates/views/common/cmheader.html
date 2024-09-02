@@ -1,49 +1,73 @@
 <header th:fragment="cmheader">
-  <div class="cmheader-wrap">
-    <div class="header-top">
-      <h1 class="logo">
-        <a href="/"><img alt="" src="/img/logo.png"></a>
-      </h1>
-      <ul class="info">
-        <li><a href="#">고객센터</a></li>
-        <li><a href="/signin">로그인/회원가입</a></li>
-      </ul>
-    </div>
-    <nav class="header-bottom">
-      <ul class="nav-top">
-        <li><a href="/mypage">마이페이지</a></li>
-        <li><a href="/hometheater/list">홈시어터</a></li>
-        <li><a href="/recommends">영화추천</a></li>
-        <li><a href="#">자유게시판</a></li>
-        <li><a href="#">스토어</a></li>
-      </ul>
-      <ul class="nav-bottom">
-        <li><a href="#"><i class="fa-brands fa-facebook"></i><span>페이스북</span></a></li>
-        <li><a href="#"><i class="fa-brands fa-youtube"></i><span>유튜브</span></a></li>
-        <li><a href="#"><i class="fa-brands fa-instagram"></i><span>인스타그램</span></a></li>
-      </ul>
-    </nav>
-  </div>
-  <div class="cmheader-scroll">
-    <div class="cmheader-scroll-inner">
-      <h1 class="logo-small">
-        <a href="/"><img alt="" src="/img/logo3.png"></a>
-      </h1>
-      <ul class="nav-scroll">
-        <li><a href="/mypage">마이페이지</a></li>
-        <li><a href="/hometheater/list">홈시어터</a></li>
-        <li><a href="/recommends">영화추천</a></li>
-        <li><a href="#">자유게시판</a></li>
-        <li><a href="/signin">로그인/회원가입</a></li>
+	<div class="cmheader-wrap">
+		<div class="header-top">
+			<h1 class="logo">
+				<a href="/"><img alt="" src="/img/logo.png"></a>
+			</h1>
+			<ul class="info">
+				<li sec:authorize="isAnonymous()"><a href="/signin">로그인/회원가입</a></li>
+				<li sec:authorize="isAuthenticated()" class="user-info"><span
+					th:text="${#authentication.principal.nickName}+' 님'"></span></li>
+				<li sec:authorize="isAuthenticated()" class="logout-form">
+					<form action="/logout" method="post">
+						<input type="hidden"
+							th:name="${_csrf != null ? _csrf.parameterName : 'csrf'}"
+							th:value="${_csrf != null ? _csrf.token : ''}" />
+						<button type="submit" class="logout-btn" title="로그아웃">
+							<i class="fas fa-sign-out-alt"></i>
+							<!-- 로그아웃 아이콘 -->
+						</button>
+					</form>
+				</li>
+			</ul>
+		</div>
+		<nav class="header-bottom">
+			<ul class="nav-top">
+				<li><a href="/mypage">마이페이지</a></li>
+				<li><a href="/hometheater/list">홈시어터</a></li>
+				<li><a href="/recommends">영화추천</a></li>
+				<li><a href="#">자유게시판</a></li>
+				<li><a href="#">스토어</a></li>
+			</ul>
+			<ul class="nav-bottom">
+				<li><a href="#"><i class="fa-brands fa-facebook"></i><span>페이스북</span></a></li>
+				<li><a href="#"><i class="fa-brands fa-youtube"></i><span>유튜브</span></a></li>
+				<li><a href="#"><i class="fa-brands fa-instagram"></i><span>인스타그램</span></a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="cmheader-scroll">
+		<div class="cmheader-scroll-inner">
+			<h1 class="logo-small">
+				<a href="/"><img alt="" src="/img/logo3.png"></a>
+			</h1>
+			<ul class="nav-scroll">
+				<li><a href="/mypage">마이페이지</a></li>
+				<li><a href="/hometheater/list">홈시어터</a></li>
+				<li><a href="/recommends">영화추천</a></li>
+				<li><a href="#">자유게시판</a></li>
+				<li sec:authorize="isAnonymous()"><a href="/signin">로그인/회원가입</a></li>
+				<li sec:authorize="isAuthenticated()" class="user-info"><span
+					th:text="${#authentication.principal.nickName}+' 님'"></span></li>
+				<li sec:authorize="isAuthenticated()" class="logout-form">
+					<form action="/logout" method="post">
+						<input type="hidden"
+							th:name="${_csrf != null ? _csrf.parameterName : 'csrf'}"
+							th:value="${_csrf != null ? _csrf.token : ''}" />
+						<button type="submit" class="logout-btn" title="로그아웃">
+							<i class="fas fa-sign-out-alt"></i>
+							<!-- 로그아웃 아이콘 -->
+						</button>
+					</form>
+				</li>
+			</ul>
 
-      </ul>
-      
-    </div>
-    
-       <ul class="nav-scroll">
-        <li><a href="/signin">로그인/회원가입</a></li>
+		</div>
 
-      </ul>
-    </div>
-  </div>
+		<ul class="nav-scroll">
+			<li><a href="/signin">로그인/회원가입</a></li>
+
+		</ul>
+	</div>
+	</div>
 </header>

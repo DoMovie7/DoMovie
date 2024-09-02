@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.FindIdResponse;
 import com.red.domovie.domain.dto.login.SignUpDTO;
+import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.LoginService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +47,8 @@ public class SigInController {
 	public String signup() {
 		return "views/login/signup";
 	}
+	
+	
 
 	@PostMapping("/signup")
 	public String signup(@ModelAttribute SignUpDTO signUpDTO, BindingResult result,
