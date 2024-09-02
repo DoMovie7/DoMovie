@@ -4,15 +4,21 @@
     <title>Box Office Movies</title>
 </head>
 <body>
-    <div class="movie-item" th:each="dto : ${list}" th:data-docid="${dto.DOCID}">
-        <a th:href="@{/contents/{id}(id=${dto.DOCID})}"><img th:src="${dto.posters}" th:alt="${dto.movieNm}"></a>
-        <h4 th:text="${dto.rank}"></h4>
-        <h4 th:text="${dto.movieNm}"></h4>
-        <ul class="box-office-info">
-            <li><span th:text="${dto.openDt}"></span></li>
-            <li><span>일일관람객:</span><span th:text="${dto.audiCnt}"></span></li>
-            <li><span>누적관람객:</span><span th:text="${dto.audiAcc}"></span></li>
-        </ul>
-    </div>
+	<div class="movie-item" th:each="dto : ${list}" th:data-docid="${dto.DOCID}">
+	    <div class="image-container">
+	        <a th:href="@{/contents/{id}(id=${dto.DOCID})}">
+	            <img th:src="${dto.posters}" th:alt="${dto.movieNm}">
+	            <!-- rank 요소를 이미지 위에 위치시키기 위해 추가 -->
+	            <span class="box-rank" th:text="${dto.rank}"></span>
+	        </a>
+	    </div>
+	    <h4 th:text="${dto.movieNm}"></h4>
+	    <ul class="box-office-info">
+	        <li><span th:text="${dto.openDt}"></span></li>
+	        <li><span>일일관람객:</span><span th:text="|${#numbers.formatInteger(dto.audiCnt, 3, 'COMMA')}명|"></span></li>
+	        
+	        <li><span>누적관람객:</span><span th:text="|${#numbers.formatInteger(dto.audiAcc, 3, 'COMMA')}명|"></span></li>
+	    </ul>
+	</div>
 </body>
 </html>

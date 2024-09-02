@@ -13,14 +13,19 @@ public class KmdbMovieDTO {
 	@JsonProperty("DOCID")
 	private String docid;
     private String posters;
+    private String posterUrl;
     private String title;
     private String prodYear;
     private String nation;
+    private String genre;
     private Plots plots;
     
     public String poster() {
-    	String[] strs=posters.split("[|]");
-    	return strs[0];
+        if (posters != null && !posters.isEmpty()) {
+            String[] strs = posters.split("[|]");
+            return strs.length > 0 ? strs[0] : null;
+        }
+        return null; // Return null if posters is null or empty
     }
     
 }
