@@ -23,11 +23,12 @@ public class IndexController {
         return "views/index-movie-list";  // 타임리프 템플릿 이름 반환
     }
     
-    @ResponseBody
+    
     @GetMapping("/movies/boxOffice")
-    public String getboxOffice() {
+    public String getBoxOffice(Model model) {
         // 모든 영화 정보를 서비스로부터 받아옴
-        return movieApiService.getboxOffice();
+    	movieApiService.getBoxOffice(model);
+        return "views/index-box-movie-list";
     }
     
     
