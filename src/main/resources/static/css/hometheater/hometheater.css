@@ -63,6 +63,13 @@ h1 {
     font-weight: bold;
 }
 
+.board-table .title{
+    width: 500px;
+}
+.board-table tbody .title{
+    text-align: left;
+}
+
 .board-table tr:hover {
     background-color: #f5f5f5;
 }
@@ -189,8 +196,30 @@ textarea {
 
 /* 전체 카테고리 메뉴 스타일 */
 #category-menu {
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
+#category-menu > div > ul{
+    display: flex;
+}
+#category-menu > div > ul > .tab:hover{
+    background-color: rgba(255,0,0,0.5);
+}
+#category-menu > div > ul > .tab{
+    padding: 1em;
+    width: calc(1160px / 9);
+    border: 1px solid #e9e9e9;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+#category-menu > div > ul > .tab.active{
+    background-color:#DB242D;
+    color: #fff;
+}
+#category-menu > div > ul > .tab-:not(:first-child) {
+    border-left: none;
+}
+
+
 
 .tabs {
     display: flex;
@@ -226,3 +255,49 @@ textarea {
 .tab:hover:not(.active) {
     background-color: #e0e0e0;
 }
+
+/* ///글쓰기버튼 css/// */
+#writeButton {
+    background-color: #DB242D; /* 원하는 색상으로 변경 가능 */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none; /* 링크 기본 스타일 제거 */
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: flex; /* 버튼을 플렉스 박스로 설정 */
+    align-items: center; /* 수직 중앙 정렬 */
+    font-size: 13px;
+}
+#searchButton {
+    background-color: #DB242D;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+#filterCategory {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+#searchInput {
+    width: 200px;
+    padding: 10px;
+    margin-right: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.search-container {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+}
+.page-title{
+     font-size: 24px;
+     font-weight: bold;
+     margin-bottom: 20px;
+ }

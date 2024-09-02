@@ -1,9 +1,11 @@
 package com.red.domovie.controller;
 
 import com.red.domovie.domain.dto.hometheater.*;
+import com.red.domovie.domain.entity.hometheater.Category;
 import com.red.domovie.service.hometheater.HomeTheaterService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,21 +21,26 @@ public class HomeTheaterController {
     private final HomeTheaterService homeTheaterService;
 
     @GetMapping
-    public String homeTheaterMain() {
+    public String homeTheaterMain(Model model) {
+        List<Category> categories = homeTheaterService.getAllCategories();
+        model.addAttribute("categories", categories);
         return "views/hometheater/hometheater"; // 홈시어터 메인 페이지
     }
 
     @GetMapping("/list")
     public String listPosts(Model model) {
         List<HomeTheaterListDTO> posts = homeTheaterService.getAllPosts();
+        List<Category> categories = homeTheaterService.getAllCategories();
         model.addAttribute("posts", posts);
+        model.addAttribute("categories", categories);
         return "views/hometheater/hometheater_list"; // 게시물 목록 페이지
     }
 
     @GetMapping("/hometheater_create")
     public String createPostForm(Model model) {
         model.addAttribute("homeTheaterSaveDTO", new HomeTheaterSaveDTO());
-        return "views/hometheater/hometheater_create"; // 글 작성 페이지
+        model.addAttribute("categories", homeTheaterService.getAllCategories());
+        return "views/hometheater/hometheater_create";
     }
 
     @PostMapping("/create")
@@ -44,7 +51,7 @@ public class HomeTheaterController {
     }
 
     @PutMapping("/{id}")
-    public String editPostForm(@PathVariable Long id, @ModelAttribute HomeTheaterUpdateDTO updateDTO) {
+    public String editPostForm(@PathVariable("id") Long id, @ModelAttribute HomeTheaterUpdateDTO updateDTO) {
         homeTheaterService.updatePost(id,updateDTO);
         return "redirect:/hometheater/{id}"; // 수정 페이지
     }
@@ -52,15 +59,28 @@ public class HomeTheaterController {
 
 
     @GetMapping("/{id}")
-    public String getPost(@PathVariable Long id, Model model) {
+    public String getPost(@PathVariable("id") Long id, Model model) {
         HomeTheaterDetailDTO post = homeTheaterService.getPostById(id);
+        List<Category> categories = homeTheaterService.getAllCategories();
         model.addAttribute("post", post);
-        model.addAttribute("commentForm", new CommentSaveDTO());  // 이 줄을 추가합니다
+        model.addAttribute("categories", categories);
+        model.addAttribute("commentForm", new CommentSaveDTO());
         return "views/hometheater/hometheater_detail"; // 상세 페이지
     }
     @PostMapping("/{id}/comment")
-    public String addComment(@PathVariable Long id, @ModelAttribute CommentSaveDTO commentForm) {
+    public String addComment(@PathVariable("id") Long id, @ModelAttribute CommentSaveDTO commentForm) {
         homeTheaterService.addComment(id,commentForm);
         return "redirect:/hometheater/" + id;
     }
+    @PutMapping("/api/{id}")
+    @ResponseBody
+    public ResponseEntity<?> updatePostAsync(@PathVariable("id") Long id, @RequestBody HomeTheaterUpdateDTO updateDTO) {
+        try {
+            homeTheaterService.updatePost(id, updateDTO);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to update post: " + e.getMessage());
+        }
+    }
+
 }

@@ -5,44 +5,134 @@
 <head>
     <title>홈시어터 정보 공유 게시판 - 상세 페이지</title>
     <link rel="stylesheet" th:href="@{/css/hometheater/hometheater.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/hometheater/image-handler.js" defer></script>
 </head>
 <body>
 <main>
     <div class="container">
-        <h1 th:text="${post.title}">게시글 제목</h1>
+        <h1 id="postTitle" th:text="${post.title}">게시글 제목</h1>
         <div class="post-info">
             <span th:text="${post.author}">작성자</span> |
             <span th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd HH:mm')}">작성일</span>
         </div>
         <div class="post-thumbnail">
-            <!-- 첨부된 이미지 표시 -->
-            <img th:src="@{'/img/upload/' + ${post.thumbnailImageUrl}}"
-                 alt="첨부 이미지"
-                 class="thumbnail"
-                 style="width: 100%; max-width: 600px;">
+            <img th:src="${post.thumbnailImageUrl}" alt="첨부 이미지" class="thumbnail" style="width: 100%; max-width: 600px;">
         </div>
-        <div class="post-content" th:utext="${post.content}">
+        <div id="postContent" class="post-content" th:utext="${post.content}">
             게시글 내용이 여기에 표시됩니다.
         </div>
-        <div class="btn-group">
-            <a th:href="@{/hometheater/{id}/edit(id=${post.id})}" class="btn btn-edit">수정</a>
-            <form th:action="@{/hometheater/{id}/delete(id=${post.id})}" method="post" style="display: inline;">
-                <button type="submit" class="btn btn-delete" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
-            </form>
+        <div id="editForm" style="display: none;">
+            <input type="text" id="editTitle" th:value="${post.title}">
+            <textarea id="editContent" th:text="${post.content}"></textarea>
+            <button id="saveButton">저장</button>
+            <button id="cancelButton">취소</button>
         </div>
-        <div class="commentEntity-section">
+        <div class="btn-group">
+            <button id="editButton" class="btn btn-edit">수정</button>
+            <button id="deleteButton" class="btn btn-delete">삭제</button>
+        </div>
+        <div class="comment-section">
             <h2>댓글</h2>
-            <div th:each="comment : ${post.comments}" class="comment">
-                <div class="comment-author" th:text="${comment.author}">댓글 작성자</div>
-                <div class="comment-content" th:text="${comment.content}">댓글 내용</div>
-                <div class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">댓글 작성일</div>
+            <div id="commentList">
+                <div th:each="comment : ${post.comments}" class="comment">
+                    <div class="comment-author" th:text="${comment.author}">댓글 작성자</div>
+                    <div class="comment-content" th:text="${comment.content}">댓글 내용</div>
+                    <div class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">댓글 작성일</div>
+                </div>
             </div>
-            <form th:action="@{/hometheater/{id}/commentEntity(id=${post.id})}" method="post" th:object="${commentForm}">
-                <textarea th:field="*{content}" rows="4" cols="50" placeholder="댓글을 입력하세요"></textarea>
+            <form id="commentForm">
+                <textarea id="commentContent" rows="4" cols="50" placeholder="댓글을 입력하세요"></textarea>
                 <button type="submit" class="btn btn-primary">댓글 작성</button>
             </form>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            const postId = [[${post.id}]];
+
+            // 수정 버튼 클릭
+            $('#editButton').click(function() {
+                $('#postTitle, #postContent, .btn-group').hide();
+                $('#editForm').show();
+            });
+
+            // 취소 버튼 클릭
+            $('#cancelButton').click(function() {
+                $('#editForm').hide();
+                $('#postTitle, #postContent, .btn-group').show();
+            });
+
+            // 저장 버튼 클릭
+            $('#saveButton').click(function() {
+                const updatedData = {
+                    title: $('#editTitle').val(),
+                    content: $('#editContent').val()
+                };
+
+                $.ajax({
+                    url: '/hometheater/api/' + postId,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(updatedData),
+                    success: function() {
+                        $('#postTitle').text(updatedData.title);
+                        $('#postContent').html(updatedData.content);
+                        $('#editForm').hide();
+                        $('#postTitle, #postContent, .btn-group').show();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('수정에 실패했습니다: ' + error);
+                    }
+                });
+            });
+
+            // 삭제 버튼 클릭
+            $('#deleteButton').click(function() {
+                if (confirm('정말로 삭제하시겠습니까?')) {
+                    $.ajax({
+                        url: '/hometheater/api/' + postId,
+                        type: 'DELETE',
+                        success: function() {
+                            window.location.href = '/hometheater/list';
+                        },
+                        error: function(xhr, status, error) {
+                            alert('삭제에 실패했습니다: ' + error);
+                        }
+                    });
+                }
+            });
+
+            // 댓글 작성
+            $('#commentForm').submit(function(e) {
+                e.preventDefault();
+                const commentData = {
+                    content: $('#commentContent').val()
+                };
+
+                $.ajax({
+                    url: '/hometheater/' + postId + '/comment',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(commentData),
+                    success: function(response) {
+                        $('#commentList').append(
+                            '<div class="comment">' +
+                            '<div class="comment-author">' + response.author + '</div>' +
+                            '<div class="comment-content">' + response.content + '</div>' +
+                            '<div class="comment-date">' + response.createdAt + '</div>' +
+                            '</div>'
+                        );
+                        $('#commentContent').val('');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('댓글 작성에 실패했습니다: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
 </main>
 </body>
 </html>

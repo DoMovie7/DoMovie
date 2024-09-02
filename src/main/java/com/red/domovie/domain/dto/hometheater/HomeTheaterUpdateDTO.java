@@ -9,5 +9,6 @@ public class HomeTheaterUpdateDTO {
     private Long id;
     private String title;
     private String content;
+    private String category;
     private String thumbnailImageUrl;  // 썸네일 이미지 경로 추가
 }
