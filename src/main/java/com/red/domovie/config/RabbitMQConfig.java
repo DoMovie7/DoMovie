@@ -5,11 +5,15 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,11 +40,11 @@ public class RabbitMQConfig {
 	@Value("${spring.rabbitmq.template.routing-key}")
 	private String routingKey;
 	
+	
 	// RabbitMQ에서 사용할 큐를 정의함
-    // 큐 이름은 properties에서 주입된 값이며, durable=false로 설정하여 비휘발성 큐가 아님
 	@Bean
 	Queue queue() {
-		return new Queue(queue, false);
+		return new Queue(queue, false); // 큐를 durable로 설정하여 서버 재시작 후에도 큐가 유지되도록
 	}
 	
 	//"topic" 유형의 RabbitMQ Exchange를 정의
@@ -68,14 +72,22 @@ public class RabbitMQConfig {
     }
     */
 	
+	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의
+	@Bean
+    SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory); // ConnectionFactory 설정
+        factory.setMessageConverter(messageConverter()); // 메시지 변환기로 Jackson2JsonMessageConverter를 사용
+        return factory;
+    }
+	
 	//RabbitMQ 메시지 리스너 컨테이너를 정의
 	@Bean
     SimpleMessageListenerContainer container(Receiver receiver) {
-		log.debug(">>>>>>connectionFactory:"+connectionFactory);
 		SimpleMessageListenerContainer container=new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.setQueueNames(queue);
-		container.setMessageListener(messageListenerAdapter(receiver));
+		container.setMessageListener(messageListenerAdapter(receiver)); // 메시지 리스너 어댑터 설정
 		return container;
 	}
 	

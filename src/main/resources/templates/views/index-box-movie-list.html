@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Box Office Movies</title>
+</head>
+<body>
+    <div class="movie-item" th:each="dto : ${list}" th:data-docid="${dto.movieCd}">
+        <a th:href="@{/contents/{id}(id=${dto.movieCd})}"><img th:src="${dto.posters}" th:alt="${dto.movieNm}"></a>
+        <h4 th:text="${dto.rank}"></h4>
+        <h4 th:text="${dto.movieNm}"></h4>
+        <ul class="box-office-info">
+            <li><span th:text="${dto.openDt}"></span></li>
+            <li><span th:text="${dto.audiCnt}"></span></li>
+            <li><span th:text="${dto.audiAcc}"></span></li>
+        </ul>
+    </div>
+</body>
+</html>

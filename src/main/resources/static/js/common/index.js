@@ -113,39 +113,19 @@ function fetchMovieInfo() {
 
 function fetchBoxOfficeInfo() {
     fetch('/movies/boxOffice')
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
             if (data.error) {
                 console.error('Error:', data.error);
                 return;
             }
-            if (data.boxOfficeResult && data.boxOfficeResult.dailyBoxOfficeList) { // 박스오피스 결과 확인
-                renderBoxOfficeItems(data.boxOfficeResult.dailyBoxOfficeList);
-            } else {
-                console.error('Unexpected data structure:', data);
-            }
+			const boxOfficeContainer = document.getElementById('boxOfficeContainer');
+			boxOfficeContainer.innerHTML =data;
         })
         .catch(error => console.error('박스오피스 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-function renderBoxOfficeItems(boxOfficeList) {
-    const boxOfficeContainer = document.getElementById('boxOfficeContainer');  // 박스오피스 아이템을 넣을 컨테이너 요소 선택
-    boxOfficeContainer.innerHTML = '';  // 기존 내용을 지워서 초기화
 
-    boxOfficeList.forEach(movie => {
-        const boxOfficeItem = document.createElement('div');  // 새로운 div 요소 생성
-        boxOfficeItem.className = 'movie-item animate__animated animate__flipInY';
-        boxOfficeItem.innerHTML = `
-            <h4>${movie.rank}. ${movie.movieNm}</h4>
-            <ul class="box-office-info">
-                <li><span>개봉일: ${movie.openDt}</span></li>
-                <li><span>일일 관객수: ${movie.audiCnt}</span></li>
-                <li><span>누적 관객수: ${movie.audiAcc}</span></li>
-            </ul>
-        `;
-        boxOfficeContainer.appendChild(boxOfficeItem);  // 생성된 요소를 컨테이너에 추가
-    });
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchMovieInfo();

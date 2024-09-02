@@ -4,7 +4,7 @@ import org.springframework.ui.Model;
 
 public interface MovieApiService {
 
-	String getboxOffice();
+	void getBoxOffice(Model model);
 
 	void getNewMovies(Model model);
 
