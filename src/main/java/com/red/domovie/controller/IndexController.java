@@ -3,7 +3,7 @@ package com.red.domovie.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+
 
 import com.red.domovie.service.MovieApiService;
 
@@ -31,5 +31,11 @@ public class IndexController {
         return "views/index-box-movie-list";
     }
     
+    @GetMapping("/movies/horror")
+    public String getHorrorMovies(Model model) {
+        // 모든 영화 정보를 서비스로부터 받아옴
+    	movieApiService.getHorrorMovies(model);
+        return "views/index-horror-movie-list";
+    }
     
 }

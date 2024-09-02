@@ -7,27 +7,20 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BoxOfficeDTO {
+public class KmdbMovieDTO {
 	
-    @JsonProperty("DOCID")
-    private String DOCID;
-	private long movieCd;
-	private String posters;
-    private String movieNm;
-    private String openDt;
-    private long rank;
-    private long audiCnt;
-    private long audiAcc;
-    private String movieId;
-
+	
+	@JsonProperty("DOCID")
+	private String docid;
+    private String posters;
+    private String title;
+    private String prodYear;
+    private String nation;
+    private Plots plots;
     
     public String poster() {
     	String[] strs=posters.split("[|]");
     	return strs[0];
     }
-
-
-
-
-
+    
 }

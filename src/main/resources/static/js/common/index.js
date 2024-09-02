@@ -125,9 +125,24 @@ function fetchBoxOfficeInfo() {
         .catch(error => console.error('박스오피스 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
+function fetchHorrorMovieInfo() {
+    fetch('/movies/horror')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer2 = document.getElementById('movieContainer2');
+            movieContainer2.innerHTML =data;
+        })
+        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchMovieInfo();
     fetchBoxOfficeInfo();
+    fetchHorrorMovieInfo();
 });

@@ -9,6 +9,30 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MovieDTO {
 	
+    @JsonProperty("DOCID")
+    private String DOCID;
+	private String movieCd;
+    private String poster;
+    private String movieNm;
+    private String movieNmEn;
+    private String prdtYear;
+    private String openDt;
+    private String typeNm;
+    private String nation;
+    private String repGenreNm;
+    private String movieId;
+
+
+	
+    /*
+    public String poster() {
+    	String[] strs=posters.split("[|]");
+    	return strs[0];
+    }
+    /*/
+	
+	
+	/*
 	@JsonProperty("DOCID")
 	private String docid;
     private String posters;
@@ -21,4 +45,5 @@ public class MovieDTO {
     	String[] strs=posters.split("[|]");
     	return strs[0];
     }
+    */
 }
