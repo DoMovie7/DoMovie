@@ -1,33 +1,71 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('findIdForm');
     const nameInput = document.getElementById('name');
-    const phoneInput = document.getElementById('phone');
-    const requestVerificationBtn = document.getElementById('requestVerification');
-    const verificationGroup = document.getElementById('verificationGroup');
-    const verificationCodeInput = document.getElementById('verificationCode');
-    const verifyCodeBtn = document.getElementById('verifyCode');
+    const birthDateInput = document.getElementById('birthDate');
     const resultDiv = document.getElementById('result');
 
-    requestVerificationBtn.addEventListener('click', () => {
-        if (nameInput.value && phoneInput.value && phoneInput.validity.valid) {
-            // 실제로는 서버에 인증번호를 요청하는 API를 호출해야 합니다.
-            alert('인증번호가 발송되었습니다. (이는 실제 발송되지 않은 예시입니다)');
-            verificationGroup.classList.remove('hidden');
-            verifyCodeBtn.classList.remove('hidden');
-            requestVerificationBtn.disabled = true;
+    // 생년월일 입력 포맷팅
+    birthDateInput.addEventListener('input', function(e) {
+        let input = e.target.value.replace(/\D/g, '').substring(0, 8); // 숫자만 추출, 최대 8자
+        let formatted = '';
+        
+        if (input.length > 4) {
+            formatted += input.substring(0, 4) + '-';
+            if (input.length > 6) {
+                formatted += input.substring(4, 6) + '-' + input.substring(6);
+            } else {
+                formatted += input.substring(4);
+            }
         } else {
-            alert('이름과 올바른 형식의 연락처를 입력해주세요.');
+            formatted = input;
         }
+        
+        e.target.value = formatted;
     });
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
-        if (verificationCodeInput.value) {
-            // 실제로는 서버에 인증번호를 확인하고 아이디를 조회하는 API를 호출해야 합니다.
-            resultDiv.textContent = '회원님의 아이디는 user123입니다. (이는 예시입니다)';
-            resultDiv.classList.remove('hidden');
-        } else {
-            alert('인증번호를 입력해주세요.');
-        }
+        findId();
     });
+
+    function findId() {
+        const name = nameInput.value.trim();
+        const birthDate = birthDateInput.value.replace(/-/g, ''); // 하이픈 제거
+
+        if (!name || birthDate.length !== 8) {
+            showResult('이름과 올바른 형식의 생년월일을 입력해주세요.');
+            return;
+        }
+
+        fetch('/api/find-id', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userName: name, birthDate: birthDate })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.email) {
+                showResult(`귀하의 이메일은 ${data.email} 입니다.`);
+            } else {
+                showResult('일치하는 사용자 정보를 찾을 수 없습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showResult('오류가 발생했습니다. 다시 시도해 주세요.');
+        });
+    }
+
+    function showResult(message) {
+        form.style.display = 'none';
+        resultDiv.textContent = message;
+        resultDiv.style.display = 'block';
+    }
 });

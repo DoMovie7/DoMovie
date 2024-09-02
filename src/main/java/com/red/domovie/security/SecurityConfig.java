@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	
 	private final CustomUserDetailsService customUserDetailsService;
-
+	//private final CustomOAuth2UserService customOAuth2UserService;
 	@Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
   	
@@ -28,7 +28,7 @@ public class SecurityConfig {
             //.csrf(csrf->csrf.disable())
 		    		.csrf(csrf -> csrf
     				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-    				.ignoringRequestMatchers("/logout") //csrf 보호 제외
+    				.ignoringRequestMatchers("/logout", "/api/check-email","/api/find-id") //csrf 보호 제외
     				)
         		
             
@@ -36,6 +36,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
           	.requestMatchers("/mypage/**").authenticated()
             .requestMatchers("/admin/**").hasRole("ADMIN") //admin으로 시작하는 주소는 'ADMIN' 권한이 필요하다는 의미
+            .requestMatchers("/api/check-email", "/api/find-id").permitAll()
             .anyRequest().permitAll() //위 설정을 제외한 나머지 요청은 인증 필요
             )
             
@@ -52,6 +53,7 @@ public class SecurityConfig {
           		  .defaultSuccessUrl("/", true) 
           		  )
             
+            
             //logout 설정
             .logout(logout -> logout
           		  .logoutSuccessUrl("/signin") //로그아웃 시 로그인 페이지로
@@ -61,7 +63,14 @@ public class SecurityConfig {
             .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")))
             
             .userDetailsService(customUserDetailsService);
-        	
+        	/*// OAuth2 로그인 설정
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+            );*/
         return http.build();
     }	
 	
