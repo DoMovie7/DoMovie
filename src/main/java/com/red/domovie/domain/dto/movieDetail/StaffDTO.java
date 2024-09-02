@@ -2,7 +2,9 @@ package com.red.domovie.domain.dto.movieDetail;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Builder
 @Getter
 public class StaffDTO {
