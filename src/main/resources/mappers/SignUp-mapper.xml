@@ -8,4 +8,17 @@
 		VALUES (#{userName}, #{nickName}, #{email}, #{phoneNumber}, #{password},
 		#{birthDate}, #{tierId.tierId})
 	</insert>
+
+	<select id="countByEmail" parameterType="string"
+		resultType="int">
+		SELECT COUNT(*) FROM user WHERE email = #{email}
+	</select>
+
+	<select id="findEmailByNameAndBirthDate"
+		parameterType="com.red.domovie.domain.dto.login.FindIdDTO" resultType="String">
+		SELECT email
+		FROM user
+		WHERE user_name = #{userName} AND birth_date = #{birthDate}
+	</select>
+	
 </mapper>

@@ -1,4 +1,4 @@
-package com.red.domovie.domain.dto;
+package com.red.domovie.domain.dto.login;
 
 
 import org.springframework.security.crypto.password.PasswordEncoder;

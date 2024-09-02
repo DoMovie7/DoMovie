@@ -12,28 +12,25 @@
 </head>
 <body class="loginWrap">
 	<div class="login-container">
-        <div class="logo">
-            <img src="/img/logo.png" alt="사람인 로고">
-        </div>
-        <form id="findIdForm">
-            <div class="input-group">
-                <input type="text" id="name" placeholder="이름" required>
-            </div>
-            <div class="input-group">
-                <input type="tel" id="phone" placeholder="연락처 ('-' 없이 입력)" required pattern="[0-9]{10,11}">
-	            <button type="button" id="requestVerification" class="find">요청</button>
-            </div>
-            <div class="input-group hidden" id="verificationGroup">
-                <input type="text" id="verificationCode" placeholder="인증번호 입력" required>
-                <button type="button" id="requestVerification" class="find">확인</button>
-            </div>
-            <button type="submit" id="verifyCode" class="login-button hidden">아이디 찾기</button>
-        </form>
-        <div id="result" class="hidden"></div>
-        <div class="login-options">
-            <a href="/findPassword">비밀번호 찾기</a> | <a href="/signin">로그인</a>
-        </div>
-    </div>
-    <script src="/js/find-id.js"></script>
+		<div class="logo">
+			<img th:src="@{/img/logo.png}" alt="사람인 로고">
+		</div>
+		<form id="findIdForm" method="post">
+			<div class="input-group">
+				<input type="text" id="name" name="userName" placeholder="이름"
+					required>
+			</div>
+			<div class="input-group">
+				<input type="text" id="birthDate" name="birthDate"
+					placeholder="생년월일 (YYYY-MM-DD)" maxlength="10" required>
+			</div>
+			<button type="submit" class="login-button">아이디 찾기</button>
+		</form>
+		<div id="result" style="display: none;"></div>
+		<div class="login-options">
+			<a href="/findPassword">비밀번호 찾기</a> | <a href="/signin">로그인</a>
+		</div>
+	</div>
+	<script src="/js/login/findId.js"></script>
 </body>
 </html>

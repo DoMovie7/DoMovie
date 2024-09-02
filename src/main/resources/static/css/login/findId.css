@@ -36,3 +36,7 @@
 .login-options a:hover {
 	color: var(--main-red);
 }
+#result{
+	margin-top:20px;
+	color: var(--main-white);
+}

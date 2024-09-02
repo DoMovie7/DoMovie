@@ -1,12 +1,16 @@
 package com.red.domovie.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.red.domovie.domain.dto.SignUpDTO;
+import com.red.domovie.domain.dto.login.FindIdDTO;
+import com.red.domovie.domain.dto.login.SignUpDTO;
 import com.red.domovie.domain.entity.Role;
 import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.mapper.LoginMapper;
@@ -47,4 +51,26 @@ public class LoginServiceProcess implements LoginService {
         }
 
     }
+
+    @Override
+    public Map<String, Boolean> checkEmailDuplication(String email) {
+        logger.info("이메일 중복 확인 요청: {}", email);
+        Map<String, Boolean> response = new HashMap<>();
+        try {
+            boolean isDuplicate = loginMapper.countByEmail(email) > 0;
+            response.put("isDuplicate", isDuplicate);
+            logger.info("이메일 중복 확인 결과: {}", isDuplicate);
+        } catch (Exception e) {
+            logger.error("이메일 중복 확인 중 오류 발생", e);
+            throw new RuntimeException("이메일 중복 확인 중 오류가 발생했습니다.", e);
+        }
+        return response;
+    }
+
+	@Override
+	public String findEmailByNameAndBirthDate(FindIdDTO request) {
+		return loginMapper.findEmailByNameAndBirthDate(request);
+	}
+
+
 }
