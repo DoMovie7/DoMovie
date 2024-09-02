@@ -268,7 +268,10 @@ function btnMsgSendClicked() {
         content: question, // 사용자 질문 내용
         userId: userId // 사용자 ID
     };
+	
+	client.send(`/message/question`, {}, JSON.stringify(data));
     
+	/*
 	if(websocketStatus == 1){
 		client.send(`/message/agent`, {}, JSON.stringify(data));
 	} else if(websocketStatus == 2){
@@ -276,6 +279,7 @@ function btnMsgSendClicked() {
 	} else{
 		client.send(`/message/question`, {}, JSON.stringify(data));
 	}
+	*/
 
     
     clearQuestion();

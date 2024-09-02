@@ -6,19 +6,15 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 public class RabbitMQConfig {
 	
 	// 메세지 브로커
-	
 	//스프링 부트의 자동 구성 기능을 통해 RabbitMQ와 연동할 수 있도록 설정됨.
 	//스프링 부트의 자동 구성은 클래스 경로에 필요한 라이브러리와 설정이 감지되면 해당 설정을 자동으로 수행하여 빈을 생성 함.
 	private final ConnectionFactory connectionFactory;
@@ -62,19 +57,19 @@ public class RabbitMQConfig {
 		return BindingBuilder.bind(queue()).to(exchange()).with(routingKey);
 	}
 	
-	/*
+	//*
 	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의
-	//@Bean
-    SimpleRabbitListenerContainerFactory myFactory(SimpleRabbitListenerContainerFactoryConfigurer configurer) {
+	@Bean
+    SimpleRabbitListenerContainerFactory myFactory() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         //ConnectionFactory connectionFactory = getCustomConnectionFactory();
-        configurer.configure(factory, connectionFactory);
-        //factory.setMessageConverter(new MyMessageConverter());
+        factory.setConnectionFactory(connectionFactory);
+        //factory.setMessageConverter(messageConverter());
         return factory;
     }
-    */
+    //*/
     
-	
+	/*
 	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의
 	@Bean
     SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
@@ -83,28 +78,31 @@ public class RabbitMQConfig {
         factory.setMessageConverter(messageConverter()); // 메시지 변환기로 Jackson2JsonMessageConverter를 사용
         return factory;
     }
+    */
 	
-	/*
+	//*
 	//RabbitMQ 메시지 리스너 컨테이너를 정의
 	@Bean
     SimpleMessageListenerContainer container(Receiver receiver) {
-		SimpleMessageListenerContainer container=new SimpleMessageListenerContainer();
-		container.setConnectionFactory(connectionFactory);
+		SimpleMessageListenerContainer container=myFactory().createListenerContainer();
+		//container.setConnectionFactory(connectionFactory);
 		container.setQueueNames(queue);
 		container.setMessageListener(messageListenerAdapter(receiver)); // 메시지 리스너 어댑터 설정
 		return container;
 	}
-	*/
+	//*/
 	
+	/*
 	@Bean
     @ConditionalOnProperty(name = "rabbitmq.listener.enabled", havingValue = "true", matchIfMissing = true)
     SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, Receiver receiver) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(queue);
-        container.setMessageListener(new MessageListenerAdapter(receiver, "receiveMessage"));
+        container.setMessageListener(messageListenerAdapter(receiver));
         return container;
     }
+    */
 	
 	
 	// 메시지 리스너 어댑터를 정의
