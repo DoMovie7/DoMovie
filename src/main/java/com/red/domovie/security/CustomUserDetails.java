@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-@ToString
 //principle 객체
 @ToString
 public class CustomUserDetails extends User implements OAuth2User {
