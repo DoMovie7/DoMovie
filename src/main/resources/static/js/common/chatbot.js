@@ -62,6 +62,7 @@ document.addEventListener('click', async function(e) {
                 break;
             case 'movieRecommend':
                 userChat("영화 추천");
+                websocketStatus = 2;
                 botChat("<p>어떤 영화를 추천해드릴까요?<br><br> 장르나 출연 배우 등 선호하는 영화와 관련된 정보를 뭐든 입력해주세요!</p>");
                 break;
             case 'login-query':
@@ -75,9 +76,10 @@ document.addEventListener('click', async function(e) {
             case 'go-back':
                 showWelcomeMessage(true);
                 break;
-            case 'not-login-query':
-                websocketStatus = 1;
-                botChat("<p>비회원 문의를 시작합니다. 문의 내용을 입력해주세요.</p>");
+            case 'go-back-all':
+				document.getElementById("chat-content").innerHTML = "";
+				websocketStatus = 0;
+				showWelcomeMessage(true);
                 break;
         }
     }
@@ -94,9 +96,8 @@ async function handleInquery() {
                     <button class="bot-category-btn final-category-btn" data-action="go-back">돌아가기</button>
                 </div>`);
     } else {
-        botChat(`<p>현재 로그인되지 않았습니다. <br><br>비회원으로 문의 시 채팅 화면을 끄면 문의 내용이 모두 삭제됩니다. 괜찮으십니까?</p>
+        botChat(`<p>현재 로그인되지 않았습니다. <br><br>1:1 문의를 원하시면 로그인해주세요.</p>
                 <div class="button-containers">
-                    <button class="bot-category-btn" data-action="not-login-query">비회원 문의</button>
                     <button class="bot-category-btn final-category-btn" onclick="location.href='/signin'">로그인 하러 가기</button>
                 </div>`);
     }
@@ -197,10 +198,7 @@ function connect() {
         key = generateUniqueKey();  //고유 키 생성
         console.log(key);
         client.subscribe(`/topic/bot/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
-          var response = answer.body; //서버로부터 받은 메세지 객체
-        //client.subscribe(`/exchange/chatbot-exchange/chatbot.key`, (message) => {
-			//var response = message.body;
-            //var response = JSON.parse(message.body);
+            var response = answer.body; //서버로부터 받은 메세지 객체
             var now = new Date();
             var time = formatTime(now);
             
@@ -269,9 +267,7 @@ function btnMsgSendClicked() {
         userId: userId // 사용자 ID
     };
 	
-	client.send(`/message/question`, {}, JSON.stringify(data));
     
-	/*
 	if(websocketStatus == 1){
 		client.send(`/message/agent`, {}, JSON.stringify(data));
 	} else if(websocketStatus == 2){
@@ -279,8 +275,6 @@ function btnMsgSendClicked() {
 	} else{
 		client.send(`/message/question`, {}, JSON.stringify(data));
 	}
-	*/
-
     
     clearQuestion();
 }
