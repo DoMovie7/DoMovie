@@ -8,4 +8,6 @@ public interface MovieApiService {
 
 	void getNewMovies(Model model);
 
+	void getHorrorMovies(Model model);
+
 }

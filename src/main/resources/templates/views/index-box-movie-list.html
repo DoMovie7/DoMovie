@@ -4,14 +4,14 @@
     <title>Box Office Movies</title>
 </head>
 <body>
-    <div class="movie-item" th:each="dto : ${list}" th:data-docid="${dto.movieCd}">
-        <a th:href="@{/contents/{id}(id=${dto.movieCd})}"><img th:src="${dto.posters}" th:alt="${dto.movieNm}"></a>
+    <div class="movie-item" th:each="dto : ${list}" th:data-docid="${dto.DOCID}">
+        <a th:href="@{/contents/{id}(id=${dto.DOCID})}"><img th:src="${dto.posters}" th:alt="${dto.movieNm}"></a>
         <h4 th:text="${dto.rank}"></h4>
         <h4 th:text="${dto.movieNm}"></h4>
         <ul class="box-office-info">
             <li><span th:text="${dto.openDt}"></span></li>
-            <li><span th:text="${dto.audiCnt}"></span></li>
-            <li><span th:text="${dto.audiAcc}"></span></li>
+            <li><span>일일관람객:</span><span th:text="${dto.audiCnt}"></span></li>
+            <li><span>누적관람객:</span><span th:text="${dto.audiAcc}"></span></li>
         </ul>
     </div>
 </body>

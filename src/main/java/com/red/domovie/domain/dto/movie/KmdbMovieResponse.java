@@ -12,6 +12,6 @@ import lombok.Data;
 public class KmdbMovieResponse {
 	
 	@JsonProperty("Result")
-	private List<MovieDTO> result;
-
+	private List<KmdbMovieDTO> result;
+ 
 }

@@ -167,6 +167,8 @@ h3 {
 }
 
 .movie-item {
+	width: 215px;
+	height: 400px;
 	background-color: var(--main-black);
 	border-radius: 10px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -176,8 +178,8 @@ h3 {
 }
 
 .movie-item img {
-    width: 100%;
-    height: auto;
+    width: 175px;
+    height: 250px;
     border-radius: 4px;
 }
 
