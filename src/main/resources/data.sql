@@ -1,3 +1,1 @@
-INSERT INTO categories (type) VALUES ('TV');
-INSERT INTO categories (type) VALUES ('AUDIO');
-INSERT INTO categories (type) VALUES ('PROJECTOR');
+ALTER TABLE home_theater MODIFY COLUMN content LONGTEXT;
