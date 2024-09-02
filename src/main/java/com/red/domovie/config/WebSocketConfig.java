@@ -41,7 +41,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 		// 사용자->서버에 메시지보낼때 전송할때 접두사
 		registry.setApplicationDestinationPrefixes("/message");
 		
-		registry.enableSimpleBroker("/topic", "/queue", "/exchange");
+		//registry.enableSimpleBroker("/topic", "/queue", "/exchange");
 		
 		/*
 		// 메시지 브로커를 RabbitMQ로 설정
