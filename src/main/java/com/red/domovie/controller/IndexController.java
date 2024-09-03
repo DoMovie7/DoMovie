@@ -35,7 +35,7 @@ public class IndexController {
     public String getHorrorMovies(Model model) {
       
     	movieApiService.getHorrorMovies(model);
-        return "views/index-horror-movie-list";
+        return "views/index-movie-list";
     }
     
     @GetMapping("/movies/animation")
@@ -45,5 +45,12 @@ public class IndexController {
         return "views/index-movie-list";
     }
     
-
+    //getUpcomingMovies
+    @GetMapping("/movies/upcoming")
+    public String getUpcomingMovies(Model model) {
+      
+    	movieApiService.getUpcomingMovies(model);
+        return "views/index-movie-list";
+    }
+    
 }

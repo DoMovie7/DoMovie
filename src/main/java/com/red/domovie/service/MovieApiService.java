@@ -12,6 +12,6 @@ public interface MovieApiService {
 
 	void getAnimationMovies(Model model);
 
-
+	void getUpcomingMovies(Model model);
 
 }

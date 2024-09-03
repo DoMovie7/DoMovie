@@ -110,7 +110,19 @@ function fetchMovieInfo() {
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-
+function fetchupcomingMovieInfo() {
+    fetch('/movies/upcoming')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer = document.getElementById('movieContainer3');
+            movieContainer.innerHTML =data;
+        })
+        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
 
 function fetchBoxOfficeInfo() {
     fetch('/movies/boxOffice')
@@ -153,11 +165,15 @@ function fetchAnimationMovieInfo() {
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
     fetchMovieInfo();
     fetchBoxOfficeInfo();
     fetchHorrorMovieInfo();
-	
+	fetchupcomingMovieInfo();
 	fetchAnimationMovieInfo();
 });
+
+
+
+
+
