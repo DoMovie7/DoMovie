@@ -4,6 +4,8 @@ import com.red.domovie.domain.dto.hometheater.HomeTheaterUpdateDTO;
 import com.red.domovie.domain.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "home_theater")
 public class HomeTheaterEntity {
 
@@ -30,7 +33,9 @@ public class HomeTheaterEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity author;
 
-    private LocalDateTime createdDate;
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;  // createdDate를 createdAt으로 변경
 
     private int viewCount;
 
@@ -55,5 +60,9 @@ public class HomeTheaterEntity {
     public boolean isAuthor(UserEntity user) {
         return this.author.getUserId() == user.getUserId();
     }
+    public String getAuthorNickname() {
+        return author != null ? author.getNickName() : null;
+    }
+
 
 }
