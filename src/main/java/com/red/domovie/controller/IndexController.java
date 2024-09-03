@@ -26,16 +26,24 @@ public class IndexController {
     
     @GetMapping("/movies/boxOffice")
     public String getBoxOffice(Model model) {
-        // 모든 영화 정보를 서비스로부터 받아옴
+    
     	movieApiService.getBoxOffice(model);
         return "views/index-box-movie-list";
     }
     
     @GetMapping("/movies/horror")
     public String getHorrorMovies(Model model) {
-        // 모든 영화 정보를 서비스로부터 받아옴
+      
     	movieApiService.getHorrorMovies(model);
         return "views/index-horror-movie-list";
     }
     
+    @GetMapping("/movies/animation")
+    public String getAnimationMovies(Model model) {
+      
+    	movieApiService.getAnimationMovies(model);
+        return "views/index-movie-list";
+    }
+    
+
 }

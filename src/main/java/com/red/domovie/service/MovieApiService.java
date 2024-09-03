@@ -10,4 +10,8 @@ public interface MovieApiService {
 
 	void getHorrorMovies(Model model);
 
+	void getAnimationMovies(Model model);
+
+
+
 }
