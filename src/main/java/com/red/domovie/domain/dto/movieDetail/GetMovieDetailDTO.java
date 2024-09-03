@@ -15,6 +15,7 @@ import java.util.ArrayList;
 @Getter
 @ToString
 public class GetMovieDetailDTO {
+	private String movieId; //아이디
     private String title; //제목
     private String repRlsDate; //개봉일
     private String genre; //카테고리
@@ -53,6 +54,7 @@ public class GetMovieDetailDTO {
         
 
         return GetMovieDetailDTO.builder()
+        		.movieId(movieData.path("DOCID").asText())
                 .title(movieData.path("title").asText())
                 .repRlsDate(formatDate(movieData.path("repRlsDate").asText()))
                 .genre(movieData.path("genre").asText())

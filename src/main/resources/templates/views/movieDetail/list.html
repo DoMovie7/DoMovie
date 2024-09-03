@@ -13,9 +13,14 @@
 	<main id="movie-detail">
 
 		<section id="video-wrap">
-			<div class="video">
+			<div th:if="${#strings.length(movieDetail.vodUrl) > 4}" class="video scroll">
 			   <!--  <img alt="" th:src="${movieDetail.stll}"> -->
+			   
 				<iframe th:src="${movieDetail.vodUrl}" sandbox="allow-same-origin allow-scripts" frameborder="0"allowfullscreen ></iframe>
+			</div>
+			
+			<div th:if="${#strings.length(movieDetail.vodUrl) < 4}" class="video scroll">
+				<img alt="" th:src="${movieDetail.stll}">
 			</div>
 
 
@@ -68,8 +73,8 @@
 					<div class="movie-actor">
 						<ul>
 							<li th:each="staffs : ${movieDetail.staffs}">
-								<span>배우 : </span><span th:text="${staffs.name}">임영웅</span><br>
-								<span>배역 : </span><span th:text="${staffs.role}">임영웅</span>
+								<span></span><span th:text="${staffs.name}">임영웅</span><br>
+								<span></span><span th:text="${staffs.role}">임영웅</span>
 							</li>
 						</ul>
 					</div>
@@ -83,9 +88,6 @@
 					<p>수상내역</p>
 					
 					<ul>
-						<li>수상 내역이 존재하지 않습니다.</li>
-						<li>수상 내역이 존재하지 않습니다.</li>
-						<li>수상 내역이 존재하지 않습니다.</li>
 						<li>수상 내역이 존재하지 않습니다.</li>
 					</ul>
 
@@ -149,10 +151,11 @@
 			  		
 			  			
 			  		</div>
+			  			<input type="hidden" th:value="${movieDetail.movieId}" name="movieId"></input>
 			  		
 			  		<div class="comment">
-			  		   <input type="text" placeholder="코멘트를 남겨주세요">
-			  		   <button class="cmbtn1">작성</button>
+			  		   <input type="text" placeholder="코멘트를 작성" required="required">
+			  		   <button type="button" class="cmbtn3 commentBtn">작성</button>
 			  		</div>
 			  	
 			  	</form>
