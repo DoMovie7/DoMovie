@@ -55,26 +55,19 @@
 			<div id="tier-content" style="display: none;">
 				<h2>나의 등급</h2>
 				<div id="tier-image-container">
-					<img id="tier-image" src="" alt="등급 이미지">
+					<img id="tier-image" th:src="${user.tier.url}" alt="등급 이미지">
 				</div>
-				<p id="tier-description"></p>
-				<p>내 게시글 수: <span id="post-count"></span></p>
+				<p id="tier-description">
+					<span>나의 등급은</span>
+					<b><i th:text="|'${user.tier.desc}'|"></i></b>
+					<span>입니다.</span>
+				</p>
+				<p>내 게시글 수: <span id="post-count" th:text="${user.recommendCount}"></span></p>
 			</div>
 			<div id="my-posts-content" style="display: none;">
 				<h2>내가 쓴 글</h2>
 				<ul id="posts-list-container">
-					<li class="post-item">
-						<span><a href="#">띵작 영화 추천</a></span>
-						<p>2024-08-25</p>
-					</li>
-					<li class="post-item">
-						<span><a href="#">최근 본 영화 TOP 5</a></span>
-						<p>2024-08-10</p>
-					</li>
-					<li class="post-item">
-						<span><a href="#">이 영화는 좀 짜친다</a></span>
-						<p>2024-08-05</p>
-					</li>
+					<li>게시글이 존재하지 않습니다.</li>
 				</ul>
 			</div>
 			<div class="popup-overlay"></div>

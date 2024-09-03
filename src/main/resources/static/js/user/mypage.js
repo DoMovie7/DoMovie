@@ -56,6 +56,27 @@ document.addEventListener('DOMContentLoaded', function() {
 	function setActiveButton(button) {
 		[profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
 		button.classList.add('active');
+		
+		//게시글 갖고오기
+		fetch("/mypage/recommends")
+		.then(response =>response.json())
+		.then(data =>{
+			console.log("list:",data);
+			let str="";
+			data.forEach(function(dto) {
+			    str +=`
+				<li class="post-item">
+					<span><a href="/recommends/${dto.id}" >${dto.title}</a></span>
+					<p>${dto.createdAt.substring(0,10)}</p>
+				</li>
+				`
+			});
+			const postsListContainer = document.querySelector('#posts-list-container');
+			postsListContainer.innerHTML=str;
+		})
+		.catch(error => {
+			alert('게시글 로드 오류!');
+		});
 	}
 
 	// 닉네임 수정 모드 토글 함수
@@ -222,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	tierBtn.addEventListener('click', () => {
 		loadContent('tier');
 		setActiveButton(tierBtn);
-		loadTierContent();
+		//loadTierContent();
 	});
 
 	myPostsBtn.addEventListener('click', () => {
