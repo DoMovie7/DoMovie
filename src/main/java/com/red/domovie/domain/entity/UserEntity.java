@@ -62,7 +62,7 @@ public class UserEntity extends BaseEntity{
     
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Tier rier =Tier.CORN ;
+    private Tier tier =Tier.CORN ;
 
   //Role 등록하기 위한 편의 메서드 
   	public UserEntity addRole(Role role) {
