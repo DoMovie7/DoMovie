@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,7 +21,8 @@ import com.red.domovie.service.OpenaiService;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller // 기본 mapping 경로 ("/message")
+@Controller
+@RequestMapping("/message")
 @RequiredArgsConstructor
 public class BotController {
 	
@@ -50,11 +52,9 @@ public class BotController {
         responseDTO.setKey(key);
         responseDTO.setMessage(responseMessage);
         
-        //String jsonResponse = objectMapper.writeValueAsString(responseDTO);
 		
-        //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>"+jsonResponse);
-		rabbitTemplate.convertAndSend(exchange, routingKey, responseDTO);
-        //messagingTemplate.convertAndSend("/topic/bot/"+key, responseDTO.getMessage());
+		//rabbitTemplate.convertAndSend(exchange, routingKey, responseDTO);
+        messagingTemplate.convertAndSend("/topic/bot/"+key, responseDTO.getMessage());
 		
 	}
 	
@@ -80,6 +80,7 @@ public class BotController {
 		
 	}
 	
+	
 	//영화추천
 	@MessageMapping("/openai")
 	public void openai(QuestionDTO dto) {
@@ -88,7 +89,7 @@ public class BotController {
 		String key = dto.getKey();
 		String responseMessage = openaiService.aiAnswerProcess(dto);
 		
-		messagingTemplate.convertAndSend("/topic/bot/"+key, responseMessage);
+		messagingTemplate.convertAndSend("/topic/chat/"+key, responseMessage);
 		
 	}
 

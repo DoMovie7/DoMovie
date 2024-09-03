@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById("chat-icon").addEventListener('click', btnBotClicked);
     document.getElementById("close-button").addEventListener('click', btnCloseClicked);
     document.getElementById("send-button").addEventListener('click', btnMsgSendClicked);
+	document.getElementById("go-back-all").addEventListener('click', btnGoBackClicked);
     
     // 입력 필드에서 Enter 키 입력 시 메시지 전송
     document.getElementById("question").addEventListener('keydown', function(event) {
@@ -168,6 +169,13 @@ function disconnect() {
             console.log("Disconnected...");
         });
     }
+}
+
+//다시 되돌아가기
+function btnGoBackClicked(){
+	document.getElementById("chat-content").innerHTML = "";
+	websocketStatus = 0;
+	showWelcomeMessage(true);
 }
 
 // 저장된 챗봇 UI 상태를 불러오고 적용하는 함수
