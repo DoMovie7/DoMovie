@@ -16,9 +16,7 @@ public interface LoginService {
 
 	String findEmailByNameAndBirthDate(FindIdDTO request);
 
-	void processFindPassword(String userName, String email);
 
-	void processResetPassword(String resetToken, String newPassword);
 
 
 }

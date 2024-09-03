@@ -74,18 +74,6 @@ public class LoginServiceProcess implements LoginService {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
 	
-	//비밀번호 찾기
-	@Override
-	@Transactional
-	public void processFindPassword(String userName, String email) {
-		// TODO Auto-generated method stub
-		
-	}
-	//비밀번호 재설정
-	@Override
-	public void processResetPassword(String resetToken, String newPassword) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }
