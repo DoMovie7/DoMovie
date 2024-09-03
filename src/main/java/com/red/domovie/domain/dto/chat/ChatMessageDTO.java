@@ -1,4 +1,4 @@
-package com.red.domovie.domain.dto.bot;
+package com.red.domovie.domain.dto.chat;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ public class ChatMessageDTO {
     }
     
     private MessageType type; // 메시지 타입
-    private String roomId; // 방번호
+    private long roomId; // 방번호
     private String sender; // 메시지 보낸사람
     private String message; // 메시지
 }
