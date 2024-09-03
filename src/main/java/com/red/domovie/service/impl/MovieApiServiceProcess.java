@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -22,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.red.domovie.domain.dto.movie.BoxOfficeDTO;
+import com.red.domovie.domain.dto.movie.KmdbMovieDTO;
 import com.red.domovie.domain.dto.movie.KmdbMovieResponse;
 import com.red.domovie.domain.dto.movie.MovieDTO;
 import com.red.domovie.service.MovieApiService;
@@ -142,9 +144,69 @@ public class MovieApiServiceProcess implements MovieApiService {
 
 
     // 개봉일기준 최신영화
-    
     @Override
     public void getNewMovies(Model model) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate threeMonthsAgo = currentDate.minusMonths(3);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String startDate = threeMonthsAgo.format(formatter);
+        String endDate = currentDate.format(formatter);
+
+        RestTemplate restTemplate = new RestTemplate();
+        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        strBuilder.append("&detail=Y");
+        strBuilder.append("&releaseDts=").append(startDate);
+        strBuilder.append("&releaseDte=").append(endDate);
+        strBuilder.append("&listCount=100");
+        strBuilder.append("&ServiceKey=").append(kmdbApiKey);
+        strBuilder.append("&sort=prodYear,1");  // 제작년도 오름차순 정렬
+
+        String url = strBuilder.toString();
+
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            JSONObject jsonResponse = new JSONObject(response);
+
+            if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
+                JSONArray dataArray = jsonResponse.getJSONArray("Data");
+                JSONObject firstData = dataArray.getJSONObject(0);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
+
+                List<KmdbMovieDTO> allMovies = kmdbMovieResponse.getResult();
+
+                List<KmdbMovieDTO> filteredAndSortedMovies = allMovies.stream()
+                    .filter(movie -> {
+                        String repRlsDate = movie.getRepRlsDate();
+                        if (repRlsDate == null || repRlsDate.equals("Unknown") || repRlsDate.length() != 8) {
+                            return false;
+                        }
+                        try {
+                            LocalDate releaseDate = LocalDate.parse(repRlsDate, formatter);
+                            return !releaseDate.isAfter(currentDate) && !releaseDate.isBefore(threeMonthsAgo);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .sorted((m1, m2) -> m2.getRepRlsDate().compareTo(m1.getRepRlsDate()))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+                model.addAttribute("list", filteredAndSortedMovies);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    
+    //개봉예정작
+    
+    @Override
+    public void getUpcomingMovies(Model model) {
         LocalDate date = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = date.format(formatter);
@@ -184,27 +246,26 @@ public class MovieApiServiceProcess implements MovieApiService {
 
 
 
-    
-   
-
 
     //개봉일 최신순, 장르 공포영화
     
     @Override
     public void getHorrorMovies(Model model) {
-        LocalDate date = LocalDate.now().minusDays(1);
+        LocalDate currentDate = LocalDate.now();
+        LocalDate sixMonthsAgo = currentDate.minusMonths(6);  // 범위를 6개월로 확장
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String formattedDate = date.format(formatter);
+        String startDate = sixMonthsAgo.format(formatter);
+        String endDate = currentDate.format(formatter);
 
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
         strBuilder.append("&detail=y");
         strBuilder.append("&genre=공포");
-        strBuilder.append("&releaseDts=").append(formattedDate);
-        strBuilder.append("&listCount=20");
+        strBuilder.append("&releaseDts=").append(startDate);
+        strBuilder.append("&releaseDte=").append(endDate);
+        strBuilder.append("&listCount=100");  // 더 많은 영화를 가져옵니다
         strBuilder.append("&ServiceKey=").append(kmdbApiKey);
         strBuilder.append("&sort=prodYear,1");
-        
 
         String url = strBuilder.toString();
 
@@ -215,34 +276,58 @@ public class MovieApiServiceProcess implements MovieApiService {
             if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
                 JSONArray dataArray = jsonResponse.getJSONArray("Data");
                 JSONObject firstData = dataArray.getJSONObject(0);
-                //System.out.println(">>>>:" + firstData);
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
 
-                //System.out.println("***:" + kmdbMovieResponse);
-                model.addAttribute("list", kmdbMovieResponse.getResult());
+                List<KmdbMovieDTO> allMovies = kmdbMovieResponse.getResult();
+
+                List<KmdbMovieDTO> filteredAndSortedMovies = allMovies.stream()
+                    .filter(movie -> {
+                        String repRlsDate = movie.getRepRlsDate();
+                        if (repRlsDate == null || repRlsDate.equals("Unknown") || repRlsDate.length() != 8) {
+                            return false;
+                        }
+                        try {
+                            LocalDate releaseDate = LocalDate.parse(repRlsDate, formatter);
+                            return !releaseDate.isAfter(currentDate) && !releaseDate.isBefore(sixMonthsAgo);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .sorted((m1, m2) -> m2.getRepRlsDate().compareTo(m1.getRepRlsDate()))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+                model.addAttribute("list", filteredAndSortedMovies);
+            } else {
+                model.addAttribute("list", new ArrayList<KmdbMovieDTO>());  // 결과가 없을 경우 빈 리스트 추가
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            model.addAttribute("error", "데이터 처리 중 오류가 발생했습니다.");
         } catch (Exception e) {
             e.printStackTrace();
+            model.addAttribute("error", "서버 오류가 발생했습니다.");
         }
     }
 
     //애니메이션
     @Override
     public void getAnimationMovies(Model model) {
-        LocalDate date = LocalDate.now().minusDays(1);
+        LocalDate currentDate = LocalDate.now();
+        LocalDate sixMonthsAgo = currentDate.minusMonths(6);  // 범위를 6개월로 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String formattedDate = date.format(formatter);
+        String startDate = sixMonthsAgo.format(formatter);
+        String endDate = currentDate.format(formatter);
 
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
         strBuilder.append("&detail=y");
         strBuilder.append("&type=애니메이션");
-        strBuilder.append("&releaseDts=").append(formattedDate);
-        strBuilder.append("&listCount=10");
+        strBuilder.append("&releaseDts=").append(startDate);
+        strBuilder.append("&releaseDte=").append(endDate);
+        strBuilder.append("&listCount=100");  // 더 많은 영화를 가져옵니다
         strBuilder.append("&ServiceKey=").append(kmdbApiKey);
         strBuilder.append("&sort=prodYear,1");
         strBuilder.append("&use=극장용");
@@ -256,18 +341,39 @@ public class MovieApiServiceProcess implements MovieApiService {
             if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
                 JSONArray dataArray = jsonResponse.getJSONArray("Data");
                 JSONObject firstData = dataArray.getJSONObject(0);
-                //System.out.println(">>>>:" + firstData);
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
 
-                //System.out.println("***:" + kmdbMovieResponse);
-                model.addAttribute("list", kmdbMovieResponse.getResult());
+                List<KmdbMovieDTO> allMovies = kmdbMovieResponse.getResult();
+
+                List<KmdbMovieDTO> filteredAndSortedMovies = allMovies.stream()
+                    .filter(movie -> {
+                        String repRlsDate = movie.getRepRlsDate();
+                        if (repRlsDate == null || repRlsDate.equals("Unknown") || repRlsDate.length() != 8) {
+                            return false;
+                        }
+                        try {
+                            LocalDate releaseDate = LocalDate.parse(repRlsDate, formatter);
+                            return !releaseDate.isAfter(currentDate) && !releaseDate.isBefore(sixMonthsAgo);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .sorted((m1, m2) -> m2.getRepRlsDate().compareTo(m1.getRepRlsDate()))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+                model.addAttribute("list", filteredAndSortedMovies);
+            } else {
+                model.addAttribute("list", new ArrayList<KmdbMovieDTO>());  // 결과가 없을 경우 빈 리스트 추가
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            model.addAttribute("error", "데이터 처리 중 오류가 발생했습니다.");
         } catch (Exception e) {
             e.printStackTrace();
+            model.addAttribute("error", "서버 오류가 발생했습니다.");
         }
     }
     
