@@ -67,25 +67,22 @@ public class UserEntity extends BaseEntity{
   //Role 등록하기 위한 편의 메서드 
   	public UserEntity addRole(Role role) {
   		roles.add(role);
-  		
   		return this;
   	}
   	@Column(name = "provider")
     private String provider;
   	@Column(name = "social_id")
   	private String socialId;
-
+  	@Column(name = "password_reset_token")
+    private String passwordResetToken; // 새로 추가된 비밀번호 재설정 토큰 필드
   	public UserEntity update(ProfileUpdateDTO dto) {
   	    // DTO에서 닉네임을 가져와서 엔티티의 필드를 업데이트합니다.
   	    if (dto.getNickName() != null) {
   	        this.nickName = dto.getNickName();
   	    }
   	    // 필요한 경우 다른 필드들도 업데이트합니다.
-
   	    return this;
   	}
 
-
-	
 
 }
