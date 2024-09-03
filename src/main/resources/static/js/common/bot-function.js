@@ -145,6 +145,8 @@ function btnCloseClicked() {
     
     // 애니메이션 종료 후 실행할 함수
     function onAnimationEnd() {
+		
+		botContainer.removeEventListener('animationend', onAnimationEnd);
         botContainer.classList.remove('open', 'animate__animated', 'animate__bounceOut');
         saveBotState();
         disconnect();
@@ -154,8 +156,6 @@ function btnCloseClicked() {
         localStorage.setItem('chatReset', 'true');
         localStorage.removeItem('hasShownWelcomeMessage');
         
-        // 이벤트 리스너 제거
-        botContainer.removeEventListener('animationend', onAnimationEnd);
     }
     
     // 애니메이션 종료 이벤트 리스너 추가
@@ -175,6 +175,8 @@ function disconnect() {
 function btnGoBackClicked(){
 	document.getElementById("chat-content").innerHTML = "";
 	websocketStatus = 0;
+	disconnect();
+	connect();
 	showWelcomeMessage(true);
 }
 

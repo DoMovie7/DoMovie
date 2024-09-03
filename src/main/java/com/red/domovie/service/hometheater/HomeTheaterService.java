@@ -41,6 +41,12 @@ public class HomeTheaterService {
                 .map(entity -> modelMapper.map(entity, HomeTheaterListDTO.class))
                 .collect(Collectors.toList());
     }
+    private HomeTheaterListDTO convertToDto(HomeTheaterEntity entity) {
+        HomeTheaterListDTO dto = modelMapper.map(entity, HomeTheaterListDTO.class);
+        dto.setAuthor(entity.getAuthorNickname()); // author 필드에 닉네임 설정
+        return dto;
+    }
+
 
     public HomeTheaterDetailDTO getPostById(Long id) {
         HomeTheaterEntity entity = homeTheaterRepository.findById(id)
@@ -69,6 +75,7 @@ public class HomeTheaterService {
         HomeTheaterEntity homeTheaterEntity = HomeTheaterEntity.builder()
                 .title(homeTheaterSaveDTO.getTitle())
                 .content(homeTheaterSaveDTO.getContent())
+                .createdAt(LocalDateTime.now())
                 .author(user)
                 .build();
 
@@ -116,12 +123,12 @@ public class HomeTheaterService {
 
         CommentEntity comment = CommentEntity.builder()
                 .content(commentForm.getContent())
-                .createdDate(LocalDateTime.now())
                 .homeTheater(homeTheater) // homeTheaterEntity에서 homeTheater로 변경
                 .build();
 
         commentRepository.save(comment);
     }
+
 }
 
 
