@@ -255,35 +255,34 @@ function connect() {
 //채팅 연결
 function chatConnect(){
 	
-	//disconnect();
-	const socket = new WebSocket("/ws/chat");
-	client = Stomp.over(socket);
-	
-	client.connect({}, (frame) => {
-        key = generateUniqueKey();  //고유 키 생성
-        console.log(key);
-        client.subscribe(`/topic/chat/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
-            var response = answer.body; //서버로부터 받은 메세지 객체
-            var now = new Date();
-            var time = formatTime(now);
-            
-            // 봇의 응답 메시지 HTML 생성
-            var tag = `<div class="msg bot flex">
-                        <div class="icon">
-                            <img src="/img/chatbot-img.png">
-                        </div>
-                        <div class="message">
-                        <div class="bot-name">두비</div>
-                            <div class="part chatbot">
-                                <p>${response}</p>
-                            </div>
-                            <div class="time">${time}</div>
-                        </div>
-                    </div>`;
-            showMessage(tag);
-            
-        });
-    });
+	disconnect();
+	client = Stomp.over(new SockJS('/chatbot')); // Stomp 라이브러리와 SockJS를 사용하여 WebSocket 연결 생성
+	    
+	    client.connect({}, (frame) => {
+	        key = generateUniqueKey();  //고유 키 생성
+	        console.log(key);
+	        client.subscribe(`/topic/chatting/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
+	            var response = answer.body; //서버로부터 받은 메세지 객체
+	            var now = new Date();
+	            var time = formatTime(now);
+	            
+	            // 봇의 응답 메시지 HTML 생성
+	            var tag = `<div class="msg bot flex">
+	                        <div class="icon">
+	                            <img src="/img/chatbot-img.png">
+	                        </div>
+	                        <div class="message">
+	                        <div class="bot-name">두비</div>
+	                            <div class="part chatbot">
+	                                <p>${response}</p>
+	                            </div>
+	                            <div class="time">${time}</div>
+	                        </div>
+	                    </div>`;
+	            showMessage(tag);
+	            
+	        });
+	    });
 	
 }
 

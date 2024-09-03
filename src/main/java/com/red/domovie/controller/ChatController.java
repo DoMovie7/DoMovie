@@ -15,7 +15,7 @@ import com.red.domovie.service.ChatService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("/chatting")
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
