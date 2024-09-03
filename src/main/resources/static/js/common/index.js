@@ -173,7 +173,37 @@ document.addEventListener('DOMContentLoaded', () => {
 	fetchAnimationMovieInfo();
 });
 
+/*영화검색*/
 
+document.getElementById('search-button').addEventListener('click', function() {
+    const keyword = document.getElementById('keyword').value.trim();
+    if (keyword) {
+        fetch(`/movies/search?keyword=${encodeURIComponent(keyword)}`)
+            .then(response => response.json())
+            .then(data => {
+                const movieList = document.getElementById('movie-list');
+                movieList.innerHTML = ''; // Clear previous results
+
+                if (data.length > 0) {
+                    data.forEach(movie => {
+                        const movieItem = document.createElement('div');
+                        movieItem.classList.add('movie-item');
+                        movieItem.innerHTML = `
+                            <h3>${movie.title}</h3>
+                            <p>${movie.description}</p>
+                        `;
+                        movieList.appendChild(movieItem);
+                    });
+                } else {
+                    movieList.innerHTML = '<p>검색 결과가 없습니다.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('movie-list').innerHTML = '<p>검색 중 오류가 발생했습니다.</p>';
+            });
+    }
+});
 
 
 
