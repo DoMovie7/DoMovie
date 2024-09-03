@@ -1,0 +1,1 @@
+ALTER TABLE home_theater MODIFY COLUMN content LONGTEXT;

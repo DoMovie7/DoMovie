@@ -1,0 +1,36 @@
+.footer {
+    background-color: #1B1D1F;
+    color: var(--main-white);
+    padding: 20px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.footer-top{
+    background-color: var(--main-black);
+    height: 70px;
+    width: 100%;
+    position: absolute;
+    margin-left: -20px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 30px auto;
+    margin-left: 270px;
+}
+.footer-row {
+    margin-bottom: 10px;
+}
+.footer-row:last-child {
+    margin-bottom: 0;
+}
+.footer-row a {
+	display: inline-block;
+}
+.footer a {
+    color: #fff;
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
