@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .requestMatchers("/mypage/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/check-email", "/api/find-id").permitAll()
+                    .requestMatchers("/hometheater/hometheater_create", "/hometheater/create").authenticated()
+
                 .anyRequest().permitAll()
             )
 
