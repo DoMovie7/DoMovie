@@ -20,9 +20,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 	// client -> "var socket=new SockJS("/chatbot")" 서버에 웹소켓 연결 시도
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/chatbot").withSockJS(); 
-		//withSockJS() : 웹소켓 지원하지 않으면 sockJS 사용
-		registry.addEndpoint("/chat").withSockJS();
+		registry.addEndpoint("/chatbot").withSockJS();//withSockJS() : 웹소켓 지원하지 않으면 sockJS 사용
+		//registry.addEndpoint("/chatting").withSockJS();
 		
 	}
 
