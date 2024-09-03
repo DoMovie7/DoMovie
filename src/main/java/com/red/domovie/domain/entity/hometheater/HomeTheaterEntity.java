@@ -5,6 +5,8 @@ import com.red.domovie.domain.entity.BaseEntity;
 import com.red.domovie.domain.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "home_theater")
 public class HomeTheaterEntity extends BaseEntity{
 
@@ -57,5 +60,9 @@ public class HomeTheaterEntity extends BaseEntity{
     public boolean isAuthor(UserEntity user) {
         return this.author.getUserId() == user.getUserId();
     }
+    public String getAuthorNickname() {
+        return author != null ? author.getNickName() : null;
+    }
+
 
 }
