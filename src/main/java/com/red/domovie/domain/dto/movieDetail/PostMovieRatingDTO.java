@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 @Setter
 @Getter
-public class postMovieRatingDTO {
+public class PostMovieRatingDTO {
 	
 	private String movieId;
 	private float rating; 
