@@ -75,7 +75,6 @@ public class HomeTheaterService {
         HomeTheaterEntity homeTheaterEntity = HomeTheaterEntity.builder()
                 .title(homeTheaterSaveDTO.getTitle())
                 .content(homeTheaterSaveDTO.getContent())
-                .createdAt(LocalDateTime.now())
                 .author(user)
                 .build();
 

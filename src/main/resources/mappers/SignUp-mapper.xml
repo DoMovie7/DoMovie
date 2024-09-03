@@ -6,7 +6,7 @@
 		INSERT INTO user (user_name, nick_name, email, phone_number, password,
 		birth_date, tier_id)
 		VALUES (#{userName}, #{nickName}, #{email}, #{phoneNumber}, #{password},
-		#{birthDate}, #{tierId.tierId})
+		#{birthDate}, #{tier})
 	</insert>
 
 	<select id="countByEmail" parameterType="string"

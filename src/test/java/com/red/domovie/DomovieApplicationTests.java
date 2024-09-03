@@ -1,14 +1,11 @@
 package com.red.domovie;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.red.domovie.domain.entity.Role;
-import com.red.domovie.domain.entity.TierEntity;
 import com.red.domovie.domain.entity.UserEntity;
-import com.red.domovie.domain.repository.TierEntityRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 
 @SpringBootTest
@@ -19,8 +16,6 @@ class DomovieApplicationTests {
 	@Autowired
 	UserEntityRepository mRepository;
 	
-	@Autowired
-	TierEntityRepository tRepository;
 	
 	
 	//@Test
