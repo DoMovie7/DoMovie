@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +70,17 @@ public class UserEntity {
     private String provider;
   	@Column(name = "social_id")
   	private String socialId;
+
+  	public UserEntity update(ProfileUpdateDTO dto) {
+  	    // DTO에서 닉네임을 가져와서 엔티티의 필드를 업데이트합니다.
+  	    if (dto.getNickName() != null) {
+  	        this.nickName = dto.getNickName();
+  	    }
+  	    // 필요한 경우 다른 필드들도 업데이트합니다.
+
+  	    return this;
+  	}
+
 
 	
 
