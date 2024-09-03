@@ -1,324 +1,380 @@
 document.addEventListener('DOMContentLoaded', function() {
-	// DOM 요소 선택
-	const profilePic = document.getElementById('profile-picture');
-	const fileInput = document.getElementById('profile-upload');
-	const profileBtn = document.getElementById('profile-btn');
-	const tierBtn = document.getElementById('tier-btn');
-	const myPostsBtn = document.getElementById('my-posts-btn');
-	const profileContent = document.getElementById('profile-content');
-	const tierContent = document.getElementById('tier-content');
-	const myPostsContent = document.getElementById('my-posts-content');
-	const form = document.getElementById('profile-form');
-	const editBtn = document.getElementById('edit-btn');
-	const cancelBtn = document.getElementById('cancel-btn');
-	const saveBtn = document.getElementById('save-btn');
+    // CSRF 토큰 설정
+    const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-	// 비밀번호 변경 관련 DOM 요소 선택
-	const changePasswordBtn = document.getElementById('change-password-btn');
-	const passwordPopup = document.getElementById('password-popup');
-	const closePopupBtn = document.getElementById('close-popup');
-	const passwordForm = document.getElementById('password-form');
-	const popupOverlay = document.querySelector('.popup-overlay');
+    // DOM 요소 선택
+    const profilePic = document.getElementById('profile-picture');
+    const fileInput = document.getElementById('profile-upload');
+    const profileBtn = document.getElementById('profile-btn');
+    const tierBtn = document.getElementById('tier-btn');
+    const myPostsBtn = document.getElementById('my-posts-btn');
+    const profileContent = document.getElementById('profile-content');
+    const tierContent = document.getElementById('tier-content');
+    const myPostsContent = document.getElementById('my-posts-content');
+    const nicknameForm = document.getElementById('nickname-form');
+    const nicknameDisplay = document.getElementById('nickname');
+    const nicknameInput = document.getElementById('nickname-input');
+    const editNicknameBtn = document.getElementById('edit-nickname-btn');
+    const saveNicknameBtn = document.getElementById('save-nickname-btn');
+    const cancelNicknameBtn = document.getElementById('cancel-nickname-btn');
+    const changePasswordBtn = document.getElementById('change-password-btn');
+    const passwordPopup = document.getElementById('password-popup');
+    const closePopupBtn = document.getElementById('close-popup');
+    const passwordForm = document.getElementById('password-form');
+    const popupOverlay = document.querySelector('.popup-overlay');
 
-	// csrf 토큰
-	const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    // 생년월일 및 핸드폰 번호 관련 요소 선택
+    const birthdateDisplay = document.getElementById('birthdate-display');
+    const birthdateForm = document.getElementById('birthdate-form');
+    const birthdateInput = document.getElementById('birthdate-input');
+    const editBirthdateBtn = document.getElementById('edit-birthdate-btn');
+    const saveBirthdateBtn = document.getElementById('save-birthdate-btn');
+    const cancelBirthdateBtn = document.getElementById('cancel-birthdate-btn');
 
-	// 등급 시스템 클래스
-	class TierSystem {
-		constructor(postCount) {
-			this.postCount = postCount;
-			this.tiers = {
-				'corn': { image: '/img/tier/Asset 1.png', description: '나의 등급은 옥수수입니다.' },
-				'popcorn': { image: '/img/tier/Asset 2.png', description: '나의 등급은 터진 옥수수입니다.' },
-				'fullPopcorn': { image: '/img/tier/Asset 3.png', description: '나의 등급은 팝콘입니다.' }
-			};
-		}
+    const phoneNumberDisplay = document.getElementById('phoneNumber-display');
+    const phoneNumberForm = document.getElementById('phoneNumber-form');
+    const phoneNumberInput = document.getElementById('phoneNumber-input');
+    const editPhoneNumberBtn = document.getElementById('edit-phoneNumber-btn');
+    const savePhoneNumberBtn = document.getElementById('save-phoneNumber-btn');
+    const cancelPhoneNumberBtn = document.getElementById('cancel-phoneNumber-btn');
 
-		getCurrentTier() {
-			if (this.postCount >= 6) return this.tiers.fullPopcorn;
-			if (this.postCount >= 3) return this.tiers.popcorn;
-			return this.tiers.corn;
-		}
-	}
+    // 원래 프로필 이미지 src 저장
+    const originalProfilePicSrc = profilePic.src;
 
-	// 원래 프로필 이미지 src 저장
-	const originalProfilePicSrc = profilePic.src;
+    // 등급 시스템 클래스 정의
+    class TierSystem {
+        constructor(postCount) {
+            this.postCount = postCount;
+            this.tiers = {
+                'corn': { image: '/img/tier/Asset 1.png', description: '나의 등급은 옥수수입니다.' },
+                'popcorn': { image: '/img/tier/Asset 2.png', description: '나의 등급은 터진 옥수수입니다.' },
+                'fullPopcorn': { image: '/img/tier/Asset 3.png', description: '나의 등급은 팝콘입니다.' }
+            };
+        }
 
-	// 컨텐츠 로드 함수
-	function loadContent(type) {
-		profileContent.style.display = type === 'profile' ? 'block' : 'none';
-		tierContent.style.display = type === 'tier' ? 'block' : 'none';
-		myPostsContent.style.display = type === 'my-posts' ? 'block' : 'none';
-	}
+        getCurrentTier() {
+            if (this.postCount >= 6) return this.tiers.fullPopcorn;
+            if (this.postCount >= 3) return this.tiers.popcorn;
+            return this.tiers.corn;
+        }
+    }
 
-	// 활성 버튼 설정 함수
-	function setActiveButton(button) {
-		[profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
-		button.classList.add('active');
-	}
+    // 컨텐츠 로드 함수
+    function loadContent(type) {
+        profileContent.style.display = type === 'profile' ? 'block' : 'none';
+        tierContent.style.display = type === 'tier' ? 'block' : 'none';
+        myPostsContent.style.display = type === 'my-posts' ? 'block' : 'none';
+    }
 
-	// 수정 모드 토글 함수
-	function toggleEditMode(isEditing) {
-		const nicknameDisplay = document.getElementById('nickname');
-		const nicknameInput = document.getElementById('nickname-input');
+    // 활성 버튼 설정 함수
+    function setActiveButton(button) {
+        [profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+    }
 
-		nicknameDisplay.style.display = isEditing ? 'none' : 'inline';
-		nicknameInput.style.display = isEditing ? 'inline' : 'none';
+    // 닉네임 수정 모드 토글 함수
+    function toggleNicknameEditMode(isEditing) {
+        nicknameDisplay.style.display = isEditing ? 'none' : 'inline';
+        nicknameForm.style.display = isEditing ? 'inline-flex' : 'none';
+        editNicknameBtn.style.display = isEditing ? 'none' : 'inline';
 
-		editBtn.style.display = isEditing ? 'none' : 'inline';
-		saveBtn.style.display = isEditing ? 'inline' : 'none';
-		cancelBtn.style.display = isEditing ? 'inline' : 'none';
+        if (isEditing) {
+            nicknameInput.value = nicknameDisplay.textContent;
+            nicknameInput.focus();
+        }
+    }
 
-		profilePic.style.cursor = isEditing ? 'pointer' : 'default';
-		profilePic.title = isEditing ? '클릭하여 이미지 변경' : '';
+    // 생년월일 수정 모드 토글 함수
+    function toggleBirthdateEditMode(isEditing) {
+        birthdateDisplay.style.display = isEditing ? 'none' : 'inline';
+        birthdateForm.style.display = isEditing ? 'inline-flex' : 'none';
+        editBirthdateBtn.style.display = isEditing ? 'none' : 'inline';
 
-		if (isEditing) {
-			nicknameInput.value = nicknameDisplay.textContent;
-			profilePic.addEventListener('click', triggerFileInput);
-		} else {
-			profilePic.removeEventListener('click', triggerFileInput);
-		}
-	}
+        if (isEditing) {
+            birthdateInput.value = birthdateDisplay.textContent;
+            birthdateInput.focus();
+        }
+    }
 
-	// 파일 입력 트리거 함수
-	function triggerFileInput() {
-		fileInput.click();
-	}
+    // 핸드폰 번호 수정 모드 토글 함수
+    function togglePhoneNumberEditMode(isEditing) {
+        phoneNumberDisplay.style.display = isEditing ? 'none' : 'inline';
+        phoneNumberForm.style.display = isEditing ? 'inline-flex' : 'none';
+        editPhoneNumberBtn.style.display = isEditing ? 'none' : 'inline';
 
-	// 비밀번호 변경 팝업 표시 함수
-	function showPasswordPopup() {
-		popupOverlay.classList.add('active');
-		passwordPopup.classList.add('active');
-	}
+        if (isEditing) {
+            phoneNumberInput.value = phoneNumberDisplay.textContent;
+            phoneNumberInput.focus();
+        }
+    }
 
-	// 비밀번호 변경 팝업 닫기 함수
-	function closePasswordPopup() {
-		popupOverlay.classList.remove('active');
-		passwordPopup.classList.remove('active');
-		passwordForm.reset();
-	}
+    // 이미지 변경 함수
+    function changeProfileImage(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch('/uploadImage', {
+            method: 'POST',
+            headers: {
+                [header]: token
+            },
+            body: formData,
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('이미지 업로드 실패');
+                }
+                return response.json();
+            })
+            .then(data => {
+                profilePic.src = data.imageUrl;
+                alert('프로필 이미지가 성공적으로 변경되었습니다.');
+            })
+            .catch(error => {
+                console.error('이미지 업로드 중 오류 발생:', error);
+                alert('이미지 업로드에 실패했습니다: ' + error.message);
+            });
+    }
 
-	// 비밀번호 변경 처리 함수
-	function changePassword(e) {
-		e.preventDefault();
-		const currentPassword = document.getElementById('current-password').value;
-		const newPassword = document.getElementById('new-password').value;
-		const confirmPassword = document.getElementById('confirm-password').value;
+    // 비밀번호 변경 팝업 표시 함수
+    function showPasswordPopup() {
+        popupOverlay.classList.add('active');
+        passwordPopup.classList.add('active');
+    }
 
-		if (newPassword !== confirmPassword) {
-			alert('새 비밀번호와 확인 비밀번호가 일치하지 않습니다.');
-			return;
-		}
+    // 비밀번호 변경 팝업 닫기 함수
+    function closePasswordPopup() {
+        popupOverlay.classList.remove('active');
+        passwordPopup.classList.remove('active');
+        passwordForm.reset();
+    }
 
-		sendPasswordChangeRequest(currentPassword, newPassword);
-		alert('비밀번호가 성공적으로 변경되었습니다.');
-		closePasswordPopup();
-	}
+    // 비밀번호 변경 처리 함수
+    function changePassword(e) {
+        e.preventDefault();
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
 
-	// 나의 등급 페이지 로드 함수
-	function loadTierContent() {
-		fetch('/api/user-post-count')
-			.then(response => response.json())
-			.then(data => {
-				const tierSystem = new TierSystem(data.postCount);
-				const currentTier = tierSystem.getCurrentTier();
+        if (newPassword !== confirmPassword) {
+            alert('새 비밀번호와 확인 비밀번호가 일치하지 않습니다.');
+            return;
+        }
 
-				const tierImage = document.getElementById('tier-image');
-				const tierDescription = document.getElementById('tier-description');
-				const postCount = document.getElementById('post-count');
+        const updateData = {
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        };
 
-				if (tierImage && tierDescription && postCount) {
-					tierImage.src = currentTier.image;
-					tierDescription.textContent = currentTier.description;
-					postCount.textContent = data.postCount.toString();
-				}
-			})
-			.catch(error => console.error('Error fetching user info:', error));
-	}
+        fetch('/updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify(updateData),
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || '비밀번호 변경 실패');
+                        });
+                    }
+                    throw new Error('서버 오류');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('비밀번호가 성공적으로 변경되었습니다.');
+                closePasswordPopup();
+            })
+            .catch(error => {
+                alert('비밀번호 변경 실패: ' + error.message);
+            });
+    }
 
-	// 프로필 업데이트 함수
-	function updateProfile() {
-		const newNickname = document.getElementById('nickname-input').value;
-		const currentNickname = document.getElementById('nickname').textContent;
-		const file = fileInput.files[0];
+    // 나의 등급 페이지 로드 함수
+    function loadTierContent() {
+        fetch('/api/user-post-count', {
+            headers: {
+                [header]: token
+            },
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const tierSystem = new TierSystem(data.postCount);
+                const currentTier = tierSystem.getCurrentTier();
 
-		const profileData = {};
+                const tierImage = document.getElementById('tier-image');
+                const tierDescription = document.getElementById('tier-description');
+                const postCount = document.getElementById('post-count');
 
-		// 닉네임이 변경되었는지 확인
-		if (newNickname !== currentNickname) {
-			profileData.nickName = newNickname;
-		}
+                if (tierImage && tierDescription && postCount) {
+                    tierImage.src = currentTier.image;
+                    tierDescription.textContent = currentTier.description;
+                    postCount.textContent = data.postCount.toString();
+                }
+            })
+            .catch(error => console.error('Error fetching user info:', error));
+    }
 
-		let updatePromise;
+    // 닉네임 업데이트 함수
+    function updateNickname(e) {
+        e.preventDefault();
+        const newNickname = nicknameInput.value;
 
-		if (file) {
-			// 이미지 파일이 선택된 경우
-			updatePromise = uploadImageToServer(file)
-				.then(imageData => {
-					profileData.profileImageUrl = imageData.url;
-					profileData.profileImageBucketKey = imageData.bucketKey;
-					profileData.profileImageOrgName = imageData.originalName;
-					return sendProfileUpdateToServer(profileData);
-				});
-		} else if (Object.keys(profileData).length > 0) {
-			// 이미지는 없지만 닉네임이 변경된 경우
-			updatePromise = sendProfileUpdateToServer(profileData);
-		} else {
-			// 변경된 내용이 없는 경우
-			alert("변경된 내용이 없습니다.");
-			toggleEditMode(false);
-			return;
-		}
+        fetch('/updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify({ nickName: newNickname }),
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('닉네임 업데이트 실패');
+                }
+                return response.json(); // 서버가 JSON을 반환한다고 가정
+            })
+            .then(data => {
+                nicknameDisplay.textContent = newNickname;
+                toggleNicknameEditMode(false);
+                alert('닉네임이 성공적으로 변경되었습니다.');
+            })
+            .catch(error => {
+                alert('닉네임 업데이트에 실패했습니다: ' + error.message);
+            });
+    }
 
-		updatePromise
-			.then(() => {
-				if (profileData.nickName) {
-					document.getElementById('nickname').textContent = profileData.nickName;
-				}
-				if (profileData.profileImageUrl) {
-					profilePic.src = profileData.profileImageUrl;
-				}
-				alert("회원 정보가 수정되었습니다.");
-				toggleEditMode(false);
-			})
-			.catch(error => {
-				console.error('프로필 업데이트 중 오류 발생:', error);
-				alert("회원 정보 수정에 실패했습니다: " + error.message);
-			});
-	}
+    // 생년월일 업데이트 함수
+    function updateBirthdate(e) {
+        e.preventDefault();
+        const newBirthdate = birthdateInput.value;
 
-	// 파일 선택 시 이미지 미리보기
-	fileInput.addEventListener('change', function(e) {
-		const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				profilePic.src = e.target.result;
-			}
-			reader.readAsDataURL(file);
-		}
-	});
+        fetch('/updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify({ birthDate: newBirthdate }),
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('생년월일 업데이트 실패');
+                }
+                return response.json(); // 서버가 JSON을 반환한다고 가정
+            })
+            .then(data => {
+                birthdateDisplay.textContent = newBirthdate;
+                toggleBirthdateEditMode(false);
+                alert('생년월일이 성공적으로 변경되었습니다.');
+            })
+            .catch(error => {
+                alert('생년월일 업데이트에 실패했습니다: ' + error.message);
+            });
+    }
 
-	// CSRF 토큰을 가져오는 함수
-	function getCsrfToken() {
-		const csrfToken = document.querySelector('meta[name="_csrf"]');
-		const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
-		if (csrfToken && csrfHeader) {
-			const header = csrfHeader.getAttribute('content');
-			// 헤더 이름에서 특수 문자 제거
-			const safeHeader = header.replace(/[^\w-]/g, '');
-			return {
-				header: safeHeader,
-				token: csrfToken.getAttribute('content')
-			};
-		}
-		return null;
-	}
+    // 핸드폰 번호 업데이트 함수
+    function updatePhoneNumber(e) {
+        e.preventDefault();
+        const newPhoneNumber = phoneNumberInput.value;
 
-	// 서버로 이미지 업로드 함수
-	function uploadImageToServer(file) {
-		const formData = new FormData();
-		formData.append('file', file);
+        fetch('/updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify({ phoneNumber: newPhoneNumber }),
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('핸드폰 번호 업데이트 실패');
+                }
+                return response.json(); // 서버가 JSON을 반환한다고 가정
+            })
+            .then(data => {
+                phoneNumberDisplay.textContent = newPhoneNumber;
+                togglePhoneNumberEditMode(false);
+                alert('핸드폰 번호가 성공적으로 변경되었습니다.');
+            })
+            .catch(error => {
+                alert('핸드폰 번호 업데이트에 실패했습니다: ' + error.message);
+            });
+    }
 
-		const csrfData = getCsrfToken();
-		const headers = {};
-		if (csrfData) {
-			headers[csrfData.header] = csrfData.token;
-		}
+    // 이벤트 리스너 추가
+    profileBtn.addEventListener('click', () => {
+        loadContent('profile');
+        setActiveButton(profileBtn);
+    });
 
-		return fetch('/uploadImage', {
-			method: 'POST',
-			headers: {
-				[header]: token //이 부분만 추가하면 됨
-			},
-			body: formData,
-			credentials: 'include'  // 쿠키를 포함시키기 위해 추가
-		})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('이미지 업로드 실패');
-				}
-				return response.json();
-			});
-	}
+    tierBtn.addEventListener('click', () => {
+        loadContent('tier');
+        setActiveButton(tierBtn);
+        loadTierContent();
+    });
 
-	// 서버로 프로필 업데이트 요청 보내는 함수
-	function sendProfileUpdateToServer(profileData) {
-		const headers = {
-			'Content-Type': 'application/json'
-		};
+    myPostsBtn.addEventListener('click', () => {
+        loadContent('my-posts');
+        setActiveButton(myPostsBtn);
+    });
 
-		const csrfData = getCsrfToken();
-		if (csrfData && csrfData.header && csrfData.token) {
-			headers[csrfData.header] = csrfData.token;
-		}
+    editNicknameBtn.addEventListener('click', () => {
+        toggleNicknameEditMode(true);
+    });
 
-		return fetch('/updateProfile', {
-			method: 'PUT',
-			headers: {
-				[header]: token //이 부분만 추가하면 됨
-			},
-			body: JSON.stringify(profileData),
-			credentials: 'include'
-		})
-			.then(response => {
-				if (!response.ok) {
-					return response.text().then(text => {
-						throw new Error('프로필 업데이트 실패: ' + text);
-					});
-				}
-				return response.json();
-			})
-			.catch(error => {
-				console.error('프로필 업데이트 중 오류 발생:', error);
-				throw error;  // 에러를 다시 throw하여 상위 catch 블록에서 처리할 수 있게 함
-			});
-	}
+    nicknameForm.addEventListener('submit', updateNickname);
 
-	// 서버로 비밀번호 변경 요청 함수 (구현 필요)
-	function sendPasswordChangeRequest(currentPassword, newPassword) {
-		console.log('비밀번호 변경 요청 함수 구현 필요:', currentPassword, newPassword);
-		// TODO: 실제 서버로 비밀번호 변경 요청을 보내는 로직 구현
-	}
+    cancelNicknameBtn.addEventListener('click', () => {
+        toggleNicknameEditMode(false);
+    });
 
-	// 이벤트 리스너 설정
-	profileBtn.addEventListener('click', () => {
-		loadContent('profile');
-		setActiveButton(profileBtn);
-	});
+    editBirthdateBtn.addEventListener('click', () => {
+        toggleBirthdateEditMode(true);
+    });
 
-	tierBtn.addEventListener('click', () => {
-		loadContent('tier');
-		setActiveButton(tierBtn);
-		loadTierContent();
-	});
+    birthdateForm.addEventListener('submit', updateBirthdate);
 
-	myPostsBtn.addEventListener('click', () => {
-		loadContent('my-posts');
-		setActiveButton(myPostsBtn);
-	});
+    cancelBirthdateBtn.addEventListener('click', () => {
+        toggleBirthdateEditMode(false);
+    });
 
-	editBtn.addEventListener('click', () => toggleEditMode(true));
+    editPhoneNumberBtn.addEventListener('click', () => {
+        togglePhoneNumberEditMode(true);
+    });
 
-	cancelBtn.addEventListener('click', () => {
-		toggleEditMode(false);
-		profilePic.src = originalProfilePicSrc;
-		document.getElementById('nickname-input').value = document.getElementById('nickname').textContent;
-	});
+    phoneNumberForm.addEventListener('submit', updatePhoneNumber);
 
-	// 수정완료 버튼 이벤트 리스너
-	saveBtn.addEventListener('click', (e) => {
-		e.preventDefault();
-		updateProfile();
-	});
+    cancelPhoneNumberBtn.addEventListener('click', () => {
+        togglePhoneNumberEditMode(false);
+    });
 
-	changePasswordBtn.addEventListener('click', showPasswordPopup);
-	closePopupBtn.addEventListener('click', closePasswordPopup);
-	passwordForm.addEventListener('submit', changePassword);
-	popupOverlay.addEventListener('click', closePasswordPopup);
+    changePasswordBtn.addEventListener('click', showPasswordPopup);
 
-	// 초기 페이지 로드
-	loadContent('profile');
-	setActiveButton(profileBtn);
+    closePopupBtn.addEventListener('click', closePasswordPopup);
+
+    passwordForm.addEventListener('submit', changePassword);
+
+    // 프로필 이미지 업로드
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profilePic.src = e.target.result; // 미리보기
+                changeProfileImage(file); // 서버로 업로드
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 });

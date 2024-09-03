@@ -1,11 +1,15 @@
 package com.red.domovie.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
@@ -35,10 +39,15 @@ public class MypageController {
 	}
 	
 	// 프로필 수정 처리
-	@PutMapping("/updateProfile")
-	public String profileUpdate(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody ProfileUpdateDTO dto) {
-		mypageService.updateProcess(userDetails.getUserId(), dto);
-		return "redirect:/mypage";
+	@PostMapping("/updateProfile")
+	@ResponseBody
+	public ResponseEntity<?> updateProfile(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody ProfileUpdateDTO dto) {
+	    try {
+	        mypageService.updateProcess(userDetails.getUserId(), dto);
+	        return ResponseEntity.ok().body(Map.of("message", "프로필이 성공적으로 업데이트되었습니다."));
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+	    }
 	}
 	
 	
