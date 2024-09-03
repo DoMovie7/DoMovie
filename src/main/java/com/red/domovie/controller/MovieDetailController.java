@@ -16,7 +16,7 @@ public class MovieDetailController {
 	
 	private final MovieDetailService movieDetailService;
 	
-	@GetMapping("/contents/{movieID}")
+	@GetMapping("/movies/detail/{movieID}")
 	public String MovieDetail(@PathVariable(name = "movieID") String movieID,Model model) {
 		
 		System.out.println("movieID:"+movieID);

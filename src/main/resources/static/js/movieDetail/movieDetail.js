@@ -1,12 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+   //별점 기능 변수 
 	const rateWrap = document.querySelectorAll('.rating'),
 		label = document.querySelectorAll('.rating .rating__label'),
 		input = document.querySelectorAll('.rating .rating__input'),
 		labelLength = label.length,
 		opacityHover = '0.5';
+		
+   //코멘트 작성 비동기 요청 변수
+	const commentBtn = document.querySelector('.commentBtn')
+	const rating = document.querySelector('input[name="rating"]:checked').value;
+	const movieId = document.querySelector('input[name="comments"]').value;
+	const commentText = document.querySelector('.comment input[type="text"]').value;
+
+   
+   const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    
+    console.log(csrfToken);
+     console.log(csrfHeader);
 
 
+   
+	let stars = document.querySelectorAll('.rating .star-icon');
 
 	checkedRate();
 
@@ -78,14 +93,42 @@ document.addEventListener('DOMContentLoaded', function() {
 			stars[i].classList.remove('filled');
 		}
 	}
+
+	//작성 버튼 동작 감지 비동기 요청
+	commentBtn.addEventListener('click', function() {
+       
+       // 보낼 폼데이터 생성
+		const formData = new FormData();
+		formData.append('rating', rating);
+		formData.append('movieId', movieId);
+		formData.append('comments', commentText);
+		
+		
+		//비동기 요청
+		fetch('/movies/detail',{
+			method: 'POST',
+			headers: {
+				[csrfHeader]: csrfToken,
+				'content-Type': 'application/json'
+			},
+			body: JSON.stringify(Object.fromEntries(formData))
+		})
+		
+		.then(data=>{
+			
+		})
+		
+		.catch(error =>{})
+		
+		.finally(data=>{});
+
+
+
+		
+		
+	});
+	
 	
 
-	
-	
 
-	
-
-
-});
-
-
+});// 끝
