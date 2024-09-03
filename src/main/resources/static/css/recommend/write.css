@@ -1,0 +1,100 @@
+/* 전체 컨테이너 스타일 */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 페이지 제목 스타일 */
+.page-title {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold; /* 제목을 더 두드러지게 하기 위해 글씨 굵기 추가 */
+}
+
+/* 폼 스타일 */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 레이블 스타일 */
+label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+/* 입력 필드 스타일 */
+select,
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+
+/* 버튼 스타일 */
+button {
+	width: auto; 
+    flex: 1; /* 버튼이 컨테이너 내에서 균등하게 나누어지도록 함 */
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #DB242D;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center; /* 버튼 텍스트를 중앙에 정렬 */
+}
+
+
+
+/* 에디터 스타일 */
+#editor {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-height: 300px;
+    margin-bottom: 15px;
+    
+}
+
+/* 버튼 그룹 스타일 */
+.button-group {
+    display: flex;
+    justify-content: space-between; /* 버튼 사이의 간격을 동일하게 유지 */
+    gap: 10px; /* 버튼 사이의 간격을 조정 (필요에 따라 조정 가능) */
+}
+
+/*장르 카테고리*/
+
+select#category {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+}
+select#category option {
+    background-color: #ffffff;
+    color: #333;
+}
+
+/* 드롭다운 호버 효과 */
+select#category:hover {
+    border-color: #DB242D;
+    background-color: #e9ecef;
+}

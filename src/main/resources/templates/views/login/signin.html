@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Sign In</title>
+<link rel="stylesheet" th:href="@{/css/login/signin.css}">
+<link rel="stylesheet" th:href="@{/css/common/reset.css}">
+</head>
+<body class="loginWrap">
+	<div class="login-container">
+		<a href="/" class="logo">
+			<img src="/img/logo.png"  alt="사람인 로고">
+		</a>
+		<form th:action="@{/signin}" method="post">
+			<div class="input-group">
+				<input type="text" name="email" placeholder="이메일" required>
+			</div>
+			<div class="input-group">
+				<input type="password" name="password" placeholder="비밀번호" required>
+			</div>
+			<div th:if="${param.error}" class="alert alert-danger">Invalid
+				username and password.</div>
+			<div th:if="${param.logout}" class="alert alert-info">You have
+				been logged out.</div>
+			<button type="submit" class="login-button">로그인</button>
+		</form>
+		<div class="login-options">
+			<a href="/findId">아이디 찾기 /</a><a href="/findPassword"> 비밀번호 찾기 /</a><a
+				href="/signup"> 회원가입</a>
+		</div>
+		<div class="divider">
+			<span>간편 로그인</span>
+		</div>
+
+		<!-- OAuth2 로그인 버튼 -->
+		<div class="social-login">
+			<button class="google-btn"
+				onclick="location.href='/oauth2/authorization/google'">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="25" fill="#fff" />
+                        <path
+						d="M36.5 25.2c0-.8-.1-1.6-.2-2.4H25v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7v3.1h3.9c2.3-2.1 3.5-5.2 3.5-8.9z"
+						fill="#4285F4" />
+                        <path
+						d="M25 37c3.2 0 5.9-1.1 7.9-2.9l-3.9-3.1c-1.1.7-2.5 1.1-4 1.1-3.1 0-5.7-2.1-6.6-4.9h-4v3.2C16.4 34.5 20.4 37 25 37z"
+						fill="#34A853" />
+                        <path
+						d="M18.4 27.2c-.2-.7-.4-1.4-.4-2.2s.1-1.5.4-2.2v-3.2h-4c-.8 1.6-1.3 3.4-1.3 5.4s.5 3.8 1.3 5.4l4-3.2z"
+						fill="#FBBC05" />
+                        <path
+						d="M25 18.1c1.7 0 3.3.6 4.5 1.8l3.4-3.4C30.9 14.6 28.2 13.5 25 13.5c-4.6 0-8.6 2.5-10.6 6.5l4 3.2c.9-2.8 3.5-4.9 6.6-4.9z"
+						fill="#EA4335" />
+                    </svg>
+			</button>
+			<button class="naver-btn"
+				onclick="location.href='/oauth2/authorization/naver'">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                        <path
+						d="M32 21.5v7.1l-4.8-7.1H22v14h5.6v-7.1l4.8 7.1H38v-14"
+						fill="#fff" />
+                    </svg>
+			</button>
+			<button class="kakao-btn"
+				onclick="location.href='/oauth2/authorization/kakao'">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                        <circle cx="25" cy="25" r="25" fill="#FEE500" />
+                        <path
+						d="M25 16c-6.1 0-11 3.9-11 8.7 0 3.1 2.1 5.8 5.2 7.3-.2.8-.7 2.9-.8 3.3-.1.5.2.5.4.4.2-.1 3-2 4.2-2.8.6.1 1.3.1 2 .1 6.1 0 11-3.9 11-8.7S31.1 16 25 16"
+						fill="#3A1D1D" />
+                    </svg>
+			</button>
+		</div>
+
+		<!-- 에러 메시지 표시 -->
+		<div th:if="${param.error}" class="error-message">Invalid
+			username or password.</div>
+		<div th:if="${param.logout}" class="success-message">You have
+			been logged out.</div>
+	</div>
+	</div>
+</body>
+</html>

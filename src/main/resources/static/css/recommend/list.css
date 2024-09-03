@@ -1,0 +1,186 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+#recommend .container {
+    background-color: white;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding-top: 60px;
+}
+
+.page-title{
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.btn-group {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 5px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-login {
+    background-color: #f0a3a3;
+    color: white;
+}
+
+.btn-signup {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.board-table th,
+.board-table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.board-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+}
+
+.board-table .title{
+	width: 500px;
+}
+.board-table tbody .title{
+	text-align: left;
+}
+
+.board-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.board-table a {
+    color: #333;
+    text-decoration: none;
+    display: inline;
+}
+
+.board-table a:hover {
+    text-decoration: underline;
+}
+
+.comment-count {
+    color: #ff6600;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* 반응형 디자인을 위한 미디어 쿼리 */
+@media (max-width: 1200px) {
+    .container {
+        margin: 0 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 0 10px;
+    }
+
+    .board-table th,
+    .board-table td {
+        padding: 8px;
+    }
+
+    .btn-group {
+        text-align: center;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* ///장르 메뉴 css/// */
+#genre-menu{
+	margin-bottom: 40px;
+}
+#genre-menu > div > ul{
+	display: flex;
+}
+#genre-menu > div > ul > .tab:hover{
+	background-color: rgba(255,0,0,0.5);
+}
+#genre-menu > div > ul > .tab{
+	padding: 1em;
+	width: calc(1160px / 9);
+	border: 1px solid #e9e9e9;
+	text-align: center;
+	border-radius: 10px 10px 0 0; 
+}
+#genre-menu > div > ul > .tab.active{
+	background-color:#DB242D;
+	color: #fff;
+}
+
+#genre-menu > div > ul > .tab-:not(:first-child) {
+	border-left: none;
+}
+/* ///검색 css/// */
+.search-container {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+#searchInput {
+    width: 200px;
+    padding: 10px;
+    margin-right: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#filterCategory {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#searchButton {
+    background-color: #DB242D;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* ///글쓰기버튼 css/// */
+#writeButton {
+    background-color: #DB242D; /* 원하는 색상으로 변경 가능 */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none; /* 링크 기본 스타일 제거 */
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: flex; /* 버튼을 플렉스 박스로 설정 */
+    align-items: center; /* 수직 중앙 정렬 */
+    font-size: 13px;
+}

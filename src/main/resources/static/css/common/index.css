@@ -1,0 +1,214 @@
+@charset "UTF-8";
+
+
+
+
+main{padding-top:110px }
+
+.indexslide-container{width: 100%;  position: relative; overflow: hidden; }
+
+.indexslide-wrap{width: 100%;position:absolute;}
+
+.indexslide{
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position:center;
+	width: 100%;
+	height:774px;
+	position: absolute;
+	top: 50%;
+	transform:translateY(-50%);
+	
+}
+
+
+.indexslide-wrap>li:nth-of-type(1) {
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/Junsu/Junsu_19207742.jpg");
+
+}
+
+
+.indexslide-wrap>li:nth-of-type(2) {
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/NoWayUp/NoWayUp_1920774.jpg");
+
+}
+
+
+.indexslide-wrap>li:nth-of-type(3) {
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/YouShineInTheMoonlight/YouShineInTheMoonlight_1920774.jpg");
+
+}
+
+.indexslide-container:before{content: ""; display: block; position:absolute;  top:0;left: 0;width: 100%; height: 130px;  
+background-image: linear-gradient(to bottom, rgba(0,0,0,0.6),rgba(0,0,0,0.3), rgba(0,0,0,0)); z-index: 1}
+
+.indexslide-container:after{content: ""; display: block; position:absolute; bottom:0;  left: 0;width: 100%; height: 120px;  
+background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.7),rgba(0,0,0,0)); z-index: 1}
+
+#prev{position: absolute; left:10%; top:50%; transform:translateY(-50%); font-size: 2.5em; color: #fff}
+#next{position: absolute; left:90%; top:50%; transform:translateY(-50%); font-size: 2.5em; color: #fff}
+
+.indexslide-wrap.animated{
+	-webkit-transition: left .3s ease-in;
+	transition:left .3s ease-in;
+}
+/********************************/
+
+.container{
+	width: 1200px;
+	margin: 0 auto;
+	
+}
+
+.review-event{
+	display: flex;
+	justify-content: center;
+	width: 75%;
+}
+
+.review-event img {
+	width: 100%;
+	
+    object-fit: contain;
+}
+
+
+.index-title{
+	font-size: 28px;
+	padding: 20px 0px;
+	
+}
+
+h3 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/**/
+.ranking-container {
+    max-width: 500px;
+    
+    background-color: var(--main-black);
+    border-radius: 12px;
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 30px;
+    color: var(--main-white);
+}
+
+.ranking-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--main-grey2);
+    gap: 1em;
+}
+
+.ranking-item:last-child {
+    border-bottom: none;
+}
+
+.rank {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--main-white);
+    width: 30px;
+    text-align: center;
+}
+
+.profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.name {
+    flex-grow: 1;
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--main-white);
+}
+
+.points {
+    color: var(--main-red);
+    font-size: 14px;
+}
+/**/
+.movie-list {
+    width: 100%;
+    border-radius: 10px;
+   
+    color: var(--main-white);
+    margin: 100px 0;
+    
+    
+}
+
+.movie-grid {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem; /* 여유로운 간격을 위해 gap을 조정 */
+}
+
+.movie-item {
+	width: 215px;
+	height: 400px;
+	background-color: var(--main-black);
+	border-radius: 10px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    position: relative; /* 순위 div를 위한 position 설정 */
+    padding: 20px; /* 여유로운 여백 추가 */
+}
+
+.movie-item img {
+    width: 175px;
+    height: 250px;
+    border-radius: 4px;
+}
+
+.box-rank {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: var(--main-black);
+    opacity: 90%;
+    color: var(--main-white);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.movie-list2{
+	width: 100%;
+	
+	background-color: var(--main-black);
+	color: var(--main-white);
+	margin-top: 10px;
+}
+.wrap{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 0px;
+	
+}
+
+/**/
+

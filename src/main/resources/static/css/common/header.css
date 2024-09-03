@@ -1,0 +1,166 @@
+@charset "UTF-8";
+
+header {
+	width: 100%;
+	background-color: var(--main-black);
+	color: var(--main-white);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+	transition: all 0.3s ease;
+}
+
+.cmheader-wrap {
+	max-width: 1220px;
+	margin: 0 auto;
+	min-width: 557px;
+	padding: 0px 10px;
+}
+
+a {
+	display: block;
+}
+
+header .header-top {
+	display: flex;
+	justify-content: space-between;
+	padding-top: 20px;
+	border-bottom: 1px solid var(--main-white);
+	height: 73px;
+	padding-bottom: 10px;
+}
+
+.logo a img {
+	width: 190px;
+	height: 30px;
+}
+
+.info {
+	display: flex;
+	align-items: flex-end;
+}
+
+.sns li, .info li, .nav-bottom li {
+	margin-right: 10px;
+}
+
+.sns a, .info a {
+	font-size: 13px;
+}
+
+.sns li i, .nav-bottom li i {
+	margin-right: 2.5px;
+}
+
+.nav-top {
+	display: flex;
+	justify-content: center;
+	padding-right: 32px;
+}
+
+.nav-top>li>a {
+	width: 110px;
+	height: 43px;
+	text-align: center;
+	line-height: 43px;
+	font-weight: 600;
+}
+
+.nav-top>li:nth-of-type(n+2):nth-of-type(-n+5)>a::before {
+	content: "";
+	display: block;
+	width: 1px;
+	height: 8px;
+	background-color: var(--main-white);
+	float: left;
+	margin-top: 19px;
+}
+
+.nav-top>li>a:hover {
+	border-bottom: 2px solid red;
+}
+
+.header-bottom {
+	position: relative;
+}
+
+.nav-bottom {
+	display: flex;
+	justify-content: flex-end;
+	font-size: 13px;
+	position: absolute;
+	top: 50%;
+	right: 0;
+	transform: translateY(-50%);
+}
+
+/* Scrolled header styles */
+.cmheader-scroll {
+	background-color: rgba(219, 36, 45, 0.8);
+	height: 0;
+	overflow: hidden;
+	transition: height 0.3s ease;
+}
+
+.cmheader-scroll-inner {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	max-width: 1220px;
+	margin: 0 auto;
+	padding: 0 10px;
+	height: 50px;
+}
+
+.logo-small img {
+	width: 170px;
+	height: auto;
+}
+
+.nav-scroll {
+	display: flex;
+}
+
+.nav-scroll li {
+	margin-left: 20px;
+}
+
+.nav-scroll li:hover .nav-scroll>li>a {
+	font-size: 14px
+}
+
+.nav-scroll a {
+	color: var(--main-white);
+	font-weight: 600;
+}
+
+/* When scrolled */
+header.scrolled .cmheader-wrap {
+	display: none;
+}
+
+header.scrolled .cmheader-scroll {
+	height: 50px;
+}
+
+@media screen and (max-width: 1200px) {
+	.nav-bottom>li>a>span {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 920px) {
+	.nav-bottom>li {
+		display: none;
+	}
+}
+
+.logout-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 18px; /* 아이콘 크기 조정 */
+	color: var(--main-grey2); /* 아이콘 색상 */
+	transition: color 0.3s; /* 색상 전환 효과 */
+}

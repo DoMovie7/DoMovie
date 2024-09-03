@@ -1,0 +1,178 @@
+@charset "UTF-8";
+
+
+/*영상,대표정보 */
+
+#movie-detail{color:var(--main-white);}
+
+#video-wrap{width: 100%;  position:relative;
+  height:0; padding-bottom:40.25%; overflow: hidden;}
+  
+  
+.video iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:110%;
+  border: none;
+  }
+  
+  
+#trailerVideo {
+    width: 100% !important;
+    height: 110% !important;
+}
+  
+  
+.video:after{content: ""; display: block; position:absolute; bottom:0;  left: 0;width: 100%; height: 40%;  
+background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.9),rgba(0,0,0,0)); z-index: 1}
+.movie-info{  position:absolute;bottom:10px; left:0; z-index: 2; width: 100%}
+.movie-info>ul{ max-width: 1220px; margin: 0 auto; padding: 0 10px}
+.movie-info>ul>li{margin-bottom: 3px; font-size: 18px}
+.movie-info>ul>li>span{margin-right: 10px}
+.movie-info>ul>li:nth-child(1){font-size:25px;font-weight: 600}
+
+
+/*컨텐츠*/
+#movie-contents{margin-bottom:50px; max-width: 100%;height: auto; background-color: var(--main-black); padding-top: 25px}
+.movie-contents-wrap{ max-width: 1220px; margin: 0 auto; padding: 0 10px; height: 400px;display: flex; justify-content:space-between;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+
+.movie-detail-contents{padding-left:15px }
+
+/*포스터*/
+     .movie-poster {
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  .movie-poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+/*별점*/ 
+.stararea {
+	text-align:left;
+    width: 160px;
+    height: 30px;
+    position: relative;
+    margin-bottom: 15px
+}
+ .point{
+    color: #f8a504;
+    font-size: 23px;
+ 	position: absolute;
+    top: -2px;;
+    left: 172px;
+ }
+.starpoint{
+	width:50%;
+    background-color: #f8a504;
+    height: 30px;
+    display: block;
+    position: relative;
+}
+ 
+.starpoint::after {
+    width: 160px;
+    height: 30px;
+    background: url(/img/star_bar.svg) no-repeat;
+    background-size: 100%;
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+ 
+  
+  
+  
+/*영화 설명*/
+  .movie-description{
+   	color:var(--main-white);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  
+  /*스테프*/
+
+  .movie-Staff-wrap,.comment-wrap{width: 100%; margin-bottom: 70px}
+  .movie-Staff,.comments{ max-width: 1220px; margin: 0 auto; padding: 0 10px; color:var(--main-white);}
+  .movie-Staff>p,.movie-awards>p,.comments>p{margin-bottom:50px; color:var(--main-white); font-size: 25px}
+  
+  .movie-staff-contents{display: flex; justify-content: flex-start; margin-bottom: 50px}
+  
+  .movie-actor>ul{display: flex; justify-content:flex-start; flex-wrap: wrap;}
+  
+  .movie-staff-contents>div>ul>li{ margin-bottom:10px; width: 170px; background-color: var(--main-black); height: 70px; border-radius: 10px; margin-right: 15px;text-align: center; padding-top: 10px}
+
+
+/*리뷰 남기기*/
+
+.write-comment{width: 100%; height: 110px; background-color:var(--main-black); border-radius: 10px; padding: 10px;margin-bottom: 40px }
+  
+  
+  /*별점 제출*/
+.rating {
+  float: none;
+  width: 200px;
+  display: flex;
+  margin-bottom: 5px
+}
+
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.rating__label .star-icon {
+  width: 10px;
+  height: 20px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url('https://velog.velcdn.com/images/jellykelly/post/9957327f-f358-4c25-9989-5bb3dd5755d6/image.svg');
+  background-repeat: no-repeat;
+  background-size: 20px;
+}
+
+.rating__label .star-icon.filled {
+  background-image: url(/img/full.svg);
+}
+
+.rating__label--full .star-icon {
+  background-position: right;
+}
+
+.rating__label--half .star-icon {
+  background-position: left;
+}
+
+.rating.readonly .star-icon {
+  opacity: 0.7;
+  cursor: default;
+}
+ 
+ .comment{width: 100%; display: flex; justify-content: space-between;}
+  .comment>input{padding:0px 10px; width:95%; max-width:1100px; background-color: var(--main-grey); height: 60px; border-radius:7px; border: none; outline-style: none; color: var(--main-white); }
+  
+  /*실제리뷰*/
+  .show-comment>ul{display: flex; justify-content: flex-start; flex-wrap: wrap;}
+  .show-comment>ul>li{ width: 280px; background-color: var(--main-black); height: 100px; border-radius: 10px; padding: 15px; margin-right: 15px; margin-bottom: 15px}
+  .show-comment>ul>li>p{margin-top:3px; width:100%;  background-color: var(--main-grey);  border-radius:3px;   height: 48px; padding:5px; color: var(--main-white);}
+  

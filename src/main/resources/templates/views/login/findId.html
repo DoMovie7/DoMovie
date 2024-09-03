@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>아이디 찾기</title>
+<link rel="icon" type="image/x-icon" href="/img/favicon.png">
+<link rel="stylesheet" href="/css/login/signin.css">
+<link rel="stylesheet" href="/css/login/findId.css">
+<link rel="stylesheet" href="/css/common/reset.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+<body class="loginWrap">
+	<div class="login-container">
+		<a href="/" class="logo">
+			<img th:src="@{/img/logo.png}" alt="사람인 로고">
+		</a>
+		<form id="findIdForm" method="post">
+			<div class="input-group">
+				<input type="text" id="name" name="userName" placeholder="이름"
+					required>
+			</div>
+			<div class="input-group">
+				<input type="text" id="birthDate" name="birthDate"
+					placeholder="생년월일 (YYYY-MM-DD)" maxlength="10" required>
+			</div>
+			<button type="submit" class="login-button">아이디 찾기</button>
+		</form>
+		<div id="result" style="display: none;"></div>
+		<div class="login-options">
+			<a href="/findPassword">비밀번호 찾기</a> | <a href="/signin">로그인</a>
+		</div>
+	</div>
+	<script src="/js/login/findId.js"></script>
+</body>
+</html>

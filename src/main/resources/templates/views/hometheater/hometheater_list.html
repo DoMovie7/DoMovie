@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+
+<head>
+    <title>홈시어터 정보 공유 게시판 - 두무비</title>
+    <link rel="stylesheet" th:href="@{/css/hometheater/hometheater.css}">
+    <script src="/js/hometheater/hometheater.js"></script>
+    <script src="/js/hometheater/image-handler.js" defer></script>
+</head>
+
+<body>
+<main id="hometheater">
+    <div class="container">
+        <p class="page-title">홈시어터 정보 공유 게시판</p>
+
+        <nav id="category-menu">
+            <div class="tabs">
+                <ul>
+                    <li onclick="" data-content="0" class="tab active">ALL</li>
+                    <th:block th:each="category, status : ${categories}">
+                        <li onclick="" th:data-content="${status.count}" class="tab" th:text="${category.type}">카테고리</li>
+                    </th:block>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="search-container">
+            <select id="filterCategory">
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="author">글쓴이</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+            <button id="searchButton"><i class="fas fa-search"></i></button>
+            <a th:href="@{/hometheater/hometheater_create}" id="writeButton">글 작성</a>
+        </div>
+
+        <table class="board-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>대표 이미지</th>
+                <th class="title">제목</th>
+                <th>글쓴이</th>
+                <th>날짜</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}" th:data-category="${post.category}">
+                <td th:text="${post.id}"></td>
+                <td>
+                    <img th:if="${post.thumbnailImageUrl != null}" th:src="${post.thumbnailImageUrl}"
+                         alt="대표 이미지"
+                         class="post-thumbnail"
+                         style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                </td>
+                <td class="title content">
+                    <a th:href="@{/hometheater/{id}(id=${post.id})}" th:text="${post.title}"></a>
+                    <span th:if="${post.commentCount > 0}" th:text="'[' + ${post.commentCount} + ']'" class="comment-count"></span>
+                </td>
+                <td th:text="${post.author}"></td>
+                <td th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+
+</html>

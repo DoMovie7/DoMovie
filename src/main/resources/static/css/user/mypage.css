@@ -1,0 +1,310 @@
+@charset "UTF-8";
+
+/* *************** 프로필 페이지 ***************** */
+
+/* 메인 영역 스타일 */
+.profile-wrap {
+	max-width: 800px;
+	margin: 2rem auto;
+	padding: 2rem;
+	background-color: var(--main-black);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	color: var(--main-white);
+}
+
+/* 서브메뉴 스타일 */
+.profile-submenu {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+	padding-top: 30px;
+}
+
+.profile-submenu button {
+	padding: 10px 20px;
+	margin: 0 10px;
+	background-color: var(--main-black);
+	color: var(--main-white);
+	border: 1px solid var(--main-white);
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.profile-submenu button.active {
+	background-color: var(--main-white);
+	color: var(--main-black);
+}
+
+/* 프로필 컨테이너 스타일 */
+.profile-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+/* 프로필 이미지 컨테이너 스타일 */
+.profile-image-container {
+	width: 40%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* 프로필 사진 */
+#profile-picture {
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+/* 프로필 정보 스타일 */
+.profile-info {
+	width: 55%;
+}
+
+/* 마이페이지 제목 스타일 */
+.mypage-title h2 {
+	color: var(--main-white);
+	border-bottom: 2px solid var(--main-white);
+	padding-bottom: 10px;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+/* 나의 등급 제목 스타일 */
+#tier-content h2 {
+	color: var(--main-white);
+	border-bottom: 2px solid var(--main-white);
+	padding-bottom: 10px;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+/* 프로필 리스트 스타일 */
+.profile-info ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+.profile-info ul li {
+	margin-bottom: 15px;
+	display: flex;
+}
+
+.profile-info ul li span:first-child {
+	font-weight: bold;
+	width: 100px;
+}
+
+/* 버튼 그룹 스타일 */
+.button-group {
+	margin-top: 20px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.button-group button {
+	margin-left: 10px;
+	padding: 8px 15px;
+	background-color: var(--main-white);
+	color: var(--main-black);
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+/********************* 비밀번호 변경 ***********************/
+/* 비밀번호 변경 버튼 스타일 */
+#change-password-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: var(--main-white);
+    color: var(--main-black);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* 오버레이 스타일 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 비밀번호 변경 팝업 컨테이너 스타일 */
+#password-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background-color: var(--main-black);
+    border: 2px solid var(--main-white);
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+#password-popup.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* 비밀번호 변경 폼 스타일 */
+#password-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 비밀번호 입력 필드 스타일 */
+#password-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--main-white);
+    background-color: var(--main-grey2);
+    color: var(--main-black);
+    border-radius: 5px;
+}
+
+/* 버튼 컨테이너 스타일 */
+.popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* 팝업 내 버튼 공통 스타일 */
+#password-form button {
+    padding: 8px 15px;
+    background-color: var(--main-white);
+    color: var(--main-black);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1; /* 버튼이 동일한 너비를 가지도록 설정 */
+    margin: 0 5px; /* 버튼 사이의 간격 */
+}
+
+/* 버튼 호버 효과 */
+#password-form button:hover {
+    background-color: var(--main-grey2);
+    color: var(--main-white);
+}
+
+/* 팝업 닫기(취소) 버튼 스타일 */
+#close-popup {
+    background-color: transparent;
+    color: var(--main-white);
+    border: 1px solid var(--main-white);
+}
+
+/* 팝업 닫기(취소) 버튼 호버 효과 */
+#close-popup:hover {
+    background-color: var(--main-white);
+    color: var(--main-black);
+}
+
+/* *************** 나의 등급 페이지 ***************** */
+/* 나의 등급 페이지 스타일 */
+#tier-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#tier-image-container {
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: var(--main-black);
+    border-radius: 50%;
+    margin: 20px auto;
+}
+
+#tier-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+#tier-description {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: var(--main-white);
+}
+
+#post-count {
+    font-weight: bold;
+}
+
+/* *************** 내가 쓴 글 페이지 ***************** */
+#my-posts-content > h2 {
+    color: var(--main-white);
+    border-bottom: 2px solid var(--main-white);
+    padding-bottom: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#posts-list-container {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#posts-list-container > li:hover {
+	cursor: pointer;
+	background-color: var(--main-grey);
+	filter: brightness(2.0) saturate(1.2);
+}
+
+.post-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-item span {
+    color: var(--main-grey2);
+    flex: 1;
+    margin: 0;
+    margin-left: 5px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.post-item p {
+    margin: 0;
+    margin-right: 5px;
+    color: var(--main-grey2);
+    font-size: 0.9em;
+    white-space: nowrap;
+}
