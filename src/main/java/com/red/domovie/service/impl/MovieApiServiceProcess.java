@@ -380,27 +380,32 @@ public class MovieApiServiceProcess implements MovieApiService {
     }
 
 
-	@Override
-	public List<KmdbMovieDTO> searchMovies(String keyword) {
+    @Override
+    public List<KmdbMovieDTO> searchMovies(String keyword) {
         RestTemplate restTemplate = new RestTemplate();
-        String apiUrl = KMDB_LIST_API_URL + "?ServiceKey=" + kmdbApiKey + "&title=" + keyword + "&listCount=10";
-        
-        ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
+
+        // KMDB API 요청 URL을 StringBuilder를 사용하여 구성
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
+        strBuilder.append("?detail=Y");
+        strBuilder.append("&listCount=10");
+        strBuilder.append("&ServiceKey=").append(kmdbApiKey);
+        strBuilder.append("&title=").append(keyword);  // Add the keyword to the query
+
+        String apiUrl = strBuilder.toString();
 
         try {
-            // Parse JSON response
+            ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(response.getBody());
-            JsonNode itemsNode = rootNode.path("items");
-
-            // Convert JSON nodes to MovieDTO objects
-            return mapper.readValue(itemsNode.toString(), mapper.getTypeFactory().constructCollectionType(List.class, MovieDTO.class));
+            
+            // JSON 응답을 KmdbMovieResponse 객체로 변환
+            KmdbMovieResponse apiResponse = mapper.readValue(response.getBody(), KmdbMovieResponse.class);
+            
+            // 필요한 데이터 추출
+            return apiResponse.getResult();
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // Return an empty list in case of error
+            e.printStackTrace(); // 로그를 남기거나 사용자에게 알림을 고려
+            return List.of(); // 오류 발생 시 빈 리스트 반환
         }
-	}
-
-
+    }
     
 }

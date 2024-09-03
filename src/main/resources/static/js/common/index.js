@@ -181,16 +181,16 @@ document.getElementById('search-button').addEventListener('click', function() {
         fetch(`/movies/search?keyword=${encodeURIComponent(keyword)}`)
             .then(response => response.json())
             .then(data => {
-                const movieList = document.getElementById('movie-list');
-                movieList.innerHTML = ''; // Clear previous results
-
+                const movieList = document.getElementById('movie-list'); // 'search-result'를 'movie-list'로 수정
+                movieList.innerHTML = ''; // 이전 결과를 지웁니다.
+                
                 if (data.length > 0) {
                     data.forEach(movie => {
                         const movieItem = document.createElement('div');
-                        movieItem.classList.add('movie-item');
+                        movieItem.classList.add('movie-item'); // 'search-result'를 'movie-item'으로 수정
                         movieItem.innerHTML = `
                             <h3>${movie.title}</h3>
-                            <p>${movie.description}</p>
+                            <p><img src="${movie.poster()}" alt="${movie.title} 포스터"></p> <!-- 'movie.poster()'를 'movie.poster'로 수정 -->
                         `;
                         movieList.appendChild(movieItem);
                     });
