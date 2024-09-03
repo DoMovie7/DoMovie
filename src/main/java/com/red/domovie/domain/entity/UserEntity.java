@@ -6,6 +6,7 @@ import java.util.Set;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+import com.red.domovie.domain.enums.Tier;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,8 @@ import lombok.ToString;
 
 import java.util.HashSet;
 
+
+@DynamicUpdate
 @Setter
 @Getter
 @Builder
@@ -25,7 +28,7 @@ import java.util.HashSet;
 @Entity
 @ToString
 @Table(name = "user")
-public class UserEntity {
+public class UserEntity extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,9 +52,6 @@ public class UserEntity {
     @Column(nullable = false)
     private String birthDate; // 생년월일
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tier_id", nullable = true)
-    private TierEntity tierId;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -59,6 +59,10 @@ public class UserEntity {
     @Builder.Default
     @Column(name = "role")
     private Set<Role> roles = new HashSet<Role>(); // 'Role' Enum 타입을 별도로 정의
+    
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Tier rier =Tier.CORN ;
 
   //Role 등록하기 위한 편의 메서드 
   	public UserEntity addRole(Role role) {
