@@ -28,18 +28,22 @@
 
 		</section>
 		<section class="search-area">
-		    <div class="search-container">
-		        <!-- 검색창 (입력 필드) -->
-		        <form action="/movies/search" method="get">
-		            <input type="text" name="keyword" class="search-box" placeholder="검색어를 입력하세요...">
-		            <!-- 검색 버튼 -->
-		            <button type="submit" class="search-button">검색</button>
-		        </form>
-		    </div>
-		
+			<div class="search-container">
+				<div>
+					<input type="text" id="keyword" class="search-box"
+						placeholder="검색어를 입력하세요...">
+					<button id="search-button" class="search-button">검색</button>
+				</div>
+
+
+			</div>
+			<!-- 검색 결과를 표시할 부분 -->
+			<div id="movie-list">
+			
+			</div>
 
 		</section>
-		
+
 		<div class="container">
 			<section class="movie-list">
 				<h2 class="index-title">박스오피스 순위</h2>
@@ -95,15 +99,13 @@
 
 			<section class="movie-list">
 				<h2 class="index-title">최신 개봉작</h2>
-				<div class="movie-grid" id="movieContainer">
-
-				</div>
+				<div class="movie-grid" id="movieContainer"></div>
 			</section>
 
 			<section class="movie-list">
 				<h2 class="index-title">개봉 예정작</h2>
 				<div class="movie-grid" id="movieContainer3">
-	
+
 					<!-- 추가 영화 항목들... -->
 				</div>
 			</section>
