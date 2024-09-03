@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initialValue: '내용을 입력해 주세요.',     // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
         previewStyle: 'vertical'                // 마크다운 프리뷰 스타일 (탭 형식 또는 수직 형식)
     });
-
+	
     // 폼 제출 처리를 담당합니다.
     document.getElementById('submitButton').addEventListener('click', function(event) {
         // 기본 폼 제출을 방지합니다.
