@@ -37,7 +37,7 @@ public class RecommendServiceProcess implements RecommendService {
         // 데이터베이스에서 가져온 RecommendEntity 객체를 RecommendListDTO로 변환
         for (RecommendEntity recommend : recommends) {
             dtoList.add(RecommendListDTO.builder()
-                    .no(recommend.getId())  // 항목 번호
+                    .id(recommend.getId())  // 항목 번호
                     .title(recommend.getTitle())  // 항목 제목
                     .email(recommend.getAuthor().getEmail())  // 엔티티의 author 필드를 user로 매핑
         	        .userName(recommend.getAuthor().getUserName())  // 엔티티의 author 필드를 user로 매핑

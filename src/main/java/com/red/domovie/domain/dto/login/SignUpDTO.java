@@ -24,6 +24,7 @@ public class SignUpDTO {
 	
 	public UserEntity toEntity(PasswordEncoder pe) {
 
+
         UserEntity entity = UserEntity.builder()
                 .userName(userName)
                 .nickName(nickName)

@@ -1,14 +1,21 @@
 package com.red.domovie.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+import com.red.domovie.domain.dto.recommend.RecommendListDTO;
 import com.red.domovie.domain.entity.UserEntity;
+import com.red.domovie.domain.repository.RecommendRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 import com.red.domovie.service.MypageService;
 
@@ -20,6 +27,8 @@ public class MypageServiceProcess implements MypageService {
 
 	private final UserEntityRepository userEntityRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ModelMapper modelMapper;
+	private final RecommendRepository recommendRepository;
 
 	@Override
 	public ProfileDTO getCurrentUser() {
@@ -32,8 +41,10 @@ public class MypageServiceProcess implements MypageService {
 
 		UserEntity user = userEntityRepository.findByEmail(username)
 				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		int count=recommendRepository.countByAuthor(user);
 
-		return ProfileDTO.from(user);
+		return modelMapper.map(user, ProfileDTO.class).recommendCount(count);
 	}
 
 	@Override
@@ -56,6 +67,17 @@ public class MypageServiceProcess implements MypageService {
 		}
 
 		userEntityRepository.save(user);
+	}
+
+	@Override
+	public List<RecommendListDTO> recommendsByUserProcess(Long userId) {
+		UserEntity author = userEntityRepository.findById(userId).orElseThrow();
+		
+		return recommendRepository.findByAuthor(author).stream()
+				.map(reommmend->modelMapper.map(reommmend, RecommendListDTO.class))
+				.collect(Collectors.toList())
+			;
+		
 	}
 
 }

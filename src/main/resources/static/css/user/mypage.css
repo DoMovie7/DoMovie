@@ -160,12 +160,6 @@
 	color: var(--main-white);
 }
 
-/* 달력 아이콘 스타일 */
-.calendar-icon {
-	cursor: pointer;
-	margin-left: 5px;
-}
-
 /* 비밀번호 변경 팝업 스타일 */
 .popup-overlay {
 	position: fixed;
