@@ -140,6 +140,7 @@ function btnBotClicked() {
 function btnCloseClicked() {
     //const botContainer = document.getElementById("bot-container");
     botContainer.classList.add('animate__animated', 'animate__bounceOut');
+    websocketStatus = 0;
     
     // 애니메이션 종료 후 실행할 함수
     function onAnimationEnd() {

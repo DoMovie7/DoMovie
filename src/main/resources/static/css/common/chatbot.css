@@ -250,14 +250,29 @@
 	border: none;
 	border-radius: 4px;
 	position: absolute;
-	top: 10px;
-	right: 10px;
+	top: 7px;
+    right: 10px;
 	margin-top: 6px;
 	margin-right: 5px;
 	z-index: 20;
 	color: var(--main-white);
 }
 
+#go-back-all{
+	display:flex;
+	cursor: pointer;
+	font-size: 18px;
+	background: none;
+	border: none;
+	border-radius: 4px;
+	position: absolute;
+	top: 9.5px;
+	right: 38px;
+	margin-top: 6px;
+	margin-right: 5px;
+	z-index: 20;
+	color: var(--main-white);
+}
 
 
 #chat-content {
@@ -297,7 +312,7 @@
 
 /* 버튼 아이콘 스타일 */
 #close-button>i {
-	font-size: 18px;
+	font-size: 22px;
 }
 
 .button-containers{
