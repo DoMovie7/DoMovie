@@ -76,7 +76,7 @@ public class BotController {
 		String key = dto.getKey();
 		String responseMessage = "아직 상담사와 연결되지 않았습니다. 잠시만 기다려주세요.";
 		
-		messagingTemplate.convertAndSend("/topic/bot/"+key, responseMessage);
+		messagingTemplate.convertAndSend("/topic/chatting/"+key, responseMessage);
 		
 	}
 	
@@ -89,7 +89,7 @@ public class BotController {
 		String key = dto.getKey();
 		String responseMessage = openaiService.aiAnswerProcess(dto);
 		
-		messagingTemplate.convertAndSend("/topic/chat/"+key, responseMessage);
+		messagingTemplate.convertAndSend("/topic/bot/"+key, responseMessage);
 		
 	}
 

@@ -1,6 +1,7 @@
 package com.red.domovie.domain.entity.hometheater;
 
 import com.red.domovie.domain.dto.hometheater.HomeTheaterUpdateDTO;
+import com.red.domovie.domain.entity.BaseEntity;
 import com.red.domovie.domain.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
 
+@DynamicUpdate
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,7 +24,7 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "home_theater")
-public class HomeTheaterEntity {
+public class HomeTheaterEntity extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +36,6 @@ public class HomeTheaterEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity author;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;  // createdDate를 createdAt으로 변경
 
     private int viewCount;
 

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.red.domovie.common.util.KmdbMovieUtil;
 import com.red.domovie.domain.dto.movieDetail.GetMovieDetailDTO;
+import com.red.domovie.domain.dto.movieDetail.postMovieRatingDTO;
 import com.red.domovie.service.MovieDetailService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,16 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 	        	
 	        }
 	
+	}
+    
+	
+	
+	//별점 쓰기 
+	@Override
+	public void saveMovieRating(Long userId, postMovieRatingDTO dto) {
+		
+		
+		
 	}
 
 	

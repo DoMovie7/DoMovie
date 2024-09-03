@@ -41,7 +41,6 @@ public class RecommendServiceProcess implements RecommendService {
                     .title(recommend.getTitle())  // 항목 제목
                     .email(recommend.getAuthor().getEmail())  // 엔티티의 author 필드를 user로 매핑
         	        .userName(recommend.getAuthor().getUserName())  // 엔티티의 author 필드를 user로 매핑
-                    .createdAt(recommend.getCreatedDate())  // 생성 시간
                     .imgUrl(recommend.getImgUrl())  // 이미지 URL (필요시 추가)
                     .commentCount(recommend.getCommentCount())  // 댓글 수
                     .build());  // RecommendListDTO 객체 생성 및 리스트에 추가

@@ -38,7 +38,6 @@ public class SignUpDTO {
                 .phoneNumber(phoneNumber)
                 .password(pe.encode(password))
                 .birthDate(birthDate)
-                .tierId(defaultTier)  // 기본 티어 설정
                 .build();
 
         entity.addRole(Role.USER);

@@ -133,7 +133,7 @@
 				            <span class="star-icon"></span>
 				        </label>
 				        <label class="rating__label rating__label--half" for="star3half">
-				            <input type="radio" id="star3half" class="rating__input" name="rating" value="7" checked>
+				            <input type="radio" id="star3half" class="rating__input" name="rating" value="7">
 				            <span class="star-icon"></span>
 				        </label>
 				        <label class="rating__label rating__label--full" for="star4">
@@ -154,7 +154,7 @@
 			  			<input type="hidden" th:value="${movieDetail.movieId}" name="movieId"></input>
 			  		
 			  		<div class="comment">
-			  		   <input type="text" placeholder="코멘트를 작성" required="required">
+			  		   <input type="text" placeholder="코멘트를 작성" name="comment" required="required">
 			  		   <button type="button" class="cmbtn3 commentBtn">작성</button>
 			  		</div>
 			  	

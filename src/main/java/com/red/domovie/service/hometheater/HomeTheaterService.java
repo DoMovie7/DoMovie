@@ -123,7 +123,6 @@ public class HomeTheaterService {
 
         CommentEntity comment = CommentEntity.builder()
                 .content(commentForm.getContent())
-                .createdDate(LocalDateTime.now())
                 .homeTheater(homeTheater) // homeTheaterEntity에서 homeTheater로 변경
                 .build();
 

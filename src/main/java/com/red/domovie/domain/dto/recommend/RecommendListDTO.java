@@ -28,7 +28,7 @@ public class RecommendListDTO {
 	        .email(entity.getAuthor().getEmail())  // 엔티티의 author 필드를 user로 매핑
 	        .userName(entity.getAuthor().getUserName())  // 엔티티의 author 필드를 user로 매핑
 	        .imgUrl(entity.getImgUrl())
-	        .createdAt(entity.getCreatedDate())  // 엔티티의 createdDate 필드를 createdAt으로 매핑
+	        //.createdAt(entity.getCreatedDate())  // 엔티티의 createdDate 필드를 createdAt으로 매핑
 	        .commentCount(entity.getCommentCount())
 	        .build();
 	}

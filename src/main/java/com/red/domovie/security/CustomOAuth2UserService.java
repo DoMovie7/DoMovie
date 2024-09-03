@@ -130,7 +130,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                 .phoneNumber("미입력")
                 .birthDate("미입력")
-                .tierId(defaultTier)
                 .provider(provider)
                 .socialId(socialId)
                 .build()

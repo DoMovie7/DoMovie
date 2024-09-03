@@ -8,10 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		
    //코멘트 작성 비동기 요청 변수
 	const commentBtn = document.querySelector('.commentBtn')
-	const rating = document.querySelector('input[name="rating"]:checked').value;
-	const movieId = document.querySelector('input[name="comments"]').value;
-	const commentText = document.querySelector('.comment input[type="text"]').value;
-
+	
    
    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
@@ -96,22 +93,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	//작성 버튼 동작 감지 비동기 요청
 	commentBtn.addEventListener('click', function() {
-       
+       //클릭 했을 시점의 값을 가져옴
+        const rating = document.querySelector('input[name="rating"]:checked').value;
+        const movieId = document.querySelector('input[name="movieId"]').value;
+        const commentText = document.querySelector('input[name="comment"]').value;
+        
+        
        // 보낼 폼데이터 생성
-		const formData = new FormData();
-		formData.append('rating', rating);
-		formData.append('movieId', movieId);
-		formData.append('comments', commentText);
-		
+		  const data = {
+		            rating: rating,
+		            movieId: movieId,
+		            comments: commentText
+		        };
 		
 		//비동기 요청
-		fetch('/movies/detail',{
+		fetch('/movies/detail/write',{
 			method: 'POST',
 			headers: {
 				[csrfHeader]: csrfToken,
 				'content-Type': 'application/json'
 			},
-			body: JSON.stringify(Object.fromEntries(formData))
+			body: JSON.stringify(data)
 		})
 		
 		.then(data=>{
