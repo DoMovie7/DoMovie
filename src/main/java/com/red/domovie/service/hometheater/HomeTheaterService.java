@@ -1,9 +1,12 @@
 package com.red.domovie.service.hometheater;
 
 import com.red.domovie.domain.dto.hometheater.*;
+import com.red.domovie.domain.entity.Role;
+import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.entity.hometheater.Category;
 import com.red.domovie.domain.entity.hometheater.CommentEntity;
 import com.red.domovie.domain.entity.hometheater.HomeTheaterEntity;
+import com.red.domovie.domain.repository.UserEntityRepository;
 import com.red.domovie.domain.repository.hometheater.CategoryRepository;
 import com.red.domovie.domain.repository.hometheater.CommentRepository;
 import com.red.domovie.domain.repository.hometheater.HomeTheaterRepository;
@@ -27,6 +30,7 @@ public class HomeTheaterService {
     private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
     private final S3Service s3Service;
+    private final UserEntityRepository userRepository;
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
@@ -43,9 +47,30 @@ public class HomeTheaterService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
         return modelMapper.map(entity, HomeTheaterDetailDTO.class);
     }
+    @Transactional
+    public boolean deletePost(Long id, String email) {
+        HomeTheaterEntity post = homeTheaterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + id));
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 
-    public void createPost(HomeTheaterSaveDTO homeTheaterSaveDTO, MultipartFile file) {
-        HomeTheaterEntity homeTheaterEntity = modelMapper.map(homeTheaterSaveDTO, HomeTheaterEntity.class);
+        if (post.isAuthor(user) || user.getRoles().contains(Role.ADMIN)) {
+            homeTheaterRepository.delete(post);
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public void createPost(HomeTheaterSaveDTO homeTheaterSaveDTO, MultipartFile file, String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+        HomeTheaterEntity homeTheaterEntity = HomeTheaterEntity.builder()
+                .title(homeTheaterSaveDTO.getTitle())
+                .content(homeTheaterSaveDTO.getContent())
+                .author(user)
+                .build();
 
         if (file != null && !file.isEmpty()) {
             try {
@@ -58,6 +83,7 @@ public class HomeTheaterService {
 
         homeTheaterRepository.save(homeTheaterEntity);
     }
+
 
     private String saveFile(MultipartFile file) throws IOException {
         String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();

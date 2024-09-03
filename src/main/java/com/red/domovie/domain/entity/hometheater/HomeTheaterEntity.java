@@ -1,6 +1,7 @@
 package com.red.domovie.domain.entity.hometheater;
 
 import com.red.domovie.domain.dto.hometheater.HomeTheaterUpdateDTO;
+import com.red.domovie.domain.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +26,9 @@ public class HomeTheaterEntity {
 
     private String title;
 
-    private String author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity author;
 
     private LocalDateTime createdDate;
 
@@ -48,6 +51,11 @@ public class HomeTheaterEntity {
     @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> commentEntities;
 
+    @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments = new ArrayList<>();
 
+    public boolean isAuthor(UserEntity user) {
+        return this.author.getUserId() == user.getUserId();
+    }
 
 }
