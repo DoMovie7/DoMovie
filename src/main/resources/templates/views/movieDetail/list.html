@@ -13,17 +13,18 @@
 	<main id="movie-detail">
 
 		<section id="video-wrap">
-		   <div class="video">
-		   	<iframe src="https://www.youtube.com/embed/zi44N3PGvJw?si=ybwkIHjMRBIlpg0s"frameborder="0" allowfullscreen=""></iframe>
-		   </div>
-			
-			
+			<div class="video">
+			   <!--  <img alt="" th:src="${movieDetail.stll}"> -->
+				<iframe th:src="${movieDetail.vodUrl}" sandbox="allow-same-origin allow-scripts" frameborder="0"allowfullscreen ></iframe>
+			</div>
+
+
 			<div class="movie-info">
 				<ul>
-					<li>임영웅ㅣ아임 히어로 더 스타디움 </li>
-					<li><span>2024</span><span>공연실황/다큐멘터리</span><span>한국</span></li>
-					<li><span>1시간 49분</span><span>전체</span></li>
-					<li><span>예매순위 1위</span><span>개봉날짜</span><span>누적판매 461명</span></li>
+					<li th:text="${movieDetail.title}">임영웅ㅣ아임 히어로 더 스타디움 </li>
+					<li><span th:text="${movieDetail.repRlsDate}">2024</span><span th:text="${movieDetail.genre}">공연실황/다큐멘터리</span><span th:text="${movieDetail.nation}">한국</span></li>
+					<li><span th:text="${movieDetail.runtime}">1시간 49분</span><span th:text="${movieDetail.rating}">전체</span></li>
+					<li><span th:text="${movieDetail.company}">예매순위 1위</span></li>
 				</ul>
 			
 			</div>
@@ -34,7 +35,7 @@
 
 				<div class="movie-poster">
 					<img
-						src="https://search.pstatic.net/common?quality=75&direct=true&src=https%3A%2F%2Fmovie-phinf.pstatic.net%2F20240814_263%2F1723612743690sGgr8_JPEG%2Fmovie_image.jpg"
+						th:src="${movieDetail.poster}"
 						alt="Movie Poster">
 				</div>
 				<div class="movie-detail-contents">
@@ -45,7 +46,7 @@
 
 					<div class="movie-description">
 						<ul>
-							<li>
+							<li th:text="${movieDetail.plotText}">
 								10만 영웅시대와 함께 상암벌을 정복한 임영웅의 스타디움 입성기! “영웅시대가 저와 별의 이야기를 함께 써 내려가고 있다고 생각해요” 2024년 5월, 서울월드컵경기장에서 양일 10만 명의 관객을 동원하며 콘서트 안팎으로 폭발적인 화제를 일으켰던 임영웅의 콘서트를 극장에서 다시 만난다. 무대 위 압도적인 가창력과 다채로운 퍼포먼스, 새로운 도전을 마다 않는 무대 뒤의 열정적인 모습과 영웅시대를 향한 진솔한 마음, 그리고 최고의 공연을 위해 임영웅과 제작진 모두가 합심해 달려온 1년여의 기록까지, 초대형 IMAX와 ScreenX로 풍성하게 담았다! 영웅시대와 함께 더 큰 꿈을 꾸는 가수 임영웅의 하늘빛 축제가 스크린에서 펼쳐진다!
 							</li>
 						</ul>
@@ -63,22 +64,13 @@
 			<div class="movie-Staff">
 				<p>스태프</p>
 				<div class="movie-staff-contents">
-					<div>
-						<ul>
-							<li><span>감독 : </span><span>임영웅</span></li>
-						</ul>
-
-					</div>
-
 
 					<div class="movie-actor">
 						<ul>
-							<li><span>배우 : </span><span>임영웅</span><br>
-							<span>배역 : </span><span>임영웅</span></li>
-							<li><span>배우 : </span><span>전송희</span><br>
-							<span>배역 : </span><span>전송희</span></li>
-							<li><span>배우 : </span><span>김유진</span><br>
-							<span>배역 : </span><span>이유진</span></li>
+							<li th:each="staffs : ${movieDetail.staffs}">
+								<span>배우 : </span><span th:text="${staffs.name}">임영웅</span><br>
+								<span>배역 : </span><span th:text="${staffs.role}">임영웅</span>
+							</li>
 						</ul>
 					</div>
 

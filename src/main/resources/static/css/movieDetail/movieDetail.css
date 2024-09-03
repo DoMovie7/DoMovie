@@ -6,15 +6,23 @@
 #movie-detail{color:var(--main-white);}
 
 #video-wrap{width: 100%;  position:relative;
-  height:0; padding-bottom:40.25%;}
+  height:0; padding-bottom:40.25%; overflow: hidden;}
   
   
-.video>iframe{
+.video iframe{
   position:absolute;
   top:0;
   left:0;
   width:100%;
-  height:100%;}
+  height:110%;
+  border: none;
+  }
+  
+  
+#trailerVideo {
+    width: 100% !important;
+    height: 110% !important;
+}
   
   
 .video:after{content: ""; display: block; position:absolute; bottom:0;  left: 0;width: 100%; height: 40%;  
@@ -104,9 +112,9 @@ background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.9),rgba(0
   
   .movie-staff-contents{display: flex; justify-content: flex-start; margin-bottom: 50px}
   
-  .movie-actor>ul{display: flex; justify-content:flex-start;}
+  .movie-actor>ul{display: flex; justify-content:flex-start; flex-wrap: wrap;}
   
-  .movie-staff-contents>div>ul>li{ width: 150px; background-color: var(--main-black); height: 70px; border-radius: 10px; margin-right: 15px;text-align: center; padding-top: 10px}
+  .movie-staff-contents>div>ul>li{ margin-bottom:10px; width: 170px; background-color: var(--main-black); height: 70px; border-radius: 10px; margin-right: 15px;text-align: center; padding-top: 10px}
 
 
 /*리뷰 남기기*/
