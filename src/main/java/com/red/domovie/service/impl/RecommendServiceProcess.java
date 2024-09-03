@@ -4,11 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.red.domovie.domain.dto.recommend.RecommendListDTO;
+import com.red.domovie.domain.dto.recommend.RecommendSaveDTO;
 import com.red.domovie.domain.entity.RecommendEntity;
+import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.repository.RecommendRepository;
 import com.red.domovie.service.RecommendService;
 
@@ -20,25 +23,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecommendServiceProcess implements RecommendService {
 	
-		private final RecommendRepository recommendRepository;	  
+	private final RecommendRepository recommendRepository;	 
+	private final ModelMapper modelMapper;
 	
     // RecommendService 인터페이스를 구현한 listProcess 메서드
     @Override
     public void listProcess(Model model) {
     	 // 데이터베이스에서 실제 추천 글 목록을 가져옴
-        List<RecommendEntity> posts = recommendRepository.findAll();
+        List<RecommendEntity> recommends = recommendRepository.findAll();
         
         List<RecommendListDTO> dtoList = new ArrayList<>();
 
         // 데이터베이스에서 가져온 RecommendEntity 객체를 RecommendListDTO로 변환
-        for (RecommendEntity post : posts) {
+        for (RecommendEntity recommend : recommends) {
             dtoList.add(RecommendListDTO.builder()
-                    .no(post.getId())  // 항목 번호
-                    .title(post.getTitle())  // 항목 제목
-                    .user(post.getAuthor())  // 글쓴이 이름
-                    .createdAt(post.getCreatedDate())  // 생성 시간
-                    .imgUrl(post.getImgUrl())  // 이미지 URL (필요시 추가)
-                    .commentCount(post.getCommentCount())  // 댓글 수
+                    .no(recommend.getId())  // 항목 번호
+                    .title(recommend.getTitle())  // 항목 제목
+                    .email(recommend.getAuthor().getEmail())  // 엔티티의 author 필드를 user로 매핑
+        	        .userName(recommend.getAuthor().getUserName())  // 엔티티의 author 필드를 user로 매핑
+                    .createdAt(recommend.getCreatedDate())  // 생성 시간
+                    .imgUrl(recommend.getImgUrl())  // 이미지 URL (필요시 추가)
+                    .commentCount(recommend.getCommentCount())  // 댓글 수
                     .build());  // RecommendListDTO 객체 생성 및 리스트에 추가
         }
 
@@ -47,8 +52,10 @@ public class RecommendServiceProcess implements RecommendService {
     }
 
     @Override
-    public void savePost(RecommendEntity recommendEntity) {
-        recommendRepository.save(recommendEntity);
+    public void savePost(RecommendSaveDTO dto, Long userId) {
+    	RecommendEntity entity=modelMapper.map(dto, RecommendEntity.class);
+    	//작성자
+        recommendRepository.save(entity.author(UserEntity.builder().userId(userId).build()));
     }
 
     @Override
