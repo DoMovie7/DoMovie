@@ -3,6 +3,7 @@ package com.red.domovie.domain.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
@@ -21,14 +22,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+@DynamicUpdate
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "recommend")
-public class RecommendEntity {
+public class RecommendEntity extends BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,13 +52,8 @@ public class RecommendEntity {
     }
     
     private int commentCount; // 조회수
-    @CreationTimestamp
-    @Column(columnDefinition = "timestamp")
     
-    private LocalDateTime createdDate; // 날짜
-    @UpdateTimestamp
-    @Column(columnDefinition = "timestamp")
-    private LocalDateTime updatedDate; // 날짜
+    
     
     private String imgUrl; // 항목 이미지 url
 }

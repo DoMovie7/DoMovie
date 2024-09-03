@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "movie_ratings", 
 uniqueConstraints = {@UniqueConstraint(columnNames = {"movieId", "user_id"})})
 @Entity
-public class MovieRatingsEntity {
+public class MovieRatingsEntity extends BaseEntity{
 	
 	//유저와 무비 아이디를 복합키로 쓰는 고유 id
     @Id
