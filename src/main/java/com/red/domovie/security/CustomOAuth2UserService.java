@@ -117,7 +117,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private UserEntity createSocialUser(String email, String name, String provider, String socialId) {
         log.info("Creating new social user: {} with provider: {}", email, provider);
-        
+
 
         UserEntity entity = UserEntity.builder()
                 .email(email != null ? email : socialId)
@@ -126,7 +126,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                 .phoneNumber("미입력")
                 .birthDate("미입력")
-                //.tierId(defaultTier)
                 .provider(provider)
                 .socialId(socialId)
                 .build()

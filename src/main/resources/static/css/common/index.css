@@ -193,12 +193,14 @@ h3 {
     font-weight: bold;
 }
 
-.movie-list2{
-	width: 100%;
+.movie-list2,
+.search-container{
 	
+	width: 100%;
+	padding: 20px 0px;
 	background-color: var(--main-black);
 	color: var(--main-white);
-	margin-top: 10px;
+	
 }
 .wrap{
 	display: flex;
@@ -224,7 +226,7 @@ h3 {
 .search-container {
     display: flex; /* 수평 정렬을 위해 flexbox 사용 */
     justify-content: center; /* 중앙 정렬 */
-    margin-top: 50px; /* 검색창 위쪽 여백 */
+    
 }
 
 .search-box {

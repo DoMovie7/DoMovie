@@ -16,11 +16,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.red.domovie.domain.dto.movie.BoxOfficeDTO;
 import com.red.domovie.domain.dto.movie.KmdbMovieDTO;
@@ -40,7 +42,7 @@ public class MovieApiServiceProcess implements MovieApiService {
     private final String BOXOFFICE_LIST_API_URL = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json";
     private final String MOVIE_LIST_API_URL = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json";
     //private final String NEW_LIST_API_URL = "http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2";
-    private final String NEW_LIST_API_URL = "http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2";
+    private final String KMDB_LIST_API_URL = "http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2";
 
     //일일 박스오피스
     @Override
@@ -92,7 +94,7 @@ public class MovieApiServiceProcess implements MovieApiService {
     private Map<String, String> fetchPosterFromKMDB(String movieNm, String releaseDts) {
         final String DEFAULT_POSTER = "/img/index/no-movie-img.jpg";
         RestTemplate restTemplate = new RestTemplate();
-        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
         strBuilder.append("&detail=Y");
         strBuilder.append("&title=").append(movieNm);
         
@@ -153,7 +155,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         String endDate = currentDate.format(formatter);
 
         RestTemplate restTemplate = new RestTemplate();
-        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
         strBuilder.append("&detail=Y");
         strBuilder.append("&releaseDts=").append(startDate);
         strBuilder.append("&releaseDte=").append(endDate);
@@ -212,7 +214,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         String formattedDate = date.format(formatter);
         
         RestTemplate restTemplate = new RestTemplate();
-        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
         strBuilder.append("&detail=Y");
         strBuilder.append("&releaseDts=").append(formattedDate);
         strBuilder.append("&listCount=10");
@@ -258,7 +260,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         String endDate = currentDate.format(formatter);
 
         RestTemplate restTemplate = new RestTemplate();
-        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
         strBuilder.append("&detail=y");
         strBuilder.append("&genre=공포");
         strBuilder.append("&releaseDts=").append(startDate);
@@ -322,7 +324,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         String endDate = currentDate.format(formatter);
 
         RestTemplate restTemplate = new RestTemplate();
-        StringBuilder strBuilder = new StringBuilder(NEW_LIST_API_URL);
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
         strBuilder.append("&detail=y");
         strBuilder.append("&type=애니메이션");
         strBuilder.append("&releaseDts=").append(startDate);
@@ -376,5 +378,29 @@ public class MovieApiServiceProcess implements MovieApiService {
             model.addAttribute("error", "서버 오류가 발생했습니다.");
         }
     }
+
+
+	@Override
+	public List<KmdbMovieDTO> searchMovies(String keyword) {
+        RestTemplate restTemplate = new RestTemplate();
+        String apiUrl = KMDB_LIST_API_URL + "?ServiceKey=" + kmdbApiKey + "&title=" + keyword + "&listCount=10";
+        
+        ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
+
+        try {
+            // Parse JSON response
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(response.getBody());
+            JsonNode itemsNode = rootNode.path("items");
+
+            // Convert JSON nodes to MovieDTO objects
+            return mapper.readValue(itemsNode.toString(), mapper.getTypeFactory().constructCollectionType(List.class, MovieDTO.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of(); // Return an empty list in case of error
+        }
+	}
+
+
     
 }

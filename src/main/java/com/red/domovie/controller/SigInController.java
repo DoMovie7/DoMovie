@@ -45,19 +45,6 @@ public class SigInController {
 	public String findPassword() {
 		return "views/login/findPassword";
 	}
-	@PostMapping("/api/find-password")
-    public String findPassword(@RequestBody FindPasswordRequestDTO request) {
-        logger.info("비밀번호 찾기 요청 받음: {}", request.getEmail());
-        loginService.processFindPassword(request.getUserName(), request.getEmail());
-		return "redirect:/findPassword";
-    }
-
-    @PutMapping("/api/reset-password")
-    public String resetPassword(@RequestBody ResetPasswordRequestDTO request) {
-        logger.info("비밀번호 재설정 요청 받음");
-        loginService.processResetPassword(request.getResetToken(), request.getNewPassword());
-        return "redirect:/signin";
-    }
 	
 
 	@GetMapping("/signup")

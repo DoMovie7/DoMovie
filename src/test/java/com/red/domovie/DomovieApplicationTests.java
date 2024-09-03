@@ -20,6 +20,7 @@ class DomovieApplicationTests {
 	
 	//@Test
 	void signIn() {
+
 	    
 	    // 일반 사용자 생성
 	    UserEntity user = UserEntity.builder()
@@ -30,7 +31,6 @@ class DomovieApplicationTests {
 	        .password(passwordEncoder.encode("1234"))
 	        .birthDate("1990-01-01")
 	        //.status(1L)
-	        //.tierId(defaultTier)  // 기본 티어 설정
 	        .build()
 	        .addRole(Role.USER);
 

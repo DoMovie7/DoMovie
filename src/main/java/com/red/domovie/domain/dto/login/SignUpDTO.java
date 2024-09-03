@@ -23,7 +23,7 @@ public class SignUpDTO {
 	private Role role;
 	
 	public UserEntity toEntity(PasswordEncoder pe) {
-        
+
 
         UserEntity entity = UserEntity.builder()
                 .userName(userName)
@@ -32,7 +32,6 @@ public class SignUpDTO {
                 .phoneNumber(phoneNumber)
                 .password(pe.encode(password))
                 .birthDate(birthDate)
-                //.tierId(defaultTier)  // 기본 티어 설정
                 .build();
 
         entity.addRole(Role.USER);
