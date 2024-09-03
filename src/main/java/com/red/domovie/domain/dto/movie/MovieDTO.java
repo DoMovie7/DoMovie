@@ -20,7 +20,9 @@ public class MovieDTO {
     private String typeNm;
     private String nation;
     private String repGenreNm;
+    private String genreAlt;
     private String movieId;
+    private String prdtStatNm;
 
 
 	

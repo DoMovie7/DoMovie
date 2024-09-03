@@ -1,32 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Movie Information</title>
-</head>
-<body>
-    <div th:each="dto : ${list}">
-        <div class="movie-item" th:data-docid="${dto.DOCID}">
-			<a th:href="@{'/contents/' + ${dto.DOCID}}">
-			    
-			    <img th:src="${dto.poster}" th:alt="${dto.movieNm}" /> 
-			</a>
-            <ul class="movie-info">
-                <li><span th:text="${dto.movieNm}"></span></li>
-                <li><span th:text="${dto.nation}"></span></li>
-                <li><span>개봉일:</span><span th:text="${#strings.substring(dto.openDt, 0, 4) + '-' + #strings.substring(dto.openDt, 4, 6) + '-' + #strings.substring(dto.openDt, 6, 8)}"></span></li>
-                 
-                
-            </ul>
-        </div>
-    </div>
-</body>
-</html>
-
-
-
-
-<!--/* <div class="movie-item" th:each="dto:${list}" th:data-docid="${dto.docid}">
-	<a th:href="|/contents/${dto.docid}|"><img th:src="${dto.poster()}" th:alt="${dto.title}"></a>
+<html>
+<div class="movie-item" th:each="dto:${list}" th:data-docid="${dto.docid}">
+	<img th:src="${dto.poster()}" th:alt="${dto.title}">
 	<ul class="movie-info">
 		<li><span>[[${dto.title}]]</span></li>
 		<li><span>[[${dto.prodYear}]]</span></li>
@@ -37,5 +12,8 @@
 			</th:block>
 		</li>
 	</ul>
-</div> */-->
+</div>
+</html>
+
+
 

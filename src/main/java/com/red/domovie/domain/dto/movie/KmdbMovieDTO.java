@@ -13,11 +13,12 @@ public class KmdbMovieDTO {
 	@JsonProperty("DOCID")
 	private String docid;
     private String posters;
-    private String posterUrl;
+
     private String title;
     private String prodYear;
     private String nation;
     private String genre;
+    private String releaseDate;
     private Plots plots;
     
     public String poster() {
@@ -27,5 +28,6 @@ public class KmdbMovieDTO {
         }
         return null; // Return null if posters is null or empty
     }
+    
     
 }
