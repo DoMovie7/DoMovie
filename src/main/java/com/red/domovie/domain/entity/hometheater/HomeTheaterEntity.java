@@ -51,8 +51,6 @@ public class HomeTheaterEntity {
     @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> commentEntities;
 
-    @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentEntity> comments = new ArrayList<>();
 
     public boolean isAuthor(UserEntity user) {
         return this.author.getUserId() == user.getUserId();
