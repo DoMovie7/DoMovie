@@ -11,9 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.red.domovie.domain.entity.Role;
-import com.red.domovie.domain.entity.TierEntity;
 import com.red.domovie.domain.entity.UserEntity;
-import com.red.domovie.domain.repository.TierEntityRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserEntityRepository userRepository;
-    private final TierEntityRepository tierRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -120,8 +117,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private UserEntity createSocialUser(String email, String name, String provider, String socialId) {
         log.info("Creating new social user: {} with provider: {}", email, provider);
-        TierEntity defaultTier = tierRepository.findById(1L)
-            .orElseThrow(() -> new RuntimeException("Default tier not found"));
+        
 
         UserEntity entity = UserEntity.builder()
                 .email(email != null ? email : socialId)
@@ -130,7 +126,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                 .phoneNumber("미입력")
                 .birthDate("미입력")
-                .tierId(defaultTier)
+                //.tierId(defaultTier)
                 .provider(provider)
                 .socialId(socialId)
                 .build()

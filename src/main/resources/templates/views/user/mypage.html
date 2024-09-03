@@ -30,16 +30,7 @@
 					<div class="profile-info">
 						<ul>
 							<li><span>이름 : </span><span id="name" th:text="${user.userName}"></span></li>
-							<li>
-								<span>생년월일 : </span>
-								<span id="birthdate-display" th:text="${user.birthDate}"></span>
-								<button id="edit-birthdate-btn">수정</button>
-								<form id="birthdate-form" style="display: none;" method="post">
-									<input type="date" id="birthdate-input" th:value="${user.birthDate}">
-									<button type="submit" id="save-birthdate-btn">수정완료</button>
-									<button type="button" id="cancel-birthdate-btn">취소</button>
-								</form>
-							</li>
+							<li><span>생년월일 : </span><span id="birthdate" th:text="${user.birthDate}"></span></li>
 							<li>
 								<span>닉네임 : </span>
 								<span id="nickname" th:text="${user.nickName}"></span>
@@ -50,16 +41,7 @@
 									<button type="button" id="cancel-nickname-btn">취소</button>
 								</form>
 							</li>
-							<li>
-							    <span>핸드폰 : </span>
-							    <span id="phoneNumber-display" th:text="${user.phoneNumber}"></span>
-							    <button id="edit-phoneNumber-btn">수정</button>
-							    <form id="phoneNumber-form" style="display: none;" method="post">
-							        <input type="text" id="phoneNumber-input" th:value="${user.phoneNumber}">
-							        <button type="submit" id="save-phoneNumber-btn">수정완료</button>
-							        <button type="button" id="cancel-phoneNumber-btn">취소</button>
-							    </form>
-							</li>
+							<li><span>핸드폰 : </span><span id="phoneNumber" th:text="${user.phoneNumber}"></span></li>
 							<li><span>이메일 : </span><span id="email" th:text="${user.email}"></span></li>
 							<li>
 								<span>비밀번호 : </span>

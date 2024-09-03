@@ -49,9 +49,6 @@ public class UserEntity {
     @Column(nullable = false)
     private String birthDate; // 생년월일
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tier_id", nullable = true)
-    private TierEntity tierId;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
