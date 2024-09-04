@@ -48,7 +48,7 @@ public class SSHTunnellingConfig {
 	org.apache.ibatis.session.Configuration mybatisConfiguration() {
 		org.apache.ibatis.session.Configuration config = new org.apache.ibatis.session.Configuration();
 		config.setMapUnderscoreToCamelCase(
-				env.getProperty("mybatis.configuration.map-underscore-to-camel-case", Boolean.class, false));
+				env.getProperty("mybatis.configuration.map-underscore-to-camel-case", Boolean.class, true));
 		// 필요한 다른 MyBatis 설정을 여기에 추가
 		return config;
 	}

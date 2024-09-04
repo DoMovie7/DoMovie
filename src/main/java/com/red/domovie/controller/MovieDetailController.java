@@ -25,20 +25,28 @@ public class MovieDetailController {
 	private final MovieDetailService movieDetailService;
 	
 	@GetMapping("/movies/detail/{movieID}")
-	public String MovieDetail(@PathVariable(name = "movieID") String movieID,Model model) {
+	public String MovieDetail(@PathVariable(name = "movieID") String movieID,Model model,@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "0") int page) {
 		
 		System.out.println("movieID:"+movieID);
+		//
+		movieDetailService.findMovieDetail(movieID,model,page);
 		
-		movieDetailService.findMovieDetail(movieID,model);
+		if(userDetails != null) {
+				
+			System.out.println("특정리뷰 가져오기 작동중");
+				movieDetailService.findUserMovieRating(userDetails.getUserId(),movieID,model);
+				
+			}
 		
 		
 		return "views/movieDetail/list";
 	}
 	
 	
+	
+	
 	@PostMapping("/movies/detail/write")
 	public String postMovieRating(@RequestBody PostMovieRatingDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-		
 		
 		
 		System.out.println(dto);
