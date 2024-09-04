@@ -96,14 +96,14 @@ document.addEventListener('DOMContentLoaded', function() {
        //클릭 했을 시점의 값을 가져옴
         const rating = document.querySelector('input[name="rating"]:checked').value;
         const movieId = document.querySelector('input[name="movieId"]').value;
-        const commentText = document.querySelector('input[name="comment"]').value;
+        const comments = document.querySelector('input[name="comment"]').value;
         
         
        // 보낼 폼데이터 생성
 		  const data = {
 		            rating: rating,
 		            movieId: movieId,
-		            comments: commentText
+		            comments: comments
 		        };
 		
 		//비동기 요청
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			headers: {
 				[csrfHeader]: csrfToken,
 				'content-Type': 'application/json'
-			},
+			},                 
 			body: JSON.stringify(data)
 		})
 		

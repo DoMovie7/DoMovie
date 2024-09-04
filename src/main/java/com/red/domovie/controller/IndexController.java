@@ -2,10 +2,12 @@ package com.red.domovie.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.red.domovie.domain.dto.movie.KmdbMovieDTO;
 import com.red.domovie.service.MovieApiService;
@@ -57,13 +59,10 @@ public class IndexController {
     }
     
     @GetMapping("/movies/search")
-    public String getSearchMovies(@RequestParam("keyword") String keyword, Model model) {
-        // KMDB API를 호출하여 검색 결과를 가져옵니다.
+    @ResponseBody
+    public ResponseEntity<List<KmdbMovieDTO>> getSearchMovies(@RequestParam("keyword") String keyword) {
         List<KmdbMovieDTO> movies = movieApiService.searchMovies(keyword);
-        model.addAttribute("list", movies);
-        model.addAttribute("keyword", keyword);  // 검색어를 모델에 추가하여 폼에 표시
-        return "views/index/search-movie"; // Thymeleaf 템플릿 파일
+        return ResponseEntity.ok(movies);
     }
-
     
 }

@@ -3,6 +3,10 @@ package com.red.domovie.domain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.red.domovie.domain.dto.bot.FAQDTO;
+
+import groovy.transform.ToString;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,11 +44,24 @@ public class FAQEntity {
     @Column(nullable = true)
     private String content;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private FAQEntity parent;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FAQEntity> children = new ArrayList<>();
+    
+    /*
+    public FAQDTO toDTO(FAQEntity faq) {
+    	return FAQDTO.builder()
+    			.id(faq.getId())
+    			.name(faq.getName())
+    			.content(faq.getContent())
+    			.children(faq.getChildren())
+    			.build();
+    }
+    */
     
 }

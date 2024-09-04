@@ -21,7 +21,7 @@
         <section>
             <div class="section-title" th:text="${recommend.title}">제목</div>
             <p><strong>작성자:</strong> <span th:text="${recommend.author.userName}">작성자</span></p>
-            <p><strong>작성일:</strong> <span th:text="${#temporals.format(recommend.createdDate, 'yyyy.MM.dd')}">작성일</span></p>
+            <p><strong>작성일:</strong> <span th:text="${#temporals.format(recommend.createdAt, 'yyyy.MM.dd')}">작성일</span></p>
             <p><strong>장르:</strong> <span th:text="${recommend.genre}">장르</span></p>
             <p><strong>댓글 수:</strong> <span th:text="${recommend.commentCount}">댓글 수</span></p>
 

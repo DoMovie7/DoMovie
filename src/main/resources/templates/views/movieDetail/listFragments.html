@@ -1,0 +1,103 @@
+<div th:fragment="userReviewSection" class="user-comments-wrap">
+		
+    <div th:if="${userMovieRating != null}"  class="user-comments">
+		<p>나의 리뷰</p>
+		
+		<ul>
+			<li class="user-rating">
+				<div class="user-info">
+					<span th:text=${userMovieRating.nickName}>닉네임</span><span th:text=${userMovieRating.rating/2}>별점</span>
+				</div>
+				<div>
+					<button class="cmbtn3">수정</button>
+					<button class="cmbtn3">삭제</button>
+				</div>
+			
+			</li>
+			<li th:text=${userMovieRating.comments} class="user-comment">완전 짱이에요</li>
+		</ul>
+	
+	
+	
+	</div><!--나의 리뷰end-->
+	
+	<div th:if="${userMovieRating == null}" class="write-comments">
+		  <p>리뷰작성</p>
+		  
+		  <div class="write-comment">
+		  	<form>
+		  		<div class="rating">
+					<label class="rating__label rating__label--half" for="starhalf">
+			            <input type="radio" id="starhalf" class="rating__input" name="rating" value="1">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--full" for="star1">
+			            <input type="radio" id="star1" class="rating__input" name="rating" value="2">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--half" for="star1half">
+			            <input type="radio" id="star1half" class="rating__input" name="rating" value="3">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--full" for="star2">
+			            <input type="radio" id="star2" class="rating__input" name="rating" value="4">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--half" for="star2half">
+			            <input type="radio" id="star2half" class="rating__input" name="rating" value="5">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--full" for="star3">
+			            <input type="radio" id="star3" class="rating__input" name="rating" value="6">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--half" for="star3half">
+			            <input type="radio" id="star3half" class="rating__input" name="rating" value="7">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--full" for="star4">
+			            <input type="radio" id="star4" class="rating__input" name="rating" value="8">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--half" for="star4half">
+			            <input type="radio" id="star4half" class="rating__input" name="rating" value="9">
+			            <span class="star-icon"></span>
+			        </label>
+			        <label class="rating__label rating__label--full" for="star5">
+			            <input type="radio" id="star5" class="rating__input" name="rating" value="10">
+			            <span class="star-icon"></span>
+			        </label>
+		  		
+		  			
+		  		</div>
+		  			<input type="hidden" th:value="${movieDetail.movieId}" name="movieId"></input>
+		  		
+		  		<div class="comment">
+		  		   <input type="text" placeholder="코멘트를 작성" name="comment" required="required">
+		  		   <button type="button" class="cmbtn3 commentBtn">작성</button>
+		  		</div>
+		  	
+		  	</form>
+		  
+		  </div>
+	  
+	  </div><!--리뷰 작성 end-->
+
+
+</div><!--user-comments-wrap end  -->
+
+
+
+
+<div class="show-comment" th:fragment="reviewList">
+	<p>전체 리뷰</p>
+ 	<ul>
+ 		<li><span>전송희</span><span>4.5</span><p>임영웅이 좋아요</p></li>
+ 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 	</ul>
+</div>
