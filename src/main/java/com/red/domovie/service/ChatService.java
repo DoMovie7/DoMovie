@@ -10,11 +10,11 @@ import com.red.domovie.domain.entity.FAQEntity;
 
 public interface ChatService {
 
-	ChatRoomDTO findRoomById(long roomId);
-
 
 	void saveRoomProcess(QuestionDTO dto);
 
 	List<ChattingRoomDTO> findAllChatRoom();
+
+	List<ChattingRoomDTO> findByRoomId(String key);
 
 }

@@ -1,6 +1,6 @@
 let client;  // WebSocket 클라이언트 객체
-let key;
-//let botContainer = document.getElementById("bot-container");
+let key = document.getElementById('roomIdKey').value;
+console.log("key : ", clearAnswer);
 
 //채팅 연결
 function chatConnect(){
@@ -8,8 +8,6 @@ function chatConnect(){
 	client = Stomp.over(new SockJS('/chatbot')); // Stomp 라이브러리와 SockJS를 사용하여 WebSocket 연결 생성
 	    
 	    client.connect({}, (frame) => {
-	        key = generateUniqueKey();  //고유 키 생성
-	        console.log(key);
 	        client.subscribe(`/topic/query/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
 	            var response = answer.body; //서버로부터 받은 메세지 객체
 	            var now = new Date();
@@ -17,11 +15,11 @@ function chatConnect(){
 	            
 	            // 봇의 응답 메시지 HTML 생성
 	            var tag = `<div class="msg bot flex">
-	                        <div class="icon">
+	                        <!--<div class="icon">
 	                            <img src="/img/chatbot-img.png">
-	                        </div>
+	                        </div>-->
 	                        <div class="message">
-	                        <div class="bot-name">두비</div>
+	                        <div class="bot-name">고객님</div>
 	                            <div class="part chatbot">
 	                                <p>${response}</p>
 	                            </div>
@@ -43,12 +41,7 @@ function btnMsgSendClicked() {
         return;
     }
 
-    var question = document.getElementById("question").value.trim(); //입력 필드에서 질문을 가져와 공백 제거
-    if (question.length < 2) {
-        alert("질문은 최소 2글자 이상으로 부탁드립니다.");
-        return;
-    }
-
+    var answer = document.getElementById("answer").value.trim(); //입력 필드에서 질문을 가져와 공백 제거
     var now = new Date();
     var time = formatTime(now);
     
@@ -56,7 +49,7 @@ function btnMsgSendClicked() {
     var tag = `<div class="msg user flex">
                 <div class="message">
                     <div class="part guest">
-                        <p class="user-chat">${question}</p>
+                        <p class="user-chat">${answer}</p>
                     </div>
                     <div class="time">${time}</div>
                 </div>
@@ -68,24 +61,22 @@ function btnMsgSendClicked() {
     // 서버로 전송할 데이터 객체
     var data = {
         key: key,
-        content: question, // 사용자 질문 내용
-        userId: userId // 사용자 ID
+        content: answer, // 답변내용
     };
     
-		client.send(`/message/chat/query`, {}, JSON.stringify(data));
+	client.send(`/message/chat/answer`, {}, JSON.stringify(data));
     
-    clearQuestion();
+    clearAnswer();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
 // 페이지 로드 시 초기화 및 이벤트 리스너 설정
 document.addEventListener('DOMContentLoaded', (event) => {
-	
 	chatConnect();
     
     // 입력 필드에서 Enter 키 입력 시 메시지 전송
-    document.getElementById("question").addEventListener('keydown', function(event) {
+    document.getElementById("answer").addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             btnMsgSendClicked();
@@ -108,13 +99,13 @@ if (isWebSocketSupported()) {
 }
 
 // 입력 필드 초기화 함수
-function clearQuestion() {
-    document.getElementById("question").value = "";
+function clearAnswer() {
+    document.getElementById("answer").value = "";
 }
 
 // 채팅 메시지를 UI에 표시하는 함수
 function showMessage(tag) {
-    var chatContent = document.getElementById("chat-content");
+    var chatContent = document.getElementById("messageArea");
     chatContent.innerHTML += tag;
     chatContent.scrollTop = chatContent.scrollHeight;  // 스크롤을 최하단으로 이동
 }
@@ -192,7 +183,7 @@ function showDateIfNew() {
     
     if (savedDate !== today) {
         var dateTag = `<div class="flex center date">${today}</div>`;
-        var chatContent = document.getElementById("chat-content");
+        var chatContent = document.getElementById("messageArea");
         chatContent.innerHTML = dateTag + chatContent.innerHTML;
         localStorage.setItem('lastDisplayedDate', today);  // 현재 날짜를 로컬 스토리지에 저장
     }
