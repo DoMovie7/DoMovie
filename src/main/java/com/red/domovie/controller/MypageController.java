@@ -1,5 +1,6 @@
 package com.red.domovie.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+import com.red.domovie.domain.dto.recommend.RecommendListDTO;
 import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.MypageService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @Controller
@@ -49,6 +53,13 @@ public class MypageController {
 	        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
 	    }
 	}
+	
+	@ResponseBody
+	@GetMapping("/mypage/recommends")
+	public List<RecommendListDTO> recommendsByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return mypageService.recommendsByUserProcess(userDetails.getUserId());
+	}
+	
 	
 	
 }

@@ -2,6 +2,7 @@ package com.red.domovie.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class LoginServiceProcess implements LoginService {
 
     private final LoginMapper loginMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailServiceProcess emailService;
 
     @Override
     @Transactional
@@ -73,6 +75,33 @@ public class LoginServiceProcess implements LoginService {
 	public String findEmailByNameAndBirthDate(FindIdDTO request) {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
+
+	@Override
+    @Transactional
+    public void processFindPassword(String userName, String email) {
+        UserEntity user = loginMapper.findByUserNameAndEmail(userName, email);
+        if (user == null) {
+            throw new RuntimeException("입력한 정보와 일치하는 계정이 없습니다.");
+        }
+        
+        String resetToken = UUID.randomUUID().toString();
+        user.setPasswordResetToken(resetToken);
+        loginMapper.updateUser(user);
+        emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
+    }
+
+	@Override
+    @Transactional
+    public void processResetPassword(String resetToken, String newPassword) {
+        UserEntity user = loginMapper.findByPasswordResetToken(resetToken);
+        if (user == null) {
+            throw new RuntimeException("유효하지 않은 재설정 토큰입니다.");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPasswordResetToken(null);
+        loginMapper.updateUser(user);
+    }
 	
 	
 

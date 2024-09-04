@@ -6,8 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-
 import com.red.domovie.domain.dto.movieDetail.PostMovieRatingDTO;
 import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.MovieDetailService;

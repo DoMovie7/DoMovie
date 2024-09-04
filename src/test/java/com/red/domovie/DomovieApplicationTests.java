@@ -20,7 +20,7 @@ class DomovieApplicationTests {
 	
 	//@Test
 	void signIn() {
-	   
+
 	    
 	    // 일반 사용자 생성
 	    UserEntity user = UserEntity.builder()
