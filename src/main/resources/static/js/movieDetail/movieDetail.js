@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		        };
 		
 		//비동기 요청
-		fetch('/movies/detail/write',{
+		fetch("/movies/detail/write",{
 			method: 'POST',
 			headers: {
 				[csrfHeader]: csrfToken,
