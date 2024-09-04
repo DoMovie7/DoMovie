@@ -34,7 +34,7 @@
         <form id="search-form">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="text" id="keyword" class="search-box" placeholder="검색어를 입력하세요..." required>
-            <button type="submit" class="search-button">검색</button>
+            <button type="submit" class="search-button" id="search-button">검색</button>
         </form>
         <div class="search-text" id="trendsList">
             <a href="#"><span>#추천검색</span></a>
@@ -50,7 +50,7 @@
 
 		<div class="container">
 			<section class="movie-list">
-				<h2 class="index-title">박스오피스 순위</h2>
+				<h2 class="index-title">박스오피스 TOP10</h2>
 
 				<div class="movie-grid" id="boxOfficeContainer">
 					<!-- 영화 포스터 항목들 -->
@@ -102,12 +102,12 @@
 		<div class="container">
 
 			<section class="movie-list">
-				<h2 class="index-title">최신 개봉작</h2>
+				<h2 class="index-title">#최신 개봉작</h2>
 				<div class="movie-grid" id="movieContainer"></div>
 			</section>
 
 			<section class="movie-list">
-				<h2 class="index-title">개봉 예정작</h2>
+				<h2 class="index-title">#개봉 예정작</h2>
 				<div class="movie-grid" id="movieContainer3">
 
 					<!-- 추가 영화 항목들... -->
@@ -123,7 +123,7 @@
 				</div>
 			</section>
 			<section class="movie-list">
-				<h2 class="index-title">#애니메이션</h2>
+				<h2 class="index-title">#애니메이션 #어린이영화</h2>
 				<div class="movie-grid" id="movieContainer4">
 
 					<!-- 추가 영화 항목들... -->

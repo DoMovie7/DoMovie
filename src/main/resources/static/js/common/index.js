@@ -92,85 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-// movieInfo.js
-//사용자 검색 추적
-// 클라이언트 측 코드 (JavaScript)
-function fetchMovieInfo() {
-    fetch('/movies/new')
-        .then(response => response.text())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                return;
-            }
-            const movieContainer = document.getElementById('movieContainer');
-            movieContainer.innerHTML =data;
-        })
-        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
-}
-
-function fetchupcomingMovieInfo() {
-    fetch('/movies/upcoming')
-        .then(response => response.text())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                return;
-            }
-            const movieContainer = document.getElementById('movieContainer3');
-            movieContainer.innerHTML =data;
-        })
-        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
-}
-
-function fetchBoxOfficeInfo() {
-    fetch('/movies/boxOffice')
-        .then(response => response.text())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                return;
-            }
-			const boxOfficeContainer = document.getElementById('boxOfficeContainer');
-			boxOfficeContainer.innerHTML =data;
-        })
-        .catch(error => console.error('박스오피스 정보를 가져오는 도중 오류가 발생했습니다:', error));
-}
-
-function fetchHorrorMovieInfo() {
-    fetch('/movies/horror')
-        .then(response => response.text())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                return;
-            }
-            const movieContainer2 = document.getElementById('movieContainer2');
-            movieContainer2.innerHTML =data;
-        })
-        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
-}
-function fetchAnimationMovieInfo() {
-    fetch('/movies/animation')
-        .then(response => response.text())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                return;
-            }
-            const movieContainer2 = document.getElementById('movieContainer4');
-            movieContainer2.innerHTML =data;
-        })
-        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetchMovieInfo();
-    fetchBoxOfficeInfo();
-    fetchHorrorMovieInfo();
-	fetchupcomingMovieInfo();
-	fetchAnimationMovieInfo();
-});
 
 // 영화 검색 함수
 document.addEventListener('DOMContentLoaded', function() {
@@ -254,7 +175,7 @@ function cleanTitle(title) {
 /*고급기능*/
 // 사용자 검색 행동을 기록하는 함수
 // HTML 문서가 완전히 로드된 후 실행
-
+}
 
 function submitSearch() {
     console.log("111111");
@@ -266,7 +187,6 @@ function submitSearch() {
     }
 
     const userSearchBehavior = {
-        //user: { id: userId }, // 사용자 ID를 여기에 설정
         searchQuery: searchQuery,
         searchTime: new Date().toISOString(),
         clickedResult: null,
@@ -277,19 +197,24 @@ function submitSearch() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            [header]: token // 이 부분만 추가하면 됨
+            [header]: token // CSRF 토큰을 헤더에 추가
         },
         body: JSON.stringify(userSearchBehavior)
     })
-    .then(response => {
+    .then(async response => {
         if (!response.ok) {
             throw new Error('Failed to record search behavior');
         }
-        return response.json();
+
+        // 응답 본문이 있는지 확인 (204 No Content 등 처리)
+        const text = await response.text();
+        return text ? JSON.parse(text) : {};
     })
-    .then(() => {
-        alert('Search behavior recorded successfully');
-        fetchSearchTrends(); // 검색 트렌드를 새로 고침
+    .then(data => {
+        // 서버로부터 받은 데이터가 유효한지 확인
+        console.log('Received data:', data);
+        //alert('Search behavior recorded successfully');
+        fetchSearchTrends(); // 검색 트렌드 새로 고침
     })
     .catch(error => {
         console.error('Error:', error);
@@ -320,4 +245,82 @@ function fetchSearchTrends() {
 }
 
 
+
+// movieInfo.js
+// 클라이언트 측 코드 (JavaScript)
+function fetchMovieInfo() {
+    fetch('/movies/new')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer = document.getElementById('movieContainer');
+            movieContainer.innerHTML =data;
+        })
+        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
+
+function fetchupcomingMovieInfo() {
+    fetch('/movies/upcoming')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer = document.getElementById('movieContainer3');
+            movieContainer.innerHTML =data;
+        })
+        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
+
+function fetchBoxOfficeInfo() {
+    fetch('/movies/boxOffice')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+			const boxOfficeContainer = document.getElementById('boxOfficeContainer');
+			boxOfficeContainer.innerHTML =data;
+        })
+        .catch(error => console.error('박스오피스 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
+
+function fetchHorrorMovieInfo() {
+    fetch('/movies/horror')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer2 = document.getElementById('movieContainer2');
+            movieContainer2.innerHTML =data;
+        })
+        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
+function fetchAnimationMovieInfo() {
+    fetch('/movies/animation')
+        .then(response => response.text())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            const movieContainer2 = document.getElementById('movieContainer4');
+            movieContainer2.innerHTML =data;
+        })
+        .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
+}
+
+
+    fetchMovieInfo();
+    fetchBoxOfficeInfo();
+    fetchHorrorMovieInfo();
+	fetchupcomingMovieInfo();
+	fetchAnimationMovieInfo();
+
