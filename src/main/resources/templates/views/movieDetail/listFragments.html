@@ -91,13 +91,21 @@
 
 <div class="show-comment" th:fragment="reviewList">
 	<p>전체 리뷰</p>
- 	<ul>
- 		<li><span>전송희</span><span>4.5</span><p>임영웅이 좋아요</p></li>
- 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
- 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
- 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
- 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
- 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
- 		<li><span>이유진</span><span>5.0</span><p>전 전송희가 좋아요</p></li>
+ 	<ul th:if="${movieRatingList != null}">
+ 		<li th:each="movieRatingList : ${movieRatingList}">
+ 			<span th:text="${movieRatingList.nickName}">전송희</span><span th:text="${movieRatingList.rating/2}">4.5</span>
+ 			<p th:text="${movieRatingList.comments}">임영웅이 좋아요</p>
+ 		
+ 		</li>
  	</ul>
+ 	
+	<div class="pagination" th:if="${movieRatingList != null and movieRatingList.totalPages > 1}">
+	    <a th:each="pageNumber : ${#numbers.sequence(1, movieRatingList.totalPages)}"
+	       th:href="@{#}"
+	       th:text="${pageNumber}"
+	       th:class="${pageNumber == movieRatingList.number + 1} ? 'active'"
+	       th:attr="data-page=${pageNumber - 1}"
+	       class="page-link">
+	    </a>
+	</div>
 </div>
