@@ -3,6 +3,7 @@ package com.red.domovie.service;
 import java.util.Map;
 
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.SignUpDTO;
@@ -16,9 +17,11 @@ public interface LoginService {
 
 	String findEmailByNameAndBirthDate(FindIdDTO request);
 
-	void processFindPassword(String userName, String email);
+	void processFindPassword(String email);
 
-	void processResetPassword(String resetToken, String newPassword);
+	void isValidPasswordResetToken(String token, Model model);
+
+	void resetPassword(String token, String newPassword, RedirectAttributes redirectAttributes);
 
 
 
