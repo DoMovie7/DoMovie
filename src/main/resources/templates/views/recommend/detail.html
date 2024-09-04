@@ -1,40 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+    <!-- HTML 문서의 시작 부분으로, Thymeleaf와 Spring Security 네임스페이스를 포함하고 있으며, 공통 레이아웃을 불러옵니다. -->
 
 <head>
     <meta charset="UTF-8">
+    <!-- 문서의 문자 인코딩을 UTF-8로 설정하여 다양한 문자를 지원합니다. -->
+
     <title th:text="${recommend.title}">추천 상세 페이지</title>
-    <link rel="stylesheet" href="/css/recommend/detail.css"> <!-- 스타일 시트 연결 -->
-    <!-- Toast UI Editor의 CSS 포함 -->
+    <!-- 페이지의 제목을 설정합니다. Thymeleaf를 사용하여 서버에서 제공하는 추천 제목을 동적으로 설정합니다. -->
+
+    <link rel="stylesheet" href="/css/recommend/detail.css">
+    <!-- 로컬 CSS 파일을 링크하여 추천 상세 페이지의 스타일을 적용합니다. -->
+
+    <!-- Toast UI Editor의 기본 스타일 시트 링크 -->
+    <!-- 글 내용을 편집할 수 있는 Toast UI Editor의 스타일을 포함합니다. -->
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
 </head>
-<body class="detail-page">  <!-- 'detail-page' 클래스 추가 -->
+
+<body class="detail-page">
+    <!-- 페이지 본문 시작. 'detail-page' 클래스를 추가하여 CSS 스타일을 적용합니다. -->
+
     <header>
+        <!-- 페이지 헤더 시작 -->
         <div class="header-title">영화 추천 상세 페이지</div>
+        <!-- 페이지의 제목을 표시하는 부분입니다. -->
+
         <nav>
+            <!-- 내비게이션 링크 -->
             <a href="/recommends">추천 목록으로 돌아가기</a>
+            <!-- 추천 목록 페이지로 돌아가는 링크입니다. -->
         </nav>
     </header>
 
     <main>
+        <!-- 주요 콘텐츠 영역 시작 -->
         <section>
+            <!-- 추천 글의 상세 정보를 표시하는 섹션입니다. -->
             <div class="section-title" th:text="${recommend.title}">제목</div>
+            <!-- 추천 글의 제목을 표시합니다. Thymeleaf를 사용하여 서버에서 전달된 추천 제목을 표시합니다. -->
+
             <p><strong>작성자:</strong> <span th:text="${recommend.author.userName}">작성자</span></p>
+            <!-- 추천 글의 작성자를 표시합니다. Thymeleaf를 사용하여 서버에서 제공하는 작성자의 사용자 이름을 표시합니다. -->
+
             <p><strong>작성일:</strong> <span th:text="${#temporals.format(recommend.createdDate, 'yyyy.MM.dd')}">작성일</span></p>
+            <!-- 추천 글의 작성일을 표시합니다. Thymeleaf와 Java Temporal API를 사용하여 날짜를 'yyyy.MM.dd' 형식으로 포맷합니다. -->
+
             <p><strong>장르:</strong> <span th:text="${recommend.genre}">장르</span></p>
+            <!-- 추천 글의 장르를 표시합니다. Thymeleaf를 사용하여 서버에서 제공하는 장르 정보를 표시합니다. -->
+
             <p><strong>댓글 수:</strong> <span th:text="${recommend.commentCount}">댓글 수</span></p>
+            <!-- 추천 글에 대한 댓글 수를 표시합니다. Thymeleaf를 사용하여 서버에서 제공하는 댓글 수를 표시합니다. -->
 
             <img th:src="${recommend.imgUrl}" alt="추천 이미지" class="recommend-image"/>
+            <!-- 추천 글의 이미지(포스터)를 표시합니다. Thymeleaf를 사용하여 서버에서 제공하는 이미지 URL을 소스로 설정합니다. -->
 
-            <!-- Toast UI Editor의 콘텐츠를 보여줄 div -->
+            <!-- Toast UI Editor에서 작성된 콘텐츠를 표시할 div -->
+            <!-- TOAST UI Editor의 HTML 콘텐츠를 보여줄 영역입니다. -->
             <div id="editor-container" class="editor-container"></div>
         </section>
     </main>
 
-    <!-- Toast UI Editor의 JavaScript 포함 -->
+    <!-- TOAST UI Editor의 JavaScript 파일 포함 -->
+    <!-- TOAST UI Editor의 기능을 사용하기 위해 필요한 JavaScript 파일을 포함합니다. -->
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <!-- JavaScript 파일 포함 -->
+
+    <!-- 로컬 JavaScript 파일 포함 -->
+    <!-- 추천 상세 페이지와 관련된 추가적인 JavaScript 파일을 포함합니다. -->
     <script src="/js/detail.js"></script>
 </body>
 </html>

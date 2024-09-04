@@ -34,27 +34,25 @@ public class RecommendEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 기본 키
+    
     private String title; // 제목
+    
     private String content; // 내용
     
     @Enumerated(EnumType.STRING)
-    private Genre genre; // 장르
+    private Genre genre; // 장르 (열거형 타입으로 저장)
     
     @ManyToOne
     @JoinColumn(name = "author")
-    private UserEntity author; // 작성자
+    private UserEntity author; // 작성자 (다대일 관계 설정)
     
-    
-    //UserEntity 를 세팅하고 RecommendEntity 리턴하는
+    // UserEntity를 세팅하고 RecommendEntity를 반환하는 메소드
     public RecommendEntity author(UserEntity author) {
-    	this.author=author;
+    	this.author = author;
     	return RecommendEntity.this;
     }
     
     private int commentCount; // 조회수
     
-    
-    
-    private String imgUrl; // 항목 이미지 url
+    private String imgUrl; // 항목 이미지 URL
 }
-
