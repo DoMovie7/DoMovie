@@ -14,17 +14,17 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class HomeTheaterService {
+public class HomeTheaterService{
     private final CategoryRepository categoryRepository;
     private final HomeTheaterRepository homeTheaterRepository;
     private final CommentRepository commentRepository;
@@ -51,6 +51,8 @@ public class HomeTheaterService {
     public HomeTheaterDetailDTO getPostById(Long id) {
         HomeTheaterEntity entity = homeTheaterRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+        HomeTheaterDetailDTO dto = modelMapper.map(entity, HomeTheaterDetailDTO.class);
+        dto.setAuthorEmail(entity.getAuthor().getEmail());  // 작성자의 이메일 설정
         return modelMapper.map(entity, HomeTheaterDetailDTO.class);
     }
     @Transactional
@@ -100,13 +102,18 @@ public class HomeTheaterService {
 
 
     @Transactional
-    public void updatePost(Long id, HomeTheaterUpdateDTO updateDTO) {
-        homeTheaterRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"))
-                .update(updateDTO);
+    public HomeTheaterDetailDTO updatePost(Long id, HomeTheaterUpdateDTO updateDTO, UserDetails userDetails) {
+        HomeTheaterEntity post = homeTheaterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
+        UserEntity currentUser = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        //homeTheaterRepository.save(homeTheaterEntity);
+        if (post.isAuthor(currentUser)) {
+            post.update(updateDTO);
+            return modelMapper.map(post, HomeTheaterDetailDTO.class);
+        }
+        return null;
     }
 
 

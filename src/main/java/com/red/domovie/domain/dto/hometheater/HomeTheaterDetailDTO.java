@@ -22,6 +22,10 @@ public class HomeTheaterDetailDTO {
     private List<CommentListDTO> comments;
     private String thumbnailImageUrl;  // 대표 이미지 경로 추가
     private String category;
+    private String authorEmail;  // 새로 추가
 
 
+
+    public void setAuthorEmail(String email) {
+    }
 }
