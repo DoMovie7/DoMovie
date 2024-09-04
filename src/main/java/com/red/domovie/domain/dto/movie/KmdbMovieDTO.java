@@ -11,6 +11,8 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KmdbMovieDTO {
 	
+	private static final String DEFAULT_POSTER = "/img/index/no-movie-img.jpg"; // 디폴트 이미지 경로
+	private static final String DEFAULT_RATING = "심의중"; // 디폴트 등급 정보
 	
 	@JsonProperty("DOCID")
 	private String docid;
@@ -38,14 +40,26 @@ public class KmdbMovieDTO {
     	return formatedDate;
     }
     
+    @JsonProperty("dotDate") //스크립트에서 사용가능하게 인코딩
+    public String getDotDate() {
+        return dotDate();
+    }
+    
     private Plots plots;
+    
+    @JsonProperty("posterUrl") //스크립트에서 사용가능하게 인코딩
+    public String getPosterUrl() {
+        return poster();
+    }
+    
+    
     
     public String poster() {
         if (posters != null && !posters.isEmpty()) {
             String[] strs = posters.split("[|]");
-            return strs.length > 0 ? strs[0] : null;
+            return strs.length > 0 && !strs[0].isEmpty() ? strs[0] : DEFAULT_POSTER;
         }
-        return null; // Return null if posters is null or empty
+        return DEFAULT_POSTER; // posters가 null이거나 비어 있으면 디폴트 이미지 반환
     }
     
     public String getRepRlsDate() {
@@ -53,6 +67,11 @@ public class KmdbMovieDTO {
             return "Unknown"; // Or any default value you prefer
         }
         return repRlsDate;
+    }
+    
+    // rating 필드에 값이 없을 경우 "심의중" 반환
+    public String getRating() {
+        return (rating == null || rating.isEmpty()) ? DEFAULT_RATING : rating;
     }
     
 }

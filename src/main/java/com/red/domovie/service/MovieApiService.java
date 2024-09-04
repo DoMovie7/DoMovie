@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import com.red.domovie.domain.dto.movie.KmdbMovieDTO;
 
 
+
 public interface MovieApiService {
 
 	void getBoxOffice(Model model);
