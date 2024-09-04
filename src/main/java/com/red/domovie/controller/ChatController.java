@@ -14,22 +14,17 @@ import com.red.domovie.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
-@RequestMapping("/chatting")
+@Controller //@messageMapping의 기본 주소는 "/message"
+@RequiredArgsConstructor
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
 
-    public ChatController(SimpMessagingTemplate messagingTemplate, ChatService chatService) {
-        this.messagingTemplate = messagingTemplate;
-        this.chatService = chatService;
-    }
-
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessageDTO chatMessage) {
         ChatRoomDTO room = chatService.findRoomById(chatMessage.getRoomId());
-        messagingTemplate.convertAndSend("/topic/chat/" + room.getRoomId(), chatMessage);
+        messagingTemplate.convertAndSend("/topic/chatting/" + room.getRoomId(), chatMessage);
     }
 
     @MessageMapping("/chat.addUser")
@@ -39,7 +34,7 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("room_id", room.getRoomId());
         chatMessage.setType(ChatMessageDTO.MessageType.ENTER);
         chatMessage.setMessage(chatMessage.getSender() + "님이 입장했습니다.");
-        messagingTemplate.convertAndSend("/topic/chat/" + room.getRoomId(), chatMessage);
+        messagingTemplate.convertAndSend("/topic/chatting/" + room.getRoomId(), chatMessage);
     }
 
     // WebSocket 연결이 끊어졌을 때 호출되는 메소드
@@ -50,6 +45,6 @@ public class ChatController {
         chatMessage.setSender(username);
         chatMessage.setMessage(username + "님이 퇴장했습니다.");
 
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, chatMessage);
+        messagingTemplate.convertAndSend("/topic/chatting/" + roomId, chatMessage);
     }
 }

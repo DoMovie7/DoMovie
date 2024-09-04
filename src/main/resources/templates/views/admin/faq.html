@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{views/admin/admin-layout :: layout(~{::head}, ~{::main})}">
+<head>
+    <link rel="stylesheet" href="/css/admin/faq.css">
+</head>
+<main>
+    <div class="container">
+        <h1>자주 묻는 질문 관리</h1>
+        <div id="faq-list" class="faq-list">
+            <!-- FAQ 항목들이 여기에 동적으로 추가됩니다 -->
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var faqData = /*[[${faqList}]]*/ [];
+        /*]]>*/
+    </script>
+    <script>
+        function createFAQTree(data, parentElement) {
+            data.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'faq-item';
+                itemElement.innerHTML = `
+                    <div class="faq-question">
+                        <h3>${item.name}</h3>
+                        <button class="faq-toggle">▼</button>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                        	${item.content ? `<p>${item.content}</p>` : ''}
+                            <div class="faq-actions">
+                                <button class="add-btn">추가</button>
+                                <!-- <button class="edit-btn">수정</button> -->
+                                <button class="delete-btn">삭제</button>
+                            </div>
+                        </div>
+                        <div class="children"></div>
+                    </div>
+                `;
+                parentElement.appendChild(itemElement);
+
+                const questionElement = itemElement.querySelector('.faq-question');
+                const answerElement = itemElement.querySelector('.faq-answer');
+                const toggleButton = itemElement.querySelector('.faq-toggle');
+
+                questionElement.addEventListener('click', () => {
+                    const isOpen = answerElement.classList.contains('active');
+                    if (isOpen) {
+                        answerElement.classList.remove('active');
+                        toggleButton.textContent = '▼';
+                    } else {
+                        answerElement.classList.add('active');
+                        toggleButton.textContent = '▲';
+                    }
+                });
+
+                const childrenContainer = itemElement.querySelector('.children');
+                if (item.children && item.children.length > 0) {
+                    createFAQTree(item.children, childrenContainer);
+                }
+            });
+        }
+
+        // FAQ 트리 생성
+        const faqListElement = document.getElementById('faq-list');
+        createFAQTree(faqData, faqListElement);
+    </script>
+    <!-- <script src="/js/admin/faq.js"></script> -->
+</main>
+</html>

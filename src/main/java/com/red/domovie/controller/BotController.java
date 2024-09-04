@@ -17,12 +17,12 @@ import com.red.domovie.domain.dto.bot.FAQDTO;
 import com.red.domovie.domain.dto.bot.QuestionDTO;
 import com.red.domovie.service.BotService;
 import com.red.domovie.service.CategoryService;
+import com.red.domovie.service.ChatService;
 import com.red.domovie.service.OpenaiService;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
-@RequestMapping("/message")
+@Controller //@messageMapping의 기본 주소는 "/message"
 @RequiredArgsConstructor
 public class BotController {
 	
@@ -36,6 +36,7 @@ public class BotController {
 	private final BotService botService;
 	private final CategoryService categoryService;
 	private final OpenaiService openaiService;
+	private final ChatService chatService;
 	
 	//내부적으로 STOMP의 프로토콜을 사용하여 메세지를 전송
 	//@SendTo 어노테이션을 처리하는 구현 객체
@@ -51,7 +52,6 @@ public class BotController {
 		ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setKey(key);
         responseDTO.setMessage(responseMessage);
-        
 		
 		//rabbitTemplate.convertAndSend(exchange, routingKey, responseDTO);
         messagingTemplate.convertAndSend("/topic/bot/"+key, responseDTO.getMessage());
@@ -68,19 +68,6 @@ public class BotController {
     }
 	
 	
-	//상담사와 채팅
-	@MessageMapping("/agent")
-	public void agent(QuestionDTO dto) {
-		
-		System.out.println(">>>채팅 문의 :"+dto);
-		String key = dto.getKey();
-		String responseMessage = "아직 상담사와 연결되지 않았습니다. 잠시만 기다려주세요.";
-		
-		messagingTemplate.convertAndSend("/topic/chatting/"+key, responseMessage);
-		
-	}
-	
-	
 	//영화추천
 	@MessageMapping("/openai")
 	public void openai(QuestionDTO dto) {
@@ -90,6 +77,18 @@ public class BotController {
 		String responseMessage = openaiService.aiAnswerProcess(dto);
 		
 		messagingTemplate.convertAndSend("/topic/bot/"+key, responseMessage);
+		
+	}
+	
+	
+	//상담사와 채팅
+	@MessageMapping("/chat/query")
+	public void agent(QuestionDTO dto) {
+		
+		System.out.println(">>>채팅 문의 :"+dto);
+		chatService.saveRoomProcess(dto);
+		
+		messagingTemplate.convertAndSend("/topic/query/"+dto.getKey(), dto.getContent());
 		
 	}
 

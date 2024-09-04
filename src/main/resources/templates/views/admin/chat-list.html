@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{views/admin/admin-layout :: layout(~{::head} ,~{::main} ) }">
+<head>
+	
+</head>
+<main>
+	<a href="/admin/chat">예시 채팅방</a>
+	<ul th:each="room : ${roomList}">
+		<li>
+			<a th:href="|/admin/chat/${room.roomId}|" th:text="|채팅방 : ${room.roomId}|">채팅방1</a>
+		</li>
+	</ul>
+</main>
