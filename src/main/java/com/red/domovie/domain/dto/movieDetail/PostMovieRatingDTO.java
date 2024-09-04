@@ -14,3 +14,4 @@ public class PostMovieRatingDTO {
 	private float rating; 
 	private String comments;
 
+}
