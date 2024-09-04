@@ -2,6 +2,7 @@ package com.red.domovie.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,11 +59,10 @@ public class IndexController {
     }
     
     @GetMapping("/movies/search")
-    @ResponseBody // JSON 응답을 반환하기 위해 사용
-    public List<KmdbMovieDTO> getSearchMovies(@RequestParam("keyword") String keyword) {
-        // KMDB API를 호출하여 검색 결과를 가져옵니다.
+    @ResponseBody
+    public ResponseEntity<List<KmdbMovieDTO>> getSearchMovies(@RequestParam("keyword") String keyword) {
         List<KmdbMovieDTO> movies = movieApiService.searchMovies(keyword);
-        return movies;  // JSON 형태로 반환
+        return ResponseEntity.ok(movies);
     }
     
 }
