@@ -1,5 +1,6 @@
 package com.red.domovie.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.ui.Model;
@@ -15,7 +16,7 @@ public interface LoginService {
 
 	Map<String, Boolean> checkEmailDuplication(String email);
 
-	String findEmailByNameAndBirthDate(FindIdDTO request);
+	List<String> findEmailByNameAndBirthDate(FindIdDTO request);
 
 	void processFindPassword(String email);
 
@@ -27,3 +28,4 @@ public interface LoginService {
 
 
 }
+

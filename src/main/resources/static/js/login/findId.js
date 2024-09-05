@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     birthDateInput.addEventListener('input', function(e) {
         let input = e.target.value.replace(/\D/g, '').substring(0, 8); // 숫자만 추출, 최대 8자
         let formatted = '';
-        
+
         if (input.length > 4) {
             formatted += input.substring(0, 4) + '-';
             if (input.length > 6) {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             formatted = input;
         }
-        
+
         e.target.value = formatted;
     });
 
@@ -51,8 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            if (data.email) {
-                showResult(`귀하의 이메일은 ${data.email} 입니다.`);
+            if (data.emails && data.emails.length > 0) {
+                const emailList = data.emails.map(email => `<li>${maskEmail(email)}</li>`).join('');
+                showResult(`<p>귀하의 이메일 주소:</p><ul>${emailList}</ul>`);
             } else {
                 showResult('일치하는 사용자 정보를 찾을 수 없습니다.');
             }
@@ -65,7 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showResult(message) {
         form.style.display = 'none';
-        resultDiv.textContent = message;
+        resultDiv.innerHTML = message;
         resultDiv.style.display = 'block';
+    }
+
+    function maskEmail(email) {
+        const [localPart, domain] = email.split('@');
+        const maskedLocalPart = localPart.substring(0, 2) + '*'.repeat(localPart.length - 2);
+        return `${maskedLocalPart}@${domain}`;
     }
 });

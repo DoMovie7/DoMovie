@@ -1,17 +1,20 @@
 package com.red.domovie.domain.dto.login;
 
+import java.util.List;
+
 public class FindIdResponse {
-    private String email;
+    private List<String> emails;
 
-    public FindIdResponse(String email) {
-        this.email = email;
+    public FindIdResponse(List<String> emails) {
+        this.emails = emails;
     }
 
-    public String getEmail() {
-        return email;
+    // getters and setters
+    public List<String> getEmails() {
+        return emails;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
     }
 }
