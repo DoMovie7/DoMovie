@@ -1,6 +1,7 @@
 package com.red.domovie.domain.mapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -13,12 +14,10 @@ import com.red.domovie.domain.entity.UserEntity;
 @Mapper
 public interface LoginMapper {
 	void saveUser(UserEntity user);
-    // 이메일 중복 체크를 위한 메소드 추가
-	int countByEmail(String email);
-	
-	String findEmailByNameAndBirthDate(FindIdDTO request);
-	UserEntity findByUserNameAndEmail(String userName, String email);
-	void updateUser(UserEntity user);
-	UserEntity findByPasswordResetToken(String resetToken);
-	
+    int countByEmail(String email);
+    List<String> findEmailByNameAndBirthDate(FindIdDTO findIdDTO);
+    UserEntity findByEmail(@Param("email") String email);
+    UserEntity findByPasswordResetToken(String resetToken);
+    int updateUser(UserEntity user);
 }
+

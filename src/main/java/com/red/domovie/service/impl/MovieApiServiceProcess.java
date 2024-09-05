@@ -2,6 +2,7 @@ package com.red.domovie.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -19,7 +20,11 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,6 +35,11 @@ import com.red.domovie.domain.dto.movie.KmdbMovieResponse;
 import com.red.domovie.domain.dto.movie.MovieDTO;
 import com.red.domovie.service.MovieApiService;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+
+@Slf4j
 @Service
 public class MovieApiServiceProcess implements MovieApiService {
 
@@ -382,30 +392,41 @@ public class MovieApiServiceProcess implements MovieApiService {
 
     @Override
     public List<KmdbMovieDTO> searchMovies(String keyword) {
+    	
         RestTemplate restTemplate = new RestTemplate();
-
-        // KMDB API 요청 URL을 StringBuilder를 사용하여 구성
         StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
-        strBuilder.append("?detail=Y");
-        strBuilder.append("&listCount=10");
+        strBuilder.append("&detail=y");
+        strBuilder.append("&title=").append(keyword);
+        strBuilder.append("&listCount=5");
         strBuilder.append("&ServiceKey=").append(kmdbApiKey);
-        strBuilder.append("&title=").append(keyword);  // Add the keyword to the query
-
-        String apiUrl = strBuilder.toString();
+        strBuilder.append("&sort=prodYear,1");
+        
+        String url = strBuilder.toString();
 
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
-            ObjectMapper mapper = new ObjectMapper();
+            String response = restTemplate.getForObject(url, String.class);
             
-            // JSON 응답을 KmdbMovieResponse 객체로 변환
-            KmdbMovieResponse apiResponse = mapper.readValue(response.getBody(), KmdbMovieResponse.class);
+            System.out.println(">>>>>>>>>>>>API Response: " + response); // 응답 로그 출력
             
-            // 필요한 데이터 추출
-            return apiResponse.getResult();
+            JSONObject jsonResponse = new JSONObject(response);
+
+            if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
+                JSONArray dataArray = jsonResponse.getJSONArray("Data");
+                JSONObject firstData = dataArray.getJSONObject(0);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
+
+                
+                return kmdbMovieResponse.getResult();
+            }
+        } catch (JSONException e) {
+            log.error("JSON 파싱 오류: {}", e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(); // 로그를 남기거나 사용자에게 알림을 고려
-            return List.of(); // 오류 발생 시 빈 리스트 반환
+            log.error("API 호출 중 오류 발생: {}", e.getMessage());
         }
+
+        log.warn("검색 결과가 없거나 오류가 발생했습니다.");
+        return new ArrayList<>(); // 빈 리스트 반환
     }
-    
 }

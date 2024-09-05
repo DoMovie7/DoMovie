@@ -74,6 +74,7 @@ background-image: linear-gradient(to top,  rgba(0,0,0,1), rgba(0,0,0,0.7),rgba(0
 
 
 .index-title{
+	color: white;
 	font-size: 28px;
 	padding: 20px 0px;
 	
@@ -149,7 +150,7 @@ h3 {
     font-size: 14px;
 }
 /**/
-.movie-list {
+.movie-list{
     width: 100%;
     border-radius: 10px;
     color: var(--main-white);
@@ -181,6 +182,9 @@ h3 {
     border-radius: 4px;
 }
 
+
+
+
 .box-rank {
     position: absolute;
     top: 20px;
@@ -193,8 +197,7 @@ h3 {
     font-weight: bold;
 }
 
-.movie-list2,
-.search-container{
+.movie-list2{
 	
 	width: 100%;
 	padding: 20px 0px;
@@ -224,39 +227,62 @@ h3 {
 
 /*검색창*/
 .search-container {
-    display: flex; /* 수평 정렬을 위해 flexbox 사용 */
+    display: flex; /* flexbox 사용 */
+    flex-direction: column; /* 수직 정렬 */
     justify-content: center; /* 중앙 정렬 */
-    
+    align-items: center; /* 요소를 가로로 중앙 정렬 */
+    width: 100%;
+    height: 250px; /* 높이를 약간 늘려 텍스트를 위한 공간 확보 */
+    margin: 0px auto;
+    background-color: var(--main-black);
 }
 
 .search-box {
-    width: 300px; /* 검색창의 너비 */
-    padding: 10px; /* 내부 여백 */
-    border: 2px solid var(--sub-grey); /* 테두리 색상과 두께 */
-    border-radius: 5px; /* 둥근 모서리 */
-    font-size: 16px; /* 글꼴 크기 */
-    outline: none; /* 포커스 시 기본 테두리 제거 */
+    width: 700px;
+    height: 60px;
+    padding: 10px;
+    border: 2px solid var(--sub-grey);
+    border-radius: 5px;
+    font-size: 20px;
+    outline: none;
 }
 
 .search-button {
-    padding: 10px 20px; /* 버튼의 내부 여백 */
-    margin-left: 10px; /* 검색창과 버튼 사이의 간격 */
-    background-color: var(--main-red); /* 버튼 배경색 */
-    color: white; /* 버튼 글자색 */
-    border: none; /* 기본 테두리 제거 */
-    border-radius: 5px; /* 둥근 모서리 */
-    cursor: pointer; /* 마우스 포인터를 손가락 모양으로 변경 */
-    font-size: 16px; /* 글꼴 크기 */
+    height: 60px;
+    padding: 10px 20px;
+    margin-top: 10px; /* 검색창과 버튼 사이의 간격 */
+    background-color: var(--main-red);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
 }
 
 .search-button:hover {
-    background-color: var(--sub-red); /* 버튼에 마우스가 올라갔을 때 배경색 변경 */
+    background-color: var(--sub-red);
 }
 
-/**/
-.movie-results {
-    margin-top: 20px;
+.search-text {
     display: flex;
-    flex-wrap: wrap;
+    gap: 0.5em;
+    color: white;
+    margin-top: 20px; /* 검색창과 추천 검색어 사이의 간격 */
+}
+.search-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#movie-list {
+    display: grid;
     justify-content: center;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem;
+    width: 1200px;
+    border-radius: 10px;
+    color: var(--main-white);
+    margin: 0 auto; /* 가로 가운데 정렬 */
 }

@@ -1,15 +1,16 @@
 package com.red.domovie.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.SignUpDTO;
@@ -72,37 +73,49 @@ public class LoginServiceProcess implements LoginService {
     }
 
 	@Override
-	public String findEmailByNameAndBirthDate(FindIdDTO request) {
+	public List<String> findEmailByNameAndBirthDate(FindIdDTO request) {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
 
-	@Override
     @Transactional
-    public void processFindPassword(String userName, String email) {
-        UserEntity user = loginMapper.findByUserNameAndEmail(userName, email);
+    public void processFindPassword(String email) {
+        UserEntity user = loginMapper.findByEmail(email);
         if (user == null) {
-            throw new RuntimeException("입력한 정보와 일치하는 계정이 없습니다.");
+            throw new RuntimeException("입력한 이메일과 일치하는 계정이 없습니다.");
         }
-        
+
         String resetToken = UUID.randomUUID().toString();
         user.setPasswordResetToken(resetToken);
         loginMapper.updateUser(user);
+
         emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
     }
 
+
+   
+
 	@Override
-    @Transactional
-    public void processResetPassword(String resetToken, String newPassword) {
-        UserEntity user = loginMapper.findByPasswordResetToken(resetToken);
-        if (user == null) {
-            throw new RuntimeException("유효하지 않은 재설정 토큰입니다.");
+	public void isValidPasswordResetToken(String token, Model model) {
+		loginMapper.findByPasswordResetToken(token);
+		model.addAttribute("token", token);
+		
+	}
+
+	@Override
+	public void resetPassword(String token, String newPassword, RedirectAttributes redirectAttributes) {
+		UserEntity user = loginMapper.findByPasswordResetToken(token);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setPasswordResetToken(null);
+            loginMapper.updateUser(user);
+            redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 재설정되었습니다.");
+            logger.info("비밀번호 재설정 성공: {}", user.getEmail());
+        } else {
+            redirectAttributes.addFlashAttribute("error", "유효하지 않은 토큰입니다. 비밀번호 재설정을 다시 요청해주세요.");
+            logger.warn("비밀번호 재설정 실패: 유효하지 않은 토큰 {}", token);
         }
-        
-        user.setPassword(passwordEncoder.encode(newPassword));
-        user.setPasswordResetToken(null);
-        loginMapper.updateUser(user);
-    }
-	
-	
+		
+		
+	}
 
 }

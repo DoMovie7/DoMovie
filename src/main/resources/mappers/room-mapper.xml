@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.red.domovie.domain.mapper.RoomMapper">
+
+	<insert id="saveRoom" parameterType="com.red.domovie.domain.dto.bot.QuestionDTO">
+		insert into chatroom (room_id, user_id, created_at)
+		values(#{key}, #{userId}, CURRENT_TIMESTAMP)
+	</insert>
+	
+	<select id="findAllRoom" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO">
+		select * from chatroom
+		order by created_at desc
+	</select>
+	
+	<select id="findByRoomId" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO" parameterType="String">
+		select * from chatroom
+		where room_id = #{roomId}
+	</select>
+</mapper>

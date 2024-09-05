@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{views/common/layout :: layout(~{::head} ,~{::main} ) }">
-
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 <head>
 <link rel="stylesheet" type="text/css" href="/css/common/index.css">
 
@@ -27,26 +28,29 @@
 			<!--container end -->
 
 		</section>
-		<section class="search-area">
-			<div class="search-container">
-				<div>
-					<input type="text" id="keyword" class="search-box"
-						placeholder="검색어를 입력하세요...">
-					<button id="search-button" class="search-button">검색</button>
-				</div>
+<section class="search-area">
+    <div class="search-container">
+        <h2 class="index-title">영화 검색</h2>
+        <form id="search-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="text" id="keyword" class="search-box" placeholder="검색어를 입력하세요..." required>
+            <button type="submit" class="search-button" id="search-button">검색</button>
+        </form>
+        <div class="search-text" id="trendsList">
+            <a href="#"><span>#추천검색</span></a>
+            <a href="#"><span>#액션</span></a>
+            <a href="#"><span>#코미디</span></a>
+        </div>
+    </div>
+    <!-- 검색 결과를 표시할 부분 -->
+    <h2 class="index-title" id="search-results-title" style="display: none;">검색결과</h2>
+    <div id="movie-list"></div>
+</section>
 
-
-			</div>
-			<!-- 검색 결과를 표시할 부분 -->
-			<div id="movie-list">
-			
-			</div>
-
-		</section>
 
 		<div class="container">
 			<section class="movie-list">
-				<h2 class="index-title">박스오피스 순위</h2>
+				<h2 class="index-title">박스오피스 TOP10</h2>
 
 				<div class="movie-grid" id="boxOfficeContainer">
 					<!-- 영화 포스터 항목들 -->
@@ -98,12 +102,12 @@
 		<div class="container">
 
 			<section class="movie-list">
-				<h2 class="index-title">최신 개봉작</h2>
+				<h2 class="index-title">#최신 개봉작</h2>
 				<div class="movie-grid" id="movieContainer"></div>
 			</section>
 
 			<section class="movie-list">
-				<h2 class="index-title">개봉 예정작</h2>
+				<h2 class="index-title">#개봉 예정작</h2>
 				<div class="movie-grid" id="movieContainer3">
 
 					<!-- 추가 영화 항목들... -->
@@ -119,7 +123,7 @@
 				</div>
 			</section>
 			<section class="movie-list">
-				<h2 class="index-title">#애니메이션</h2>
+				<h2 class="index-title">#애니메이션 #어린이영화</h2>
 				<div class="movie-grid" id="movieContainer4">
 
 					<!-- 추가 영화 항목들... -->

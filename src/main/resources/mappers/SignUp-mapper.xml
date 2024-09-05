@@ -1,50 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.red.domovie.domain.mapper.LoginMapper">
-    
-    <!-- 기존 쿼리문들 -->
-    <insert id="saveUser" parameterType="com.red.domovie.domain.entity.UserEntity">
-        <!-- 새 사용자 정보를 데이터베이스에 저장합니다. -->
-        INSERT INTO user (user_name, nick_name, email, phone_number, password, birth_date)
-        VALUES (#{userName}, #{nickName}, #{email}, #{phoneNumber}, #{password}, #{birthDate})
-    </insert>
 
-    <select id="countByEmail" parameterType="string" resultType="int">
-        <!-- 주어진 이메일 주소와 일치하는 사용자의 수를 반환합니다. 이메일 중복 확인에 사용됩니다. -->
-        SELECT COUNT(*) FROM user WHERE email = #{email}
-    </select>
+	<!-- 기존 쿼리문들 -->
+	<insert id="saveUser"
+		parameterType="com.red.domovie.domain.entity.UserEntity">
+		<!-- 새 사용자 정보를 데이터베이스에 저장합니다. -->
+		INSERT INTO user (user_name, nick_name, email, phone_number, password,
+		birth_date)
+		VALUES (#{userName}, #{nickName}, #{email}, #{phoneNumber}, #{password},
+		#{birthDate})
+	</insert>
+	<select id="countByEmail" parameterType="string"
+		resultType="int">
+		<!-- 주어진 이메일 주소와 일치하는 사용자의 수를 반환합니다. 이메일 중복 확인에 사용됩니다. -->
+		SELECT COUNT(*) FROM user WHERE email = #{email}
+	</select>
+	<select id="findEmailByNameAndBirthDate"
+		parameterType="com.red.domovie.domain.dto.login.FindIdDTO"
+		resultType="String">
+		<!-- 주어진 사용자 이름과 생년월일에 해당하는 사용자의 이메일을 찾습니다. 아이디 찾기 기능에 사용됩니다. -->
+		SELECT email
+		FROM user
+		WHERE user_name = #{userName} AND birth_date = #{birthDate}
+	</select>
+	<!-- 새로 추가되는 쿼리문들 -->
+	<select id="findByEmail"
+		resultType="com.red.domovie.domain.entity.UserEntity">
+		<!-- 사용자 이름과 이메일로 사용자를 찾습니다. 비밀번호 재설정 요청 시 사용자 확인에 사용됩니다. -->
+		SELECT * FROM user WHERE email = #{email}
+	</select>
+	<update id="updateUser"
+		parameterType="com.red.domovie.domain.entity.UserEntity">
+		<!-- 사용자 정보를 업데이트합니다. 비밀번호 재설정 토큰 저장 시 사용됩니다. -->
+		UPDATE user
+		SET password_reset_token = #{passwordResetToken}
+		WHERE email = #{email}
+	</update>
+	<select id="findByPasswordResetToken"
+		resultType="com.red.domovie.domain.entity.UserEntity">
+		SELECT * FROM user WHERE password_reset_token = #{token}
+	</select>
 
-    <select id="findEmailByNameAndBirthDate" parameterType="com.red.domovie.domain.dto.login.FindIdDTO" resultType="String">
-        <!-- 주어진 사용자 이름과 생년월일에 해당하는 사용자의 이메일을 찾습니다. 아이디 찾기 기능에 사용됩니다. -->
-        SELECT email
-        FROM user
-        WHERE user_name = #{userName} AND birth_date = #{birthDate}
-    </select>
-
-    <!-- 새로 추가되는 쿼리문들 -->
-    <select id="findByUserNameAndEmail" resultType="com.red.domovie.domain.entity.UserEntity">
-        <!-- 사용자 이름과 이메일로 사용자를 찾습니다. 비밀번호 재설정 요청 시 사용자 확인에 사용됩니다. -->
-        SELECT * FROM user WHERE user_name = #{userName} AND email = #{email}
-    </select>
-
-    <select id="findByPasswordResetToken" resultType="com.red.domovie.domain.entity.UserEntity">
-        <!-- 비밀번호 재설정 토큰으로 사용자를 찾습니다. 비밀번호 재설정 링크 검증 시 사용됩니다. -->
-        SELECT * FROM user WHERE password_reset_token = #{resetToken}
-    </select>
-
-    <update id="updateUser" parameterType="com.red.domovie.domain.entity.UserEntity">
-        <!-- 사용자 정보를 업데이트합니다. 비밀번호 재설정 토큰 저장 시 사용됩니다. -->
-        UPDATE user 
-        SET password = #{password},
-            password_reset_token = #{passwordResetToken}
-        WHERE user_id = #{userId}
-    </update>
-
-    <update id="resetPassword">
-        <!-- 비밀번호를 재설정하고 재설정 토큰을 제거합니다. 새 비밀번호 설정 시 사용됩니다. -->
-        UPDATE user 
-        SET password = #{password},
-            password_reset_token = NULL
-        WHERE password_reset_token = #{resetToken}
-    </update>
 </mapper>

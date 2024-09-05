@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{views/admin/admin-layout :: layout(~{::head} ,~{::main} ) }">
+<head>
+	<link rel="stylesheet" href="/css/admin/chat.css">
+	<link rel="stylesheet" href="/css/common/chatbot.css">
+</head>
+<main class="chat-main">
+	<input type="hidden" th:value="${roomId}" id="roomIdKey">
+	<div id="messageArea"><!-- id:chat-content  -->
+		
+	</div>
+    <form  class="flex" name="messageForm"> <!-- id="input-container" -->
+        <input type="text" class="question" placeholder="메시지를 입력하세요" autocomplete="off" id="answer"> <!-- id="question"  -->
+        <button class="send-button" type="submit">보내기</button> <!--  id="send-button"  -->
+    </form>
+	
+	<script src="/js/admin/chat.js"></script>
+    <!-- <script>
+        var stompClient = null; // WebSocket 클라이언트 변수
+        var currentRoom = null; // 현재 사용자가 참여 중인 채팅방 ID
+        var username = null;
+
+        // WebSocket 연결 함수
+        function connect() {
+            username = '관리자';
+            // SockJS를 사용하여 WebSocket 연결 생성
+            var socket = new SockJS('/websocket-chat');
+            stompClient = Stomp.over(socket);
+            // WebSocket 서버에 연결 시도
+            stompClient.connect({}, onConnected, onError);
+        }
+
+        // WebSocket 연결 성공 시 호출되는 콜백 함수
+        function onConnected() {
+            // 공개 채팅 메시지 구독
+            stompClient.subscribe('/topic/public', onMessageReceived);
+            // 개인 메시지 구독
+            stompClient.subscribe('/user/queue/private', onPrivateMessage);
+            // 채팅방 관련 메시지 구독
+            stompClient.subscribe('/topic/room', onRoomMessage);
+            // 채팅방 목록 로드
+            loadRooms();
+        }
+
+        // WebSocket 연결 실패 시 호출되는 콜백 함수
+        function onError(error) {
+            console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
+        }
+
+        // 새 채팅방 생성 함수
+        function createRoom() {
+            // 입력된 채팅방 이름 가져오기
+            var roomName = document.getElementById('roomName').value;
+            if (stompClient) {
+                // 서버에 새 채팅방 생성 요청 전송
+                stompClient.send("/app/chat.createRoom", {}, JSON.stringify({name: roomName}));
+            } else {
+                console.log('WebSocket connection not established');
+            }
+        }
+
+        // 채팅방 참여 함수
+        function joinRoom(roomId) {
+            // 이미 참여 중인 방이 있다면 퇴장
+            if (currentRoom) {
+                leaveRoom(currentRoom);
+            }
+            // 현재 방 ID 업데이트
+            currentRoom = roomId;
+            if (stompClient) {
+                // 서버에 방 참여 메시지 전송
+                stompClient.send("/app/chat.joinRoom", {}, JSON.stringify({sender: username, type: 'JOIN', room: roomId}));
+            } else {
+                console.log('WebSocket connection not established');
+            }
+        }
+
+        // 채팅방 퇴장 함수
+        function leaveRoom(roomId) {
+            if (stompClient) {
+                // 서버에 방 퇴장 메시지 전송
+                stompClient.send("/app/chat.leaveRoom", {}, JSON.stringify({sender: username, type: 'LEAVE', room: roomId}));
+            } else {
+                console.log('WebSocket connection not established');
+            }
+        }
+
+        // 메시지 전송 함수
+        function sendMessage(event) {
+            // 입력된 메시지 내용 가져오기
+            var messageContent = document.getElementById('message').value.trim();
+            if (messageContent && stompClient) {
+                // 채팅 메시지 객체 생성
+                var chatMessage = {
+                    sender: username,
+                    content: messageContent,
+                    type: 'CHAT',
+                    room: currentRoom
+                };
+                // 서버에 메시지 전송
+                stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+                // 자신의 메시지를 화면에 표시
+                displayMyMessage(chatMessage);
+                // 입력 필드 초기화
+                document.getElementById('message').value = '';
+            }
+            // 폼 제출 기본 동작 방지
+            event.preventDefault();
+        }
+
+        // 자신의 메시지를 화면에 표시하는 함수
+        function displayMyMessage(message) {
+            // 새로운 메시지 요소 생성
+            var messageElement = document.createElement('div');
+            messageElement.classList.add('my-message');
+            messageElement.innerHTML = '<span>' + message.sender + ': ' + message.content + '</span>';
+            // 메시지 영역에 추가
+            document.getElementById('messageArea').appendChild(messageElement);
+            // 새 메시지가 보이도록 스크롤
+            messageElement.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 서버로부터 받은 메시지 처리 함수
+        function onMessageReceived(payload) {
+            // JSON 메시지를 파싱
+            var message = JSON.parse(payload.body);
+            // 새로운 메시지 요소 생성
+            var messageElement = document.createElement('div');
+
+            messageElement.innerHTML = '<span>' + message.sender + ': ' + message.content + '</span>';
+            // 메시지 영역에 추가
+            document.getElementById('messageArea').appendChild(messageElement);
+            // 새 메시지가 보이도록 스크롤
+            messageElement.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 개인 메시지 처리 함수
+        function onPrivateMessage(payload) {
+            // JSON 메시지를 파싱
+            var message = JSON.parse(payload.body);
+            // 새로운 메시지 요소 생성
+            var messageElement = document.createElement('div');
+
+            messageElement.innerHTML = '<span>(Private) ' + message.sender + ': ' + message.content + '</span>';
+            // 메시지 영역에 추가
+            document.getElementById('messageArea').appendChild(messageElement);
+            // 새 메시지가 보이도록 스크롤
+            messageElement.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 채팅방 관련 메시지 처리 함수
+        function onRoomMessage(payload) {
+            // JSON 메시지를 파싱
+            var message = JSON.parse(payload.body);
+            if (message.type === 'JOIN') {
+                console.log(message.sender + ' joined ' + message.room);
+            } else if (message.type === 'LEAVE') {
+                console.log(message.sender + ' left ' + message.room);
+            }
+        }
+
+        // 채팅방 목록 로드 함수
+        function loadRooms() {
+            // 실제 방 로딩 로직으로 대체되어야 함
+            var rooms = [{id: '1', name: 'General'}, {id: '2', name: 'Random'}];
+            var roomListContainer = document.getElementById('roomListContainer');
+            roomListContainer.innerHTML = '';
+            // 각 방에 대한 UI 요소 생성
+            rooms.forEach(function(room) {
+                var roomElement = document.createElement('div');
+                roomElement.classList.add('room-item');
+                roomElement.textContent = room.name;
+                // 방 클릭 시 참여 이벤트 연결
+                roomElement.onclick = function() { joinRoom(room.id); };
+                roomListContainer.appendChild(roomElement);
+            });
+        }
+
+        // 메시지 전송 폼 제출 이벤트 리스너
+        document.getElementById('messageForm').addEventListener('submit', sendMessage, true);
+        // Enter 키 입력 시 메시지 전송 이벤트 리스너
+        document.getElementById('message').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage(event);
+            }
+        });
+
+        // 페이지 로드 시 WebSocket 연결 시작
+        window.onload = connect;
+        
+    </script> -->
+</main>

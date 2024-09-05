@@ -27,14 +27,14 @@ public class SecurityConfig {
             // CSRF 설정
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/logout", "/api/check-email", "/api/find-id")
+                .ignoringRequestMatchers("/logout", "/api/check-email", "/api/find-id","/api/find-password","/reset-password")
             )
 
             // URI에 대한 보안 설정
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/mypage/**","/movies/detail/**").authenticated()
+                .requestMatchers("/mypage/**","/movies/detail/movie/rating").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/check-email", "/api/find-id").permitAll()
+                .requestMatchers("/api/check-email", "/api/find-id","/api/find-password","/reset-password").permitAll()
                     .requestMatchers("/hometheater/hometheater_create", "/hometheater/create").authenticated()
 
                 .anyRequest().permitAll()

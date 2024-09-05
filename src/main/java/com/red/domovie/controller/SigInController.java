@@ -1,12 +1,12 @@
 package com.red.domovie.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,16 +18,14 @@ import com.red.domovie.domain.dto.login.ErrorResponse;
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.FindIdResponse;
 import com.red.domovie.domain.dto.login.FindPasswordRequestDTO;
-import com.red.domovie.domain.dto.login.ResetPasswordRequestDTO;
 import com.red.domovie.domain.dto.login.SignUpDTO;
 import com.red.domovie.domain.dto.login.SuccessResponse;
-import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.LoginService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -47,35 +45,36 @@ public class SigInController {
 	public String findPassword() {
 		return "views/login/findPassword";
 	}
-	
+
 	@PostMapping("/api/find-password")
-    public ResponseEntity<?> findPassword(@RequestBody FindPasswordRequestDTO request) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>" + request);
-        try {
-            loginService.processFindPassword(request.getUserName(), request.getEmail());
-            return ResponseEntity.ok().body(new SuccessResponse("비밀번호 재설정 이메일이 발송되었습니다."));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-        }
+	public ResponseEntity<?> findPassword(@Valid @RequestBody FindPasswordRequestDTO request) {
+		try {
+			loginService.processFindPassword(request.getEmail());
+			return ResponseEntity.ok().body(new SuccessResponse("비밀번호 재설정 이메일이 발송되었습니다."));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+		}
+	}
+
+	@GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam(name="token") String token, Model model) {
+        // 토큰 유효성 검사
+        loginService.isValidPasswordResetToken(token, model);
+        return "views/login/reset-password";
     }
 
-    @PutMapping("/api/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequestDTO request) {
-        try {
-            loginService.processResetPassword(request.getResetToken(), request.getNewPassword());
-            return ResponseEntity.ok().body(new SuccessResponse("비밀번호가 성공적으로 재설정되었습니다."));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-        }
+    @PostMapping("/reset-password")
+    public String processResetPassword(@RequestParam(name="token") String token,
+                                       @RequestParam(name="password") String newPassword,
+                                       RedirectAttributes redirectAttributes) {
+    	loginService.resetPassword(token, newPassword,redirectAttributes);
+            return "redirect:/signin";
     }
-	
 
 	@GetMapping("/signup")
 	public String signup() {
 		return "views/login/signup";
 	}
-	
-	
 
 	@PostMapping("/signup")
 	public String signup(@ModelAttribute SignUpDTO signUpDTO, BindingResult result,
@@ -109,12 +108,12 @@ public class SigInController {
 
 	@PostMapping("/api/find-id")
 	public ResponseEntity<?> findId(@RequestBody FindIdDTO request) {
-		String email = loginService.findEmailByNameAndBirthDate(request);
-		if (email != null) {
-			return ResponseEntity.ok(new FindIdResponse(email));
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+	    List<String> emails = loginService.findEmailByNameAndBirthDate(request);
+	    if (!emails.isEmpty()) {
+	        return ResponseEntity.ok(new FindIdResponse(emails));
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 
 	// 로그인 성공 시 리다이렉트될 페이지
