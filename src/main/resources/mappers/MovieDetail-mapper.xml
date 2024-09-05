@@ -23,7 +23,7 @@
 	</insert>
    
    <!--특정 사용자 리뷰 -->
-	<select id="findUserMovieRating" resultType="com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO">
+	<select id="findUserMovieRating" resultType="com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO">
 		SELECT mr.movie_id as movieId, mr.rating, mr.comments,
 		u.user_id as userId, u.nick_name as nickName
 		FROM movie_ratings mr
@@ -35,7 +35,7 @@
 	</select>
 
 	
-	<select id="findMovieRatingList" resultType="com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO">
+	<select id="findMovieRatingList" resultType="com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO">
         SELECT mr.movie_id as movieId, mr.rating, mr.comments,
                u.user_id as userId, u.nick_name as nickName
         FROM movie_ratings mr

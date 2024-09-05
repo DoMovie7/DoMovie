@@ -17,8 +17,8 @@ import org.thymeleaf.context.Context;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.red.domovie.common.util.KmdbMovieUtil;
 import com.red.domovie.domain.dto.movieDetail.GetMovieDetailDTO;
+import com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO;
 import com.red.domovie.domain.dto.movieDetail.PostMovieRatingDTO;
-import com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO;
 import com.red.domovie.domain.entity.MovieRatingsEntity;
 import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.mapper.MovieDetailMapper;
@@ -74,7 +74,7 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 	@Override
 	public void findAllComments(String movieID, Model model) {
 		
-		List<getMovieRatingDTO> movieRatingList= movieDetailMapper.findMovieRatingList(movieID);
+		List<GetMovieRatingDTO> movieRatingList= movieDetailMapper.findMovieRatingList(movieID);
 		model.addAttribute("movieRatingList", movieRatingList);
 
 	}

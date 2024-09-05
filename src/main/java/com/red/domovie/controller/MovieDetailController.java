@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.rabbitmq.client.AMQP.Basic.Return;
 import com.red.domovie.domain.dto.movieDetail.PostMovieRatingDTO;
-import com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO;
 import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.MovieDetailService;
 
@@ -78,6 +77,7 @@ public class MovieDetailController {
 	
 	
 	//리뷰 저장
+	@ResponseBody
 	@PostMapping("/movies/detail/comment/write")
 	public String  postMovieRating(@RequestBody PostMovieRatingDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails ,Model model) {
 	
