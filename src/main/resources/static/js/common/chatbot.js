@@ -273,7 +273,7 @@ function chatConnect(){
 	                        </div>
 	                        <div class="message">
 	                        <div class="bot-name">두비</div>
-	                            <div class="part chatbot">
+	                            <div class="part chat-chatbot">
 	                                <p>${response}</p>
 	                            </div>
 	                            <div class="time">${time}</div>

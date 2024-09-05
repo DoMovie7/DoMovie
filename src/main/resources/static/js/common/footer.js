@@ -1,5 +1,5 @@
 function openNewWindow() {
-    var width = 800; // 원하는 너비
+    var width = 830; // 원하는 너비
     var height = 820; // 원하는 높이
     var left = (screen.width - width) / 2;
     var top = (screen.height - height) / 2;

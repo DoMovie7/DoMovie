@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.red.domovie.domain.dto.bot.FAQDTO;
 import com.red.domovie.domain.dto.chat.ChatRoomDTO;
 import com.red.domovie.domain.dto.chat.ChattingRoomDTO;
+import com.red.domovie.domain.dto.chat.PageDTO;
 import com.red.domovie.domain.entity.FAQEntity;
 import com.red.domovie.service.ChatService;
 import com.red.domovie.service.FAQService;
@@ -44,6 +45,13 @@ public class BotAdminController {
 		return "views/admin/faq";
 	}
 	
+	@PostMapping("/admin/faqs/first")
+    public String addFirstFAQ(@RequestParam(name = "name") String name) {
+		System.out.println(">>>>>>>name : "+name);
+		faqService.addFirstFAQ(name);
+        return "redirect:/admin/faqs";
+    }
+	
 	//////////////////////////////
 	@PostMapping("/admin/faqs")
     @ResponseBody
@@ -51,10 +59,10 @@ public class BotAdminController {
         return faqService.addFAQ(faqDTO);
     }
 
-    @PutMapping("/admin/faqs/{id}")
+    @PutMapping("/admin/faqs/{parentId}")
     @ResponseBody
-    public FAQDTO updateFAQ(@PathVariable Long id, @RequestBody FAQDTO faqDTO) {
-        return faqService.updateFAQ(id, faqDTO);
+    public FAQDTO updateFAQ(@PathVariable Long parentId, @RequestBody FAQDTO faqDTO) {
+        return faqService.updateFAQ(parentId, faqDTO);
     }
 
     @DeleteMapping("/admin/faqs/{id}")
@@ -64,18 +72,18 @@ public class BotAdminController {
     }
 	//////////////////////////////
 	
-	@GetMapping("/admin/chat/list")
-	public String chatList(Model model) {
-		
-		List<ChattingRoomDTO> roomList = chatService.findAllChatRoom();
-        model.addAttribute("roomList",roomList);
-        
-		return "views/admin/chat-list";
-	}
+    @GetMapping("/admin/chat/list")
+    public String chatList(Model model, 
+                           @RequestParam(name = "page", defaultValue = "1") int page, 
+                           @RequestParam(name = "size", defaultValue = "8") int size) {
+        PageDTO pageDTO = chatService.findAllChattingRoom(page, size);
+        model.addAttribute("pageDTO", pageDTO);
+        return "views/admin/chat-list";
+    }
 	
 	@GetMapping("/admin/chat/{roomId}")
 	public String chatting(@PathVariable("roomId") String roomId, Model model) {
-		model.addAttribute("roomdId", roomId);	
+		model.addAttribute("roomdId", roomId);
 		return "views/admin/chat";
 	}
 	

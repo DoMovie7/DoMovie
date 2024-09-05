@@ -14,4 +14,6 @@ public interface FAQService {
 	FAQDTO updateFAQ(Long id, FAQDTO faqDTO);
 
 	void deleteFAQ(Long id);
+
+	void addFirstFAQ(String name);
 }
