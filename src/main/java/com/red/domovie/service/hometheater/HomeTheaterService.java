@@ -1,5 +1,6 @@
 package com.red.domovie.service.hometheater;
 
+import com.red.domovie.common.util.DomovieFileUtil;
 import com.red.domovie.domain.dto.hometheater.*;
 import com.red.domovie.domain.entity.Role;
 import com.red.domovie.domain.entity.UserEntity;
@@ -13,24 +14,40 @@ import com.red.domovie.domain.repository.hometheater.HomeTheaterRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class HomeTheaterService {
+public class HomeTheaterService{
     private final CategoryRepository categoryRepository;
     private final HomeTheaterRepository homeTheaterRepository;
     private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
     private final S3Service s3Service;
     private final UserEntityRepository userRepository;
+    private final S3Client s3Client;
+    private final DomovieFileUtil domovieFileUtil;
+
+//    @Value("spring.cloud.aws.s3.bucket")
+//    private final String bucket;
+//    @Value("spring.cloud.aws.s3.upload-temp.theater")
+//    private final String temp;
+//    @Value("spring.cloud.aws.s3.upload-src.theater")
+//    private final String src;
+
+
+
+
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
@@ -51,6 +68,8 @@ public class HomeTheaterService {
     public HomeTheaterDetailDTO getPostById(Long id) {
         HomeTheaterEntity entity = homeTheaterRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+        HomeTheaterDetailDTO dto = modelMapper.map(entity, HomeTheaterDetailDTO.class);
+        dto.setAuthorEmail(entity.getAuthor().getEmail());  // 작성자의 이메일 설정
         return modelMapper.map(entity, HomeTheaterDetailDTO.class);
     }
     @Transactional
@@ -100,13 +119,18 @@ public class HomeTheaterService {
 
 
     @Transactional
-    public void updatePost(Long id, HomeTheaterUpdateDTO updateDTO) {
-        homeTheaterRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"))
-                .update(updateDTO);
+    public HomeTheaterDetailDTO updatePost(Long id, HomeTheaterUpdateDTO updateDTO, UserDetails userDetails) {
+        HomeTheaterEntity post = homeTheaterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
+        UserEntity currentUser = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        //homeTheaterRepository.save(homeTheaterEntity);
+        if (post.isAuthor(currentUser)) {
+            post.update(updateDTO);
+            return modelMapper.map(post, HomeTheaterDetailDTO.class);
+        }
+        return null;
     }
 
 
@@ -122,11 +146,22 @@ public class HomeTheaterService {
 
         CommentEntity comment = CommentEntity.builder()
                 .content(commentForm.getContent())
+                .author(commentForm.getAuthor())
                 .homeTheater(homeTheater) // homeTheaterEntity에서 homeTheater로 변경
                 .build();
 
         commentRepository.save(comment);
     }
+//    @Override
+//    public Map<String,String> tempUploadProcess(MultipartFile postfile){
+//        String newname =domovieFileUtil.newFilenameWithoutExtension();
+//        String tempkey=temp+newname;
+//        String orgName=postfile.getOriginalFilename();
+//
+//        Map<String, String> result=domovieFileUtil.awsS3fileUpload(postfile,s3Client,bucket,tempkey);
+//        result.put(tempkey,orgName);
+//        return null;
+//    }
 
 }
 

@@ -2,8 +2,8 @@ package com.red.domovie.controller;
 
 import com.red.domovie.domain.dto.hometheater.*;
 import com.red.domovie.domain.entity.hometheater.Category;
-import com.red.domovie.service.hometheater.HomeTheaterService;
 
+import com.red.domovie.service.hometheater.HomeTheaterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/hometheater")
@@ -57,14 +58,6 @@ public class HomeTheaterController {
         return "redirect:/hometheater/list";
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public String editPostForm(@PathVariable("id") Long id, @ModelAttribute HomeTheaterUpdateDTO updateDTO) {
-        homeTheaterService.updatePost(id,updateDTO);
-        return "redirect:/hometheater/{id}"; // 수정 페이지
-    }
-
-
 
     @GetMapping("/{id}")
     public String getPost(@PathVariable("id") Long id, Model model) {
@@ -77,19 +70,28 @@ public class HomeTheaterController {
     }
     @PostMapping("/{id}/comment")
     @PreAuthorize("isAuthenticated()")
-    public String addComment(@PathVariable("id") Long id, @ModelAttribute CommentSaveDTO commentForm) {
+    public String addComment(@PathVariable("id") Long id, @ModelAttribute CommentSaveDTO commentForm,
+                             @AuthenticationPrincipal UserDetails userDetails) {
+        commentForm.setAuthor(userDetails.getUsername());  // 이 줄을 추가하세요
         homeTheaterService.addComment(id,commentForm);
         return "redirect:/hometheater/" + id;
     }
     @PutMapping("/api/{id}")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updatePostAsync(@PathVariable("id") Long id, @RequestBody HomeTheaterUpdateDTO updateDTO) {
+    public ResponseEntity<?> updatePostAsync(@PathVariable("id") Long id,
+                                             @RequestBody HomeTheaterUpdateDTO updateDTO,
+                                             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            homeTheaterService.updatePost(id, updateDTO);
-            return ResponseEntity.ok().build();
+            HomeTheaterDetailDTO updatedPost = homeTheaterService.updatePost(id, updateDTO, userDetails);
+            if (updatedPost != null) {
+                // ResponseEntity.ok() 대신 직접 ResponseEntity 객체 생성
+                return new ResponseEntity<>(updatedPost, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("You don't have permission to update this post.", HttpStatus.FORBIDDEN);
+            }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to update post: " + e.getMessage());
+            return new ResponseEntity<>("Failed to update post: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
     @DeleteMapping("/api/{id}")
@@ -107,6 +109,11 @@ public class HomeTheaterController {
             return ResponseEntity.badRequest().body("Failed to delete post: " + e.getMessage());
         }
     }
+//    @ResponseBody
+//    @PostMapping("/recommends/temp-upload")
+//    public Map<String,String> tempUpload(@RequestParam(name = "postfile") MultipartFile postfile){
+//        return HomeTheaterService.tempUploadProcess(postfile);
+//    }
 
 
 }
