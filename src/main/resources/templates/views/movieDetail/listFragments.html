@@ -70,7 +70,7 @@
 		  		
 		  			
 		  		</div>
-		  			<input type="hidden" th:value="${movieDetail.movieId}" name="movieId"></input>
+		  
 		  		
 		  		<div class="comment">
 		  		   <input type="text" placeholder="코멘트를 작성" name="comment" required="required">
@@ -99,13 +99,5 @@
  		</li>
  	</ul>
  	
-	<div class="pagination" th:if="${movieRatingList != null and movieRatingList.totalPages > 1}">
-	    <a th:each="pageNumber : ${#numbers.sequence(1, movieRatingList.totalPages)}"
-	       th:href="@{#}"
-	       th:text="${pageNumber}"
-	       th:class="${pageNumber == movieRatingList.number + 1} ? 'active'"
-	       th:attr="data-page=${pageNumber - 1}"
-	       class="page-link">
-	    </a>
-	</div>
+	
 </div>
