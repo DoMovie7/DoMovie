@@ -1,5 +1,6 @@
 package com.red.domovie.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -107,12 +108,12 @@ public class SigInController {
 
 	@PostMapping("/api/find-id")
 	public ResponseEntity<?> findId(@RequestBody FindIdDTO request) {
-		String email = loginService.findEmailByNameAndBirthDate(request);
-		if (email != null) {
-			return ResponseEntity.ok(new FindIdResponse(email));
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+	    List<String> emails = loginService.findEmailByNameAndBirthDate(request);
+	    if (!emails.isEmpty()) {
+	        return ResponseEntity.ok(new FindIdResponse(emails));
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 
 	// 로그인 성공 시 리다이렉트될 페이지

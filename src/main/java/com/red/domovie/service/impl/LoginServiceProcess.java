@@ -1,13 +1,12 @@
 package com.red.domovie.service.impl;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -74,7 +73,7 @@ public class LoginServiceProcess implements LoginService {
     }
 
 	@Override
-	public String findEmailByNameAndBirthDate(FindIdDTO request) {
+	public List<String> findEmailByNameAndBirthDate(FindIdDTO request) {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
 
