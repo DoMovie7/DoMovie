@@ -1,5 +1,7 @@
 package com.red.domovie.controller;
 
+import java.util.Map;
+
 import org.springframework.context.annotation.Role;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.red.domovie.domain.dto.recommend.RecommendFileSaveDTO;
 import com.red.domovie.domain.dto.recommend.RecommendSaveDTO;
 import com.red.domovie.domain.entity.RecommendEntity;
 import com.red.domovie.security.CustomUserDetails;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -62,7 +66,10 @@ public class RecommendController {
 	 * https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html#servlet-authentication-securitycontext
 	 */    // 새로운 추천 글을 저장하는 메서드입니다.
     @PostMapping("/recommends") //작성자 정보는 session()에 저장 어센티케이션-프린시펄
-    public String createRecommend(@ModelAttribute RecommendSaveDTO dto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String createRecommend(
+    		@ModelAttribute RecommendSaveDTO dto,
+    		@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    	
     	recommendService.savePost(dto, customUserDetails.getUserId()); // 입력된 추천 글 데이터를 데이터베이스에 저장합니다.
         return "redirect:/recommends"; // 저장 후 추천 목록 페이지로 리다이렉트합니다.
     }
@@ -81,6 +88,14 @@ public class RecommendController {
         
         // "views/recommend/list"라는 뷰를 반환합니다. 이 뷰는 Thymeleaf 템플릿을 참조합니다.
         return "views/recommend/list";
+    }
+    
+    @ResponseBody//js fetchapi 성공시 then으로 전달한다.
+    @PostMapping("/recommends/temp-upload")
+    public Map<String, String> tempUpload(@RequestParam(name = "posterfile") MultipartFile posterfile) {
+      
+        
+        return recommendService.tempUploadProcss(posterfile);
     }
     
     

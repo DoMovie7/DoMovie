@@ -2,7 +2,9 @@ package com.red.domovie.domain.dto.recommend;
 
 import java.time.LocalDateTime;
 
+import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.entity.RecommendEntity;
+import com.red.domovie.domain.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,22 +27,11 @@ public class RecommendListDTO {
     private String imgUrl; // 항목 이미지 URL
     private int commentCount; // 항목 댓글 수
     
+    private ProfileDTO author;
     
-
-    // Service 계층에서 엔티티를 DTO로 변환하는 예시 메서드입니다.
-    public RecommendListDTO convertToDTO(RecommendEntity entity) {
-        // RecommendEntity 객체를 RecommendListDTO로 변환합니다.
-        return RecommendListDTO.builder()
-            .id(entity.getId()) // 엔티티의 ID를 DTO의 항목 번호로 설정합니다.
-            .title(entity.getTitle()) // 엔티티의 제목을 DTO의 항목 제목으로 설정합니다.
-            .email(entity.getAuthor().getEmail()) // 엔티티의 author 필드에서 작성자의 이메일을 DTO에 설정합니다.
-            .userName(entity.getAuthor().getUserName()) // 엔티티의 author 필드에서 작성자의 사용자 이름을 DTO에 설정합니다.
-            .imgUrl(entity.getImgUrl()) // 엔티티의 이미지 URL을 DTO에 설정합니다.
-            .createdAt(entity.getCreatedAt()) // 엔티티의 작성 날짜와 시간을 DTO에 설정합니다.
-            .commentCount(entity.getCommentCount()) // 엔티티의 댓글 수를 DTO에 설정합니다.
-            .build(); // 모든 필드를 설정한 후 DTO 객체를 빌드하여 반환합니다.
+    public RecommendListDTO author(ProfileDTO author) {
+    	this.author=author;
+    	return this;
     }
-
-
 	
 }
