@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
+	// CSRF 토큰 설정
+	const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
 	// DOM 요소 선택
 	const profilePic = document.getElementById('profile-picture');
 	const fileInput = document.getElementById('profile-upload');
@@ -8,42 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
 	const profileContent = document.getElementById('profile-content');
 	const tierContent = document.getElementById('tier-content');
 	const myPostsContent = document.getElementById('my-posts-content');
-	const form = document.getElementById('profile-form');
-	const editBtn = document.getElementById('edit-btn');
-	const cancelBtn = document.getElementById('cancel-btn');
-	const saveBtn = document.getElementById('save-btn');
-
-	// 비밀번호 변경 관련 DOM 요소 선택
+	const nicknameForm = document.getElementById('nickname-form');
+	const nicknameDisplay = document.getElementById('nickname');
+	const nicknameInput = document.getElementById('nickname-input');
+	const editNicknameBtn = document.getElementById('edit-nickname-btn');
+	const saveNicknameBtn = document.getElementById('save-nickname-btn');
+	const cancelNicknameBtn = document.getElementById('cancel-nickname-btn');
 	const changePasswordBtn = document.getElementById('change-password-btn');
 	const passwordPopup = document.getElementById('password-popup');
 	const closePopupBtn = document.getElementById('close-popup');
 	const passwordForm = document.getElementById('password-form');
 	const popupOverlay = document.querySelector('.popup-overlay');
 
-	// csrf 토큰
-	const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-	// 등급 시스템 클래스
-	class TierSystem {
-		constructor(postCount) {
-			this.postCount = postCount;
-			this.tiers = {
-				'corn': { image: '/img/tier/Asset 1.png', description: '나의 등급은 옥수수입니다.' },
-				'popcorn': { image: '/img/tier/Asset 2.png', description: '나의 등급은 터진 옥수수입니다.' },
-				'fullPopcorn': { image: '/img/tier/Asset 3.png', description: '나의 등급은 팝콘입니다.' }
-			};
-		}
-
-		getCurrentTier() {
-			if (this.postCount >= 6) return this.tiers.fullPopcorn;
-			if (this.postCount >= 3) return this.tiers.popcorn;
-			return this.tiers.corn;
-		}
-	}
-
-	// 원래 프로필 이미지 src 저장
-	const originalProfilePicSrc = profilePic.src;
 
 	// 컨텐츠 로드 함수
 	function loadContent(type) {
@@ -56,34 +36,67 @@ document.addEventListener('DOMContentLoaded', function() {
 	function setActiveButton(button) {
 		[profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
 		button.classList.add('active');
+
+		//게시글 갖고오기
+		fetch("/mypage/recommends")
+			.then(response => response.json())
+			.then(data => {
+				console.log("list:", data);
+				let str = "";
+				data.forEach(function(dto) {
+					str += `
+				<li class="post-item">
+					<span><a href="/recommends/${dto.id}" >${dto.title}</a></span>
+					<p>${dto.createdAt.substring(0, 10)}</p>
+				</li>
+				`
+				});
+				const postsListContainer = document.querySelector('#posts-list-container');
+				postsListContainer.innerHTML = str;
+			})
+			.catch(error => {
+				alert('게시글 로드 오류!');
+			});
 	}
 
-	// 수정 모드 토글 함수
-	function toggleEditMode(isEditing) {
-		const nicknameDisplay = document.getElementById('nickname');
-		const nicknameInput = document.getElementById('nickname-input');
-
+	// 닉네임 수정 모드 토글 함수
+	function toggleNicknameEditMode(isEditing) {
 		nicknameDisplay.style.display = isEditing ? 'none' : 'inline';
-		nicknameInput.style.display = isEditing ? 'inline' : 'none';
-
-		editBtn.style.display = isEditing ? 'none' : 'inline';
-		saveBtn.style.display = isEditing ? 'inline' : 'none';
-		cancelBtn.style.display = isEditing ? 'inline' : 'none';
-
-		profilePic.style.cursor = isEditing ? 'pointer' : 'default';
-		profilePic.title = isEditing ? '클릭하여 이미지 변경' : '';
+		nicknameForm.style.display = isEditing ? 'inline-flex' : 'none';
+		editNicknameBtn.style.display = isEditing ? 'none' : 'inline';
 
 		if (isEditing) {
 			nicknameInput.value = nicknameDisplay.textContent;
-			profilePic.addEventListener('click', triggerFileInput);
-		} else {
-			profilePic.removeEventListener('click', triggerFileInput);
+			nicknameInput.focus();
 		}
 	}
 
-	// 파일 입력 트리거 함수
-	function triggerFileInput() {
-		fileInput.click();
+	// 이미지 변경 함수
+	function changeProfileImage(file) {
+		const formData = new FormData();
+		formData.append('file', file);
+		fetch('/uploadImage', {
+			method: 'POST',
+			headers: {
+				[header]: token
+			},
+			body: formData,
+			credentials: 'include'
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('이미지 업로드 실패');
+				}
+				return response.json();
+			})
+			.then(data => {
+				profilePic.src = data.imageUrl;
+				alert('프로필 이미지가 성공적으로 변경되었습니다.');
+			})
+			.catch(error => {
+				console.error('이미지 업로드 중 오류 발생:', error);
+				alert('이미지 업로드에 실패했습니다: ' + error.message);
+			});
 	}
 
 	// 비밀번호 변경 팝업 표시 함수
@@ -111,14 +124,48 @@ document.addEventListener('DOMContentLoaded', function() {
 			return;
 		}
 
-		sendPasswordChangeRequest(currentPassword, newPassword);
-		alert('비밀번호가 성공적으로 변경되었습니다.');
-		closePasswordPopup();
+		const updateData = {
+			currentPassword: currentPassword,
+			newPassword: newPassword
+		};
+
+		fetch('/updateProfile', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				[header]: token
+			},
+			body: JSON.stringify(updateData),
+			credentials: 'include'
+		})
+			.then(response => {
+				if (!response.ok) {
+					if (response.status === 400) {
+						return response.json().then(data => {
+							throw new Error(data.error || '비밀번호 변경 실패');
+						});
+					}
+					throw new Error('서버 오류');
+				}
+				return response.json();
+			})
+			.then(data => {
+				alert('비밀번호가 성공적으로 변경되었습니다.');
+				closePasswordPopup();
+			})
+			.catch(error => {
+				alert('비밀번호 변경 실패: ' + error.message);
+			});
 	}
 
 	// 나의 등급 페이지 로드 함수
 	function loadTierContent() {
-		fetch('/api/user-post-count')
+		fetch('/api/user-post-count', {
+			headers: {
+				[header]: token
+			},
+			credentials: 'include'
+		})
 			.then(response => response.json())
 			.then(data => {
 				const tierSystem = new TierSystem(data.postCount);
@@ -137,152 +184,37 @@ document.addEventListener('DOMContentLoaded', function() {
 			.catch(error => console.error('Error fetching user info:', error));
 	}
 
-	// 프로필 업데이트 함수
-	function updateProfile() {
-		const newNickname = document.getElementById('nickname-input').value;
-		const currentNickname = document.getElementById('nickname').textContent;
-		const file = fileInput.files[0];
+	// 닉네임 업데이트 함수
+	function updateNickname(e) {
+		e.preventDefault();
+		const newNickname = nicknameInput.value;
 
-		const profileData = {};
-
-		// 닉네임이 변경되었는지 확인
-		if (newNickname !== currentNickname) {
-			profileData.nickName = newNickname;
-		}
-
-		let updatePromise;
-
-		if (file) {
-			// 이미지 파일이 선택된 경우
-			updatePromise = uploadImageToServer(file)
-				.then(imageData => {
-					profileData.profileImageUrl = imageData.url;
-					profileData.profileImageBucketKey = imageData.bucketKey;
-					profileData.profileImageOrgName = imageData.originalName;
-					return sendProfileUpdateToServer(profileData);
-				});
-		} else if (Object.keys(profileData).length > 0) {
-			// 이미지는 없지만 닉네임이 변경된 경우
-			updatePromise = sendProfileUpdateToServer(profileData);
-		} else {
-			// 변경된 내용이 없는 경우
-			alert("변경된 내용이 없습니다.");
-			toggleEditMode(false);
-			return;
-		}
-
-		updatePromise
-			.then(() => {
-				if (profileData.nickName) {
-					document.getElementById('nickname').textContent = profileData.nickName;
-				}
-				if (profileData.profileImageUrl) {
-					profilePic.src = profileData.profileImageUrl;
-				}
-				alert("회원 정보가 수정되었습니다.");
-				toggleEditMode(false);
-			})
-			.catch(error => {
-				console.error('프로필 업데이트 중 오류 발생:', error);
-				alert("회원 정보 수정에 실패했습니다: " + error.message);
-			});
-	}
-
-	// 파일 선택 시 이미지 미리보기
-	fileInput.addEventListener('change', function(e) {
-		const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				profilePic.src = e.target.result;
-			}
-			reader.readAsDataURL(file);
-		}
-	});
-
-	// CSRF 토큰을 가져오는 함수
-	function getCsrfToken() {
-		const csrfToken = document.querySelector('meta[name="_csrf"]');
-		const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
-		if (csrfToken && csrfHeader) {
-			const header = csrfHeader.getAttribute('content');
-			// 헤더 이름에서 특수 문자 제거
-			const safeHeader = header.replace(/[^\w-]/g, '');
-			return {
-				header: safeHeader,
-				token: csrfToken.getAttribute('content')
-			};
-		}
-		return null;
-	}
-
-	// 서버로 이미지 업로드 함수
-	function uploadImageToServer(file) {
-		const formData = new FormData();
-		formData.append('file', file);
-
-		const csrfData = getCsrfToken();
-		const headers = {};
-		if (csrfData) {
-			headers[csrfData.header] = csrfData.token;
-		}
-
-		return fetch('/uploadImage', {
+		fetch('/updateProfile', {
 			method: 'POST',
 			headers: {
-				[header]: token //이 부분만 추가하면 됨
+				'Content-Type': 'application/json',
+				[header]: token
 			},
-			body: formData,
-			credentials: 'include'  // 쿠키를 포함시키기 위해 추가
-		})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('이미지 업로드 실패');
-				}
-				return response.json();
-			});
-	}
-
-	// 서버로 프로필 업데이트 요청 보내는 함수
-	function sendProfileUpdateToServer(profileData) {
-		const headers = {
-			'Content-Type': 'application/json'
-		};
-
-		const csrfData = getCsrfToken();
-		if (csrfData && csrfData.header && csrfData.token) {
-			headers[csrfData.header] = csrfData.token;
-		}
-
-		return fetch('/updateProfile', {
-			method: 'PUT',
-			headers: {
-				[header]: token //이 부분만 추가하면 됨
-			},
-			body: JSON.stringify(profileData),
+			body: JSON.stringify({ nickName: newNickname }),
 			credentials: 'include'
 		})
 			.then(response => {
 				if (!response.ok) {
-					return response.text().then(text => {
-						throw new Error('프로필 업데이트 실패: ' + text);
-					});
+					throw new Error('닉네임 업데이트 실패');
 				}
-				return response.json();
+				return response.json(); // 서버가 JSON을 반환한다고 가정
+			})
+			.then(data => {
+				nicknameDisplay.textContent = newNickname;
+				toggleNicknameEditMode(false);
+				alert('닉네임이 성공적으로 변경되었습니다.');
 			})
 			.catch(error => {
-				console.error('프로필 업데이트 중 오류 발생:', error);
-				throw error;  // 에러를 다시 throw하여 상위 catch 블록에서 처리할 수 있게 함
+				alert('닉네임 업데이트에 실패했습니다: ' + error.message);
 			});
 	}
 
-	// 서버로 비밀번호 변경 요청 함수 (구현 필요)
-	function sendPasswordChangeRequest(currentPassword, newPassword) {
-		console.log('비밀번호 변경 요청 함수 구현 필요:', currentPassword, newPassword);
-		// TODO: 실제 서버로 비밀번호 변경 요청을 보내는 로직 구현
-	}
-
-	// 이벤트 리스너 설정
+	// 이벤트 리스너 추가
 	profileBtn.addEventListener('click', () => {
 		loadContent('profile');
 		setActiveButton(profileBtn);
@@ -291,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	tierBtn.addEventListener('click', () => {
 		loadContent('tier');
 		setActiveButton(tierBtn);
-		loadTierContent();
+		//loadTierContent();
 	});
 
 	myPostsBtn.addEventListener('click', () => {
@@ -299,26 +231,61 @@ document.addEventListener('DOMContentLoaded', function() {
 		setActiveButton(myPostsBtn);
 	});
 
-	editBtn.addEventListener('click', () => toggleEditMode(true));
-
-	cancelBtn.addEventListener('click', () => {
-		toggleEditMode(false);
-		profilePic.src = originalProfilePicSrc;
-		document.getElementById('nickname-input').value = document.getElementById('nickname').textContent;
+	editNicknameBtn.addEventListener('click', () => {
+		toggleNicknameEditMode(true);
 	});
 
-	// 수정완료 버튼 이벤트 리스너
-	saveBtn.addEventListener('click', (e) => {
-		e.preventDefault();
-		updateProfile();
+	nicknameForm.addEventListener('submit', updateNickname);
+
+	cancelNicknameBtn.addEventListener('click', () => {
+		toggleNicknameEditMode(false);
 	});
 
 	changePasswordBtn.addEventListener('click', showPasswordPopup);
-	closePopupBtn.addEventListener('click', closePasswordPopup);
-	passwordForm.addEventListener('submit', changePassword);
-	popupOverlay.addEventListener('click', closePasswordPopup);
 
-	// 초기 페이지 로드
-	loadContent('profile');
-	setActiveButton(profileBtn);
+	closePopupBtn.addEventListener('click', closePasswordPopup);
+
+	passwordForm.addEventListener('submit', changePassword);
+
+	// 프로필 이미지 업로드
+	fileInput.addEventListener("change", fileuploadS3Temp);
+	
+	function fileuploadS3Temp(){
+		//s3 temp 폴더 파일업로드해야함
+		//FormData 객체를 사용하여 파일 데이터를 서버에 전송할수있다
+		//const fileInput = document.getElementById('poster-file');
+		const formData = new FormData();
+		//console.log(posterFile.files[0]);
+        formData.append('profile', fileInput.files[0]); // 파일 추가
+		//console.log("---");
+		//console.log(formData);
+		//*
+		//파일을 서버에 비동기 전송
+		fetch("/mypage/profile/temp-upload",{
+			method: "POST",
+			headers: {
+				[header]: token
+			},
+			body: formData
+		})
+		//fetch로부터 받은 응답(Response 객체)을 처리
+		.then(response=>response.json())
+		.then(data=>{
+			console.log(data.url);
+			//console.log(data.key);
+			//console.log(data.orgName);
+			
+			//파일의 부모인 label태그의 백그라운드에 이미지 처리
+			const fileLabel=fileInput.parentElement;
+			fileLabel.style.backgroundImage=`url(${data.url})`;
+							
+			
+		})
+		.catch(error=>{
+			alert("파일업로드 실패! 서버연결을 확인하시고 다시 시도 해주세요!");
+		})
+	}
+	
 });
+
+

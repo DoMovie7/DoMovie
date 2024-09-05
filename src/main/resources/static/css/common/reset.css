@@ -67,6 +67,8 @@ button:hover{cursor: pointer;}
 
 .cmbtn2:hover{background-color:#DB242D;color:#fff; font-weight:600}
 
+.cmbtn3{padding:4px 11px; border:none;border-radius: 4px;  background-color:#A51F22;color:#fff}
+
 /*공통 대시보드*/
 
 .dash{background-color: rgba( 255, 255, 255, 1 );backdrop-filter: blur( 8px ); box-shadow: 0 4px 10px 0 rgba( 31, 38, 135, 0.37 ); border-radius: 10px;padding: 15px; overflow-y:auto;position: relative; border: 1px solid rgba( 255, 255, 255, 0.18 );}

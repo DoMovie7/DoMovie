@@ -36,7 +36,8 @@ public class ModelMapperConfig {
 	        // 매핑 전략을 느슨한 매칭으로 설정 (필드 이름이 정확히 일치하지 않더라도 유사한 이름의 필드를 매핑)
 	        //.setMatchingStrategy(MatchingStrategies.LOOSE)
 	        ;
-		
+
+
 		return modelMapper;
 	}
 

@@ -10,4 +10,6 @@ public interface FaqEntityRespository extends JpaRepository<FAQEntity, Long>{
 
 	List<FAQEntity> findByParentIsNull();
 
+	List<FAQEntity> findAllByParentIsNull();
+
 }

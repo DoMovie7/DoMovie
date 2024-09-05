@@ -1,52 +1,71 @@
-	<!DOCTYPE html>
-	<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
-	<head>
-	    <meta charset="UTF-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <title>글쓰기 페이지</title>
-	    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
-	    <link rel="stylesheet" href="/css/recommend/write.css"> <!-- 추가 스타일 시트 -->
-	</head>
-	<body>
-		<main>
-	    <div class="container">
-	        <p class="page-title">영화 추천 글쓰기</p>
-	        <form id="writeForm" method="post" action="/recommends/new" enctype="multipart/form-data">
-			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-	          <input type="hidden" id="content" name="content">
-				
-				<label for="category">장르&nbsp;선택</label>
-	            <select id="category" name="genre" required>
-	                <option value="액션">액션</option>
-	                <option value="멜로/로맨스">멜로/로맨스</option>
-	                <option value="드라마">드라마</option>
-	                <option value="공포">공포</option>
-	                <option value="코미디">코미디</option>
-	                <option value="애니메이션">애니메이션</option>
-	                <option value="sf/판타지">SF/판타지</option>
-	                <option value="기타">기타</option>
-	            </select><!--<br><br>-->
-	            
-	            <label for="file">포스터&nbsp;업로드</label>
-	            <input type="file" id="file" name="file">
-				
-	            <label for="title">제&nbsp;목</label>
-	            <input type="text" id="title" name="title" required><!--<br><br>-->
-	            
-	            <label for="editor">내&nbsp;용</label>
-	            <div id="editor"></div><!--<br><br>-->
-	            <br><br>
-	            
-	            <div class="button-group">
-	                <button type="submit" id="submitButton">글 올리기</button>
-	                <button type="button" id="cancelButton">취소</button>
-	            </div>
-	        </form>
-	    </div>
-	    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-	    <script src="/js/write.js" defer></script>
-	    </main>
-	    
-	</body>
-	</html>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>글쓰기 페이지</title>
+        
+        <!-- Toast UI Editor의 기본 스타일 시트 링크 -->
+        <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+        
+        <!-- 추가적인 스타일 시트 링크 (로컬 CSS 파일) -->
+        <link rel="stylesheet" href="/css/recommend/write.css">
+    </head>
+    <body>
+        <main>
+            <div class="container">
+                <!-- 페이지 제목 -->
+                <p class="page-title">영화 추천 글쓰기</p>
+                
+                <!-- 폼 시작 -->
+                <form id="writeForm" method="post" action="/recommends" enctype="multipart/form-data">
+                    
+                    <!-- CSRF 토큰을 숨겨진 필드로 추가하여 보안 강화 -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    
+                    <!-- 장르 선택을 위한 드롭다운 -->
+                    <label for="category">장르 선택</label>
+                    <select id="category" name="genre" required>
+                        <!-- Thymeleaf를 사용하여 장르 목록을 반복문으로 표시 -->
+                        <th:block th:each="genre:${T(com.red.domovie.domain.entity.Genre).values()}">
+                            <option th:value="${genre}" th:text="${genre.koName}"></option>
+                        </th:block>
+                    </select>
+                    
+                    <!-- 포스터 파일 업로드 입력 필드 -->
+                    <label for="file">포스터 업로드</label>
+                    <input type="file" id="file" name="file">
+                    
+                    <!-- 제목 입력 필드 -->
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" required>
+                    
+                    <!-- TOAST UI Editor를 사용할 콘텐츠 입력 필드 -->
+                    <label for="editor">내용</label>
+                    <div id="editor"></div>
+                    
+                    <!-- TOAST UI Editor에서 입력된 콘텐츠를 숨겨진 필드에 저장 -->
+                    <input type="hidden" id="content" name="content">
+                    
+                    <br><br>
+                    
+                    <!-- 버튼 그룹 -->
+                    <div class="button-group">
+                        <!-- 글 올리기 버튼 -->
+                        <button type="button" id="submitButton">글 올리기</button>
+                        
+                        <!-- 취소 버튼 -->
+                        <button type="button" id="cancelButton">취소</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- TOAST UI Editor의 JavaScript 파일 링크 -->
+            <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+            
+            <!-- 로컬 JavaScript 파일 링크 (글쓰기 페이지 관련 스크립트) -->
+            <script src="/js/write.js" defer></script>
+        </main>
+    </body>
+</html>

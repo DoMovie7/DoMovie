@@ -1,14 +1,11 @@
 package com.red.domovie;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.red.domovie.domain.entity.Role;
-import com.red.domovie.domain.entity.TierEntity;
 import com.red.domovie.domain.entity.UserEntity;
-import com.red.domovie.domain.repository.TierEntityRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 
 @SpringBootTest
@@ -19,18 +16,11 @@ class DomovieApplicationTests {
 	@Autowired
 	UserEntityRepository mRepository;
 	
-	@Autowired
-	TierEntityRepository tRepository;
 	
 	
 	//@Test
 	void signIn() {
-	    // 기본 티어 생성 (ID: 1)
-	    TierEntity defaultTier = TierEntity.builder()
-	        .minPostCount(0)
-	        .maxPostCount(10)
-	        .build();
-	    tRepository.save(defaultTier);
+
 	    
 	    // 일반 사용자 생성
 	    UserEntity user = UserEntity.builder()
@@ -41,7 +31,6 @@ class DomovieApplicationTests {
 	        .password(passwordEncoder.encode("1234"))
 	        .birthDate("1990-01-01")
 	        //.status(1L)
-	        .tierId(defaultTier)  // 기본 티어 설정
 	        .build()
 	        .addRole(Role.USER);
 

@@ -67,23 +67,46 @@ document.addEventListener('click', async function(e) {
                 break;
             case 'login-query':
                 websocketStatus = 1;
+				chatConnect();
                 botChat("<p>상담사 연결중입니다.<br> 문의 내용을 입력해주세요.</p>");
                 break;
             case 'past-query-list':
 				websocketStatus = 1;
-                botChat("<p>이전 채팅문의 내역입니다.</p>");
+                botChat(`<p>이전 채팅문의 내역입니다.</p>`);
                 break;
             case 'go-back':
                 showWelcomeMessage(true);
                 break;
-            case 'go-back-all':
-				document.getElementById("chat-content").innerHTML = "";
-				websocketStatus = 0;
-				showWelcomeMessage(true);
-                break;
         }
     }
 });
+
+
+/*
+async function createRoom(){
+	try {
+	    const response = await fetch(url, {
+	      method: 'POST',
+	      headers: {
+	        'Content-Type': 'application/json',
+			[header] : token
+	      },
+	      body: JSON.stringify({ userId: userId })
+	    });
+
+	    if (!response.ok) {
+	      throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+
+	    const data = await response.json();
+		console.log(data);
+	    return data;
+	  } catch (error) {
+	    console.error('Error posting userId:', error);
+	    throw error;
+	  }
+}
+*/
 
 async function handleInquery() {
     const userId = await checkAuthStatus();
@@ -229,10 +252,45 @@ function connect() {
     });
 }
 
+//채팅 연결
+function chatConnect(){
+	
+	disconnect();
+	client = Stomp.over(new SockJS('/chatbot')); // Stomp 라이브러리와 SockJS를 사용하여 WebSocket 연결 생성
+	    
+	    client.connect({}, (frame) => {
+	        key = generateUniqueKey();  //고유 키 생성
+	        console.log(key);
+	        client.subscribe(`/topic/answer/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
+	            var response = answer.body; //서버로부터 받은 메세지 객체
+	            var now = new Date();
+	            var time = formatTime(now);
+	            
+	            // 봇의 응답 메시지 HTML 생성
+	            var tag = `<div class="msg bot flex">
+	                        <div class="icon">
+	                            <img src="/img/chatbot-img.png">
+	                        </div>
+	                        <div class="message">
+	                        <div class="bot-name">두비</div>
+	                            <div class="part chat-chatbot">
+	                                <p>${response}</p>
+	                            </div>
+	                            <div class="time">${time}</div>
+	                        </div>
+	                    </div>`;
+	            showMessage(tag);
+	            
+	        });
+	    });
+	
+}
+
 
 
 // 메시지 전송 버튼 클릭 이벤트 핸들러
 function btnMsgSendClicked() {
+	
     if (!client) { // WebSocket 클라이언트가 초기화되지 않은 경우
         console.error("WebSocket client is not initialized.");
         return;
@@ -269,7 +327,7 @@ function btnMsgSendClicked() {
 	
     
 	if(websocketStatus == 1){
-		client.send(`/message/agent`, {}, JSON.stringify(data));
+		client.send(`/message/chat/query`, {}, JSON.stringify(data));
 	} else if(websocketStatus == 2){
 		client.send(`/message/openai`, {}, JSON.stringify(data));
 	} else{

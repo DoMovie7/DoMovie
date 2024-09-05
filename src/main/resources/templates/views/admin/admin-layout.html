@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	th:fragment="layout(pHead, pMain)">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="/img/favicon.png">
+	<link rel="stylesheet" href="/css/common/reset.css">
+	<link rel="stylesheet" href="/css/admin/layout.css">
+	<link rel="stylesheet" href="/css/common/chatbot.css">
+	<th:block th:replace="${pHead}" />
+</head>
+<body>
+	<div class="class-page">
+	
+		<div class="side-bar">
+            <h2 class="main-text">문의 관리</h2>
+            <a href="/admin/faqs">자주 묻는 질문 관리</a>
+            <a href="/admin/chat/list">1:1 문의 답변</a>
+            <div id="roomListContainer"></div>
+            <!-- <input type="text" id="roomName" placeholder="새 방 이름"> -->
+            <!-- <button onclick="createRoom()">방 만들기</button> -->
+    	</div>
+    	
+        <div class="right-section">
+			<th:block th:replace="${pMain}" />
+        </div>
+        
+	</div>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	
+</body>
+</html>

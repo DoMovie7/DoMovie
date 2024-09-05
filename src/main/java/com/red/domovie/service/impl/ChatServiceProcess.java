@@ -1,63 +1,53 @@
 package com.red.domovie.service.impl;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.red.domovie.domain.dto.bot.ChatRoomDTO;
+import com.red.domovie.domain.dto.bot.QuestionDTO;
+import com.red.domovie.domain.dto.chat.ChattingRoomDTO;
+import com.red.domovie.domain.dto.chat.PageDTO;
+import com.red.domovie.domain.mapper.RoomMapper;
 import com.red.domovie.service.ChatService;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 public class ChatServiceProcess implements ChatService{
 	
-	private final ObjectMapper objectMapper;
-    private Map<String, ChatRoomDTO> chatRooms;
+    private final RoomMapper roomMapper;
 
-    @PostConstruct
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
-    }
+	@Override
+	public void saveRoomProcess(QuestionDTO dto) {
+		roomMapper.saveRoom(dto);
+		
+	}
 
-    public List<ChatRoomDTO> findAllRoom() {
-        return new ArrayList<>(chatRooms.values());
-    }
+	@Override
+	public List<ChattingRoomDTO> findAllChatRoom() {
+		return roomMapper.findAllRoom();
+	}
 
-    public ChatRoomDTO findRoomById(String roomId) {
-        return chatRooms.get(roomId);
-    }
+	@Override
+	public List<ChattingRoomDTO> findByRoomId(String key) {
+		String roomId = key;
+		return roomMapper.findByRoomId(roomId);
+	}
 
-    public ChatRoomDTO createRoom(String name) {
-        String randomId = UUID.randomUUID().toString();
-        ChatRoomDTO chatRoom = ChatRoomDTO.builder()
-                .roomId(randomId)
-                .name(name)
-                .build();
-        chatRooms.put(randomId, chatRoom);
-        return chatRoom;
-    }
+	@Override
+	public PageDTO findAllChattingRoom(int page, int size) {
+		int offset = (page - 1) * size;
+		
+		Map<String, Integer> params = new HashMap<>();
+		params.put("offset", offset);
+		params.put("size", size);
+		
+        List<ChattingRoomDTO> content = roomMapper.findAllRooms(params);
+        long totalElements = roomMapper.countAllRooms();
+        return new PageDTO(page, size, totalElements, content);
+	}
 
-    // 새로운 메서드: 사용자가 방에 입장할 때 호출
-    public void addUserToRoom(String roomId, String username) {
-        ChatRoomDTO room = chatRooms.get(roomId);
-        if (room != null) {
-            room.addUser(username);
-        }
-    }
-
-    // 새로운 메서드: 사용자가 방에서 퇴장할 때 호출
-    public void removeUserFromRoom(String roomId, String username) {
-        ChatRoomDTO room = chatRooms.get(roomId);
-        if (room != null) {
-            room.removeUser(username);
-        }
-    }
 }

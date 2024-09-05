@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{views/admin/admin-layout :: layout(~{::head} ,~{::main} ) }">
+<head>
+	<link rel="stylesheet" href="/css/admin/chat.css">
+	<link rel="stylesheet" href="/css/common/chatbot.css">
+</head>
+<main class="chat-main">
+	<input type="hidden" th:value="${roomId}" id="roomIdKey">
+	<div id="messageArea"><!-- id:chat-content  -->
+		
+	</div>
+    <form  class="flex" name="messageForm"> <!-- id="input-container" -->
+        <input type="text" class="question" placeholder="메시지를 입력하세요" autocomplete="off" id="answer"> <!-- id="question"  -->
+        <button class="send-button" type="submit">보내기</button> <!--  id="send-button"  -->
+    </form>
+	
+	<script src="/js/admin/chat.js"></script>
+</main>
