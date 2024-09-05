@@ -13,7 +13,8 @@ public class ProfileDTO {
 	private String phoneNumber; // 핸드폰번호
 	private String nickName; // 닉네임
 	private String email; // 이메일
-	private Tier tier; // 이메일
+	private Tier tier; // 등급
+	private String profileImageUrl;
 	
 	private int  recommendCount;
 	

@@ -23,10 +23,12 @@
 					<h2>내 프로필</h2>
 				</div>
 				<div class="profile-container">
-					<div class="profile-image-container">
-						<img id="profile-picture" src="/img/default-profile.jpg" alt="프로필 사진">
+					<label class="profile-image-container" th:unless="${#strings.isEmpty(user.profileImageUrl)}" th:style="|background-image: url(${user.profileImageUrl});|">
 						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
-					</div>
+					</label>
+					<label class="profile-image-container" th:if="${#strings.isEmpty(user.profileImageUrl)}" >
+						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
+					</label>
 					<div class="profile-info">
 						<ul>
 							<li><span>이름 : </span><span id="name" th:text="${user.userName}"></span></li>

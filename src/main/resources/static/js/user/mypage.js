@@ -24,26 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	const passwordForm = document.getElementById('password-form');
 	const popupOverlay = document.querySelector('.popup-overlay');
 
-	// 원래 프로필 이미지 src 저장
-	const originalProfilePicSrc = profilePic.src;
-
-	// 등급 시스템 클래스 정의
-	class TierSystem {
-		constructor(postCount) {
-			this.postCount = postCount;
-			this.tiers = {
-				'corn': { image: '/img/tier/Asset 1.png', description: '나의 등급은 옥수수입니다.' },
-				'popcorn': { image: '/img/tier/Asset 2.png', description: '나의 등급은 터진 옥수수입니다.' },
-				'fullPopcorn': { image: '/img/tier/Asset 3.png', description: '나의 등급은 팝콘입니다.' }
-			};
-		}
-
-		getCurrentTier() {
-			if (this.postCount >= 6) return this.tiers.fullPopcorn;
-			if (this.postCount >= 3) return this.tiers.popcorn;
-			return this.tiers.corn;
-		}
-	}
 
 	// 컨텐츠 로드 함수
 	function loadContent(type) {
@@ -56,27 +36,27 @@ document.addEventListener('DOMContentLoaded', function() {
 	function setActiveButton(button) {
 		[profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
 		button.classList.add('active');
-		
+
 		//게시글 갖고오기
 		fetch("/mypage/recommends")
-		.then(response =>response.json())
-		.then(data =>{
-			console.log("list:",data);
-			let str="";
-			data.forEach(function(dto) {
-			    str +=`
+			.then(response => response.json())
+			.then(data => {
+				console.log("list:", data);
+				let str = "";
+				data.forEach(function(dto) {
+					str += `
 				<li class="post-item">
 					<span><a href="/recommends/${dto.id}" >${dto.title}</a></span>
-					<p>${dto.createdAt.substring(0,10)}</p>
+					<p>${dto.createdAt.substring(0, 10)}</p>
 				</li>
 				`
+				});
+				const postsListContainer = document.querySelector('#posts-list-container');
+				postsListContainer.innerHTML = str;
+			})
+			.catch(error => {
+				alert('게시글 로드 오류!');
 			});
-			const postsListContainer = document.querySelector('#posts-list-container');
-			postsListContainer.innerHTML=str;
-		})
-		.catch(error => {
-			alert('게시글 로드 오류!');
-		});
 	}
 
 	// 닉네임 수정 모드 토글 함수
@@ -268,15 +248,44 @@ document.addEventListener('DOMContentLoaded', function() {
 	passwordForm.addEventListener('submit', changePassword);
 
 	// 프로필 이미지 업로드
-	fileInput.addEventListener('change', (event) => {
-		const file = event.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				profilePic.src = e.target.result; // 미리보기
-				changeProfileImage(file); // 서버로 업로드
-			};
-			reader.readAsDataURL(file);
-		}
-	});
+	fileInput.addEventListener("change", fileuploadS3Temp);
+	
+	function fileuploadS3Temp(){
+		//s3 temp 폴더 파일업로드해야함
+		//FormData 객체를 사용하여 파일 데이터를 서버에 전송할수있다
+		//const fileInput = document.getElementById('poster-file');
+		const formData = new FormData();
+		//console.log(posterFile.files[0]);
+        formData.append('profile', fileInput.files[0]); // 파일 추가
+		//console.log("---");
+		//console.log(formData);
+		//*
+		//파일을 서버에 비동기 전송
+		fetch("/mypage/profile/temp-upload",{
+			method: "POST",
+			headers: {
+				[header]: token
+			},
+			body: formData
+		})
+		//fetch로부터 받은 응답(Response 객체)을 처리
+		.then(response=>response.json())
+		.then(data=>{
+			console.log(data.url);
+			//console.log(data.key);
+			//console.log(data.orgName);
+			
+			//파일의 부모인 label태그의 백그라운드에 이미지 처리
+			const fileLabel=fileInput.parentElement;
+			fileLabel.style.backgroundImage=`url(${data.url})`;
+							
+			
+		})
+		.catch(error=>{
+			alert("파일업로드 실패! 서버연결을 확인하시고 다시 시도 해주세요!");
+		})
+	}
+	
 });
+
+
