@@ -56,5 +56,7 @@ public class RecommendEntity extends BaseEntity {
     
     private int commentCount; // 조회수
     
-    private String imgUrl; // 항목 이미지 URL
+    private String imgUrl; // 포스터 이미지 URL
+    private String bucketKey; // 버킷key
+    private String orgName;//파일 원본이름
 }

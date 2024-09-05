@@ -35,4 +35,70 @@ document.addEventListener('DOMContentLoaded', function() {
         // 숨겨진 폼 필드('content')에 에디터의 내용을 설정합니다.
         document.querySelector('#content').value = content;
     });
+    
+    
+    
+    const posterFile=document.querySelector('#file');
+    
+    //파일이 선택되면 value 값이 변경된다.-change이벤트
+	//posterFile.addEventListener("change", function(){});
+	posterFile.addEventListener("change", fileuploadS3Temp);
+	
+	function fileuploadS3Temp(){
+		//s3 temp 폴더 파일업로드해야함
+		//FormData 객체를 사용하여 파일 데이터를 서버에 전송할수있다
+		//const fileInput = document.getElementById('poster-file');
+		const formData = new FormData();
+		//console.log(posterFile.files[0]);
+        formData.append('posterfile', posterFile.files[0]); // 파일 추가
+		console.log("---");
+		console.log(formData);
+		
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		
+		//*
+		//파일을 서버에 비동기 전송
+		fetch("/recommends/temp-upload",{
+			method: "POST",
+			headers:{
+				[header]:token
+			},
+			//csrf 적용시 POST인경우  headers에 토큰을 적용해야함, 파일전송시 Content-Type 지정하면 오류.
+			//json 은 {key:value} 구조인데 key는 기본적으로 문자열처리됨 	
+			//키를 변수처리하기위해 [header]: 대괄호([]) 안의 header는 객체의 키를 동적으로 설정하는 방식
+			body: formData
+		})
+		//fetch로부터 받은 응답(Response 객체)을 처리
+		.then(response=>response.json())
+		.then(data=>{
+			console.log(data.url);
+			console.log(data.bucketKey);
+			console.log(data.orgName);
+			console.log(data.newName);
+			//파일의 부모인 label태그의 백그라운드에 이미지 처리
+			const fileLabel=posterFile.parentElement;
+			fileLabel.style.backgroundImage=`url(${data.url})`;
+			
+			//key 와 orgName은 태그를 만들어서 추가
+			let addTag=`
+			<input type="hidden" name="bucketKey" value="${data.bucketKey}">
+			<input type="hidden" name="orgName" value="${data.orgName}">
+			<input type="hidden" name="newName" value="${data.newName}">
+			`;
+			//label태그의 자식요소로 addTag의 내용을 추가
+			fileLabel.innerHTML += addTag;			
+			
+		})
+		.catch(error=>{
+			alert("파일업로드 실패! 서버연결을 확인하시고 다시 시도 해주세요!");
+		})
+		//*/
+		
+	}
+    
 });
+
+
+
+

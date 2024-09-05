@@ -1,6 +1,11 @@
 package com.red.domovie.service;
 
+import java.util.Map;
+
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.red.domovie.domain.dto.recommend.RecommendFileSaveDTO;
 import com.red.domovie.domain.dto.recommend.RecommendSaveDTO;
 import com.red.domovie.domain.entity.RecommendEntity;
 
@@ -23,5 +28,7 @@ public interface RecommendService {
     // 매개변수로 전달된 추천 글의 ID를 사용하여 해당 글을 데이터베이스에서 조회하고, RecommendEntity 객체로 반환합니다.
     // 이 메서드는 특정 글의 상세 정보를 조회할 때 사용됩니다.
 	RecommendEntity getPost(Long id);
+
+	Map<String, String> tempUploadProcss(MultipartFile posterfile);
 
 }

@@ -87,13 +87,13 @@
 						</td>
 
 						<!-- 추천 글 작성자의 이메일과 이름을 표시합니다. -->
-						<td>
-							<div th:text="${dto.email}"></div>
-							<div th:text="${'('+dto.userName+')'}"></div>
+						<td >
+							<div th:text="${dto.author.email}"></div>
+							<div th:text="${'('+dto.author.userName+')'}"></div>
 						</td>
 
 						<!-- 추천 글이 작성된 날짜를 지정된 형식으로 포맷하여 표시합니다. -->
-						<td th:text="${#temporals.format(dto.createdAt, 'yyyy.MM.dd')}"></td>
+						<td th:text="${dto.createdAt.toLocalDate}"></td>
 					</tr>
 					<!-- 추천 글 목록이 비어 있을 경우, 이를 알리는 메시지를 표시합니다. -->
 					<tr th:if="${#lists.isEmpty(list)}">
