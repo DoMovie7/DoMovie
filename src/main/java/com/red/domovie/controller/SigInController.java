@@ -18,6 +18,7 @@ import com.red.domovie.domain.dto.login.ErrorResponse;
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.FindIdResponse;
 import com.red.domovie.domain.dto.login.FindPasswordRequestDTO;
+import com.red.domovie.domain.dto.login.PasswordResetRequest;
 import com.red.domovie.domain.dto.login.SignUpDTO;
 import com.red.domovie.domain.dto.login.SuccessResponse;
 import com.red.domovie.service.LoginService;
@@ -26,6 +27,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -49,6 +51,7 @@ public class SigInController {
 	@PostMapping("/api/find-password")
 	public ResponseEntity<?> findPassword(@Valid @RequestBody FindPasswordRequestDTO request) {
 		try {
+			//사용자가 넘긴 이메일로 이메일을 발송하기위한 로직
 			loginService.processFindPassword(request.getEmail());
 			return ResponseEntity.ok().body(new SuccessResponse("비밀번호 재설정 이메일이 발송되었습니다."));
 		} catch (RuntimeException e) {
@@ -63,12 +66,11 @@ public class SigInController {
         return "views/login/reset-password";
     }
 
-    @PostMapping("/reset-password")
+	@PostMapping("/reset-password")
     public String processResetPassword(@RequestParam(name="token") String token,
-                                       @RequestParam(name="password") String newPassword,
-                                       RedirectAttributes redirectAttributes) {
-    	loginService.resetPassword(token, newPassword,redirectAttributes);
-            return "redirect:/signin";
+                                                       @RequestBody PasswordResetRequest request) {
+        loginService.resetPassword(token, request.getNewPassword());
+        return "redirect:/signin";
     }
 
 	@GetMapping("/signup")

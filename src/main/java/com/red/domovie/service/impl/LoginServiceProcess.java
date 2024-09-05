@@ -77,17 +77,23 @@ public class LoginServiceProcess implements LoginService {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
 
+	//사용자가 넘긴 이메일로 이메일을 발송하기위한 로직
     @Transactional
     public void processFindPassword(String email) {
+    	//유저 엔터티로 만든 이유: 
         UserEntity user = loginMapper.findByEmail(email);
         if (user == null) {
             throw new RuntimeException("입력한 이메일과 일치하는 계정이 없습니다.");
         }
-
+        //임의로 만든 토큰값
         String resetToken = UUID.randomUUID().toString();
+        
+        
         user.setPasswordResetToken(resetToken);
         loginMapper.updateUser(user);
-
+       
+        
+        //최종적으로 인증을 위한 이메일 발송 로직 
         emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
     }
 
@@ -102,20 +108,25 @@ public class LoginServiceProcess implements LoginService {
 	}
 
 	@Override
-	public void resetPassword(String token, String newPassword, RedirectAttributes redirectAttributes) {
-		UserEntity user = loginMapper.findByPasswordResetToken(token);
-        if (user != null) {
-            user.setPassword(passwordEncoder.encode(newPassword));
-            user.setPasswordResetToken(null);
-            loginMapper.updateUser(user);
-            redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 재설정되었습니다.");
-            logger.info("비밀번호 재설정 성공: {}", user.getEmail());
-        } else {
-            redirectAttributes.addFlashAttribute("error", "유효하지 않은 토큰입니다. 비밀번호 재설정을 다시 요청해주세요.");
-            logger.warn("비밀번호 재설정 실패: 유효하지 않은 토큰 {}", token);
-        }
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
 		
-		
-	}
+		// 실제 넘어온 토큰값이 유저에 존재하는지 확인
+	    UserEntity user = loginMapper.findByPasswordResetToken(token);
+	    if (user == null) {
+	        throw new RuntimeException("유효하지 않은 토큰입니다.");
+	    }
+
+	    // 넘어온 패스워드를 인코딩 함
+	    String encodedPassword = passwordEncoder.encode(newPassword);
+	    
+	    System.out.println("Encoded password: " + encodedPassword);
+	    System.out.println("Token: " + token);
+	    
+	    // 인코딩된 비밀번호와 토큰을 사용하여 업데이트
+	    loginMapper.updatePassword(encodedPassword, token);
+	    
+	    logger.info("비밀번호 재설정 성공: {}", user.getEmail());
+    }
 
 }

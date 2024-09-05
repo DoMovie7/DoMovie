@@ -1,58 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
-    const passwordInput = document.querySelector('input[name="password"]');
-    const confirmPasswordInput = document.querySelector('input[name="confirmPassword"]');
-    const submitButton = document.querySelector('button[type="submit"]');
-
-    function validatePassword() {
-        const password = passwordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
-
-        // 비밀번호 길이 검사
-        if (password.length < 8) {
-            setError(passwordInput, '비밀번호는 최소 8자 이상이어야 합니다.');
-            return false;
-        }
-
-        // 비밀번호 복잡성 검사 (예: 숫자와 특수문자 포함)
-        if (!/^(?=.*\d)(?=.*[!@#$%^&*])/.test(password)) {
-            setError(passwordInput, '비밀번호는 숫자와 특수문자를 포함해야 합니다.');
-            return false;
-        }
-
-        // 비밀번호 일치 검사
-        if (password !== confirmPassword) {
-            setError(confirmPasswordInput, '비밀번호가 일치하지 않습니다.');
-            return false;
-        }
-
-        clearError(passwordInput);
-        clearError(confirmPasswordInput);
-        return true;
-    }
-
-    function setError(input, message) {
-        const errorElement = input.parentElement.querySelector('.error-message') || document.createElement('div');
-        errorElement.className = 'error-message';
-        errorElement.textContent = message;
-        if (!input.parentElement.contains(errorElement)) {
-            input.parentElement.appendChild(errorElement);
-        }
-    }
-
-    function clearError(input) {
-        const errorElement = input.parentElement.querySelector('.error-message');
-        if (errorElement) {
-            errorElement.remove();
-        }
-    }
-
-    passwordInput.addEventListener('input', validatePassword);
-    confirmPasswordInput.addEventListener('input', validatePassword);
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
     form.addEventListener('submit', function(e) {
-        if (!validatePassword()) {
-            e.preventDefault();
+        e.preventDefault();
+
+        const token = document.querySelector('input[name="token"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+
+        if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
         }
+
+        fetch(`/reset-password?token=${token}`, {
+            method: 'Post',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({ newPassword: password })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.text();
+        })
+        .then(message => {
+            alert(message);
+            window.location.href = '/signin';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('비밀번호 재설정 중 오류가 발생했습니다: ' + error.message);
+        });
     });
 });
