@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.red.domovie.common.util.KmdbMovieUtil;
@@ -30,6 +33,7 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 	//영화 상세 정보 얻어오는 유틸
 	private final KmdbMovieUtil kmdbMovieUtil;
 	private final MovieDetailMapper movieDetailMapper;
+	 private final TemplateEngine templateEngine;
 
 	
 	//영화 id로 상세정보,리뷰 얻어오기
@@ -52,21 +56,20 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 	        	
 	        }
         
-        //영화에 따른 전체 리뷰 가져오기
-        
-        
-        int offset = page *6;
-       
-        List<getMovieRatingDTO> movieRatingList = movieDetailMapper.findMovieRatingList(movieID,PageRequest.of(page,6));
-        
-        model.addAttribute("ratingPage", movieRatingList);
-	
-	
-    
-	
+        Page<getMovieRatingDTO> ratingPage = findMovieRatingList(movieID, page, 6);
+        model.addAttribute("movieRatingList", ratingPage);
 	
 
 	}
+	
+	
+	   // 영화에 따른 전체 리뷰를 가져오는 메서드
+    public Page<getMovieRatingDTO> findMovieRatingList(String movieID, int page, int size) {
+        int offset = page * size;
+        List<getMovieRatingDTO> movieRatingList = movieDetailMapper.findMovieRatingList(movieID, offset, size);
+        long total = movieDetailMapper.countMovieRatings(movieID);
+        return new PageImpl<>(movieRatingList, PageRequest.of(page, size), total);
+    }
 
 
 
@@ -103,7 +106,30 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 		
 	}
 
+
+
+
+
+	@Override
+	public String getUserReviewSectionHtml(Long userId, String movieId) {
+		  Context context = new Context();
+	        getMovieRatingDTO userMovieRating = movieDetailMapper.findUserMovieRating(userId, movieId);
+	        context.setVariable("userMovieRating", userMovieRating);
+	        return templateEngine.process("/templates/views/movieDetail/listFragments :: userReviewSection", context);
+	}
+
+
+
+
+
+	public String getReviewListHtml(String movieId, int page, int size) {
+        Context context = new Context();
+        Page<getMovieRatingDTO> ratingPage = findMovieRatingList(movieId, page, size);
+        context.setVariable("movieRatingList", ratingPage);
+        return templateEngine.process("/templates/views/movieDetail/listFragments :: reviewList", context);
+    }
+
 	
-	
+
 	
 }

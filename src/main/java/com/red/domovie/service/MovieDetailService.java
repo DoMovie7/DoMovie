@@ -12,4 +12,8 @@ public interface MovieDetailService {
 
 	void findUserMovieRating(Long userId, String movieID, Model model);
 
+	String getUserReviewSectionHtml(Long userId, String movieId);
+
+	String getReviewListHtml(String movieId, int i, int j);
+
 }

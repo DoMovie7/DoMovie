@@ -49,7 +49,12 @@
         JOIN user u ON mr.user_id = u.user_id
         WHERE mr.movie_id = #{movieID}
         ORDER BY mr.created_at DESC
-        LIMIT #{offset}, #{limit}
+        LIMIT #{offset}, #{size}
+    </select>
+    
+    
+    <select id="countMovieRatings" resultType="long">
+        SELECT COUNT(*) FROM movie_ratings WHERE movie_id = #{movieID}
     </select>
 	
 

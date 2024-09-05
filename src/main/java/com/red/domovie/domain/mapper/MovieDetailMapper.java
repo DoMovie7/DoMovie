@@ -19,6 +19,11 @@ public interface MovieDetailMapper {
 
 	getMovieRatingDTO findUserMovieRating(@Param("userId")Long userId,@Param("movieID")String movieID);
 
-	List<getMovieRatingDTO> findMovieRatingList(@Param("movieID") String movieID, PageRequest pageRequest);
+
+	List<getMovieRatingDTO> findMovieRatingList(@Param("movieID") String movieID, @Param("offset") int offset, @Param("size") int size);
+
+	long countMovieRatings(@Param("movieID") String movieID);
+	
+	
 
 }
