@@ -27,7 +27,6 @@ public class ProfileUpdateDTO {
 				.nickName(nickName)
 				.birthDate(birthDate)
 				.phoneNumber(phoneNumber)
-				//.profileImageUrl(profileImageUrl)
 				.build();
 	}
 	

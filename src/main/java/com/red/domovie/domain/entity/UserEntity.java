@@ -90,6 +90,14 @@ public class UserEntity extends BaseEntity{
   	    // 필요한 경우 다른 필드들도 업데이트합니다.
   	    return this;
   	}
+  	
+  	private String profileImageUrl;
+  	private String profileImagekey;
+  	public UserEntity profileImageUpdate(String profileImageUrl, String profileImagekey) {
+  		this.profileImageUrl=profileImageUrl;
+  		this.profileImagekey=profileImagekey;
+  		return UserEntity.this;
+  	}
 	
 
 
