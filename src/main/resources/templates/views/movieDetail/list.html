@@ -14,7 +14,6 @@
 
 		<section id="video-wrap">
 			<div th:if="${#strings.length(movieDetail.vodUrl) > 4}" class="video scroll">
-			   <!--  <img alt="" th:src="${movieDetail.stll}"> -->
 			   
 				<iframe th:src="${movieDetail.vodUrl}" sandbox="allow-same-origin allow-scripts" frameborder="0"allowfullscreen ></iframe>
 			</div>
@@ -30,6 +29,7 @@
 					<li><span th:text="${movieDetail.repRlsDate}">2024</span><span th:text="${movieDetail.genre}">공연실황/다큐멘터리</span><span th:text="${movieDetail.nation}">한국</span></li>
 					<li><span th:text="${movieDetail.runtime}">1시간 49분</span><span th:text="${movieDetail.rating}">전체</span></li>
 					<li><span th:text="${movieDetail.company}">예매순위 1위</span></li>
+					<li><span class="movieId" th:text="${movieDetail.movieId}">예매순위 1위</span></li>
 				</ul>
 			
 			</div>
@@ -104,17 +104,11 @@
 		<section class="comment-wrap">
 			<div class="comments" th:fragment="movieList">
 			
-			 	<th:block th:replace="views/movieDetail/listFragments :: userReviewSection"></th:block>
+			 	<div class="user-comments"></div>
 				
 				
 				
-				<th:block th:replace="views/movieDetail/listFragments :: reviewList"></th:block>
-
-
-			
-			
-			</div><!--comments end  -->
-		
+				<div class="comments-list"></div>
 
 		
 		

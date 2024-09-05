@@ -33,12 +33,11 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 	//영화 상세 정보 얻어오는 유틸
 	private final KmdbMovieUtil kmdbMovieUtil;
 	private final MovieDetailMapper movieDetailMapper;
-	 private final TemplateEngine templateEngine;
 
 	
-	//영화 id로 상세정보,리뷰 얻어오기
+	//영화 id로 상세정보 얻어오
 	@Override
-	public void findMovieDetail(String movieID, Model model,int page) {
+	public void findMovieDetail(String movieID, Model model) {
 		
 		//영화 상세정보 가져오기
 		ResponseEntity<JsonNode> response = kmdbMovieUtil.getDtailMovie(movieID);
@@ -56,20 +55,30 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 	        	
 	        }
         
-        Page<getMovieRatingDTO> ratingPage = findMovieRatingList(movieID, page, 6);
-        model.addAttribute("movieRatingList", ratingPage);
-	
 
 	}
 	
 	
-	   // 영화에 따른 전체 리뷰를 가져오는 메서드
-    public Page<getMovieRatingDTO> findMovieRatingList(String movieID, int page, int size) {
-        int offset = page * size;
-        List<getMovieRatingDTO> movieRatingList = movieDetailMapper.findMovieRatingList(movieID, offset, size);
-        long total = movieDetailMapper.countMovieRatings(movieID);
-        return new PageImpl<>(movieRatingList, PageRequest.of(page, size), total);
-    }
+	
+    //사용자 리뷰 가져오기
+	@Override
+	public void findUserMovieRating(Long userId, String movieID,Model model) {
+		
+	  
+	    model.addAttribute("userMovieRating", movieDetailMapper.findUserMovieRating(userId,movieID));
+		
+	}
+	
+
+	// 영화에 따른 전체 리뷰를 가져오는 메서드
+	@Override
+	public void findAllComments(String movieID, Model model) {
+		
+		List<getMovieRatingDTO> movieRatingList= movieDetailMapper.findMovieRatingList(movieID);
+		model.addAttribute("movieRatingList", movieRatingList);
+
+	}
+
 
 
 
@@ -86,48 +95,11 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 		movieDetailMapper.saveMovieRating(userId,dto);
 		
 		
-		
-		
-		
-	}
-
-
-    //특정 유저의 정보 가져오기 
-	@Override
-	public void findUserMovieRating(Long userId, String movieID, Model model) {
-		
-		
-		getMovieRatingDTO userMovieRating = movieDetailMapper.findUserMovieRating(userId,movieID);
-		System.out.println(userMovieRating);
-		
-		model.addAttribute("userMovieRating", userMovieRating);
-		
-		
-		
 	}
 
 
 
 
-
-	@Override
-	public String getUserReviewSectionHtml(Long userId, String movieId) {
-		  Context context = new Context();
-	        getMovieRatingDTO userMovieRating = movieDetailMapper.findUserMovieRating(userId, movieId);
-	        context.setVariable("userMovieRating", userMovieRating);
-	        return templateEngine.process("/templates/views/movieDetail/listFragments :: userReviewSection", context);
-	}
-
-
-
-
-
-	public String getReviewListHtml(String movieId, int page, int size) {
-        Context context = new Context();
-        Page<getMovieRatingDTO> ratingPage = findMovieRatingList(movieId, page, size);
-        context.setVariable("movieRatingList", ratingPage);
-        return templateEngine.process("/templates/views/movieDetail/listFragments :: reviewList", context);
-    }
 
 	
 
