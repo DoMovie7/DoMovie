@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.ui.Model;
 
 import com.red.domovie.domain.dto.movieDetail.PostMovieRatingDTO;
-import com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO;
 
 public interface MovieDetailService {
 	//영화 상세정보 가져오기
