@@ -46,12 +46,14 @@ public class RabbitMQConfig {
 		return new TopicExchange(exchange);
 	}
 	
+	
 	// 큐와 익스체인지 간의 바인딩을 정의
 	// 특정 라우팅 키를 사용하여 큐를 익스체인지에 바인딩
 	@Bean
 	Binding binding() {
 		return BindingBuilder.bind(queue()).to(exchange()).with(routingKey);
 	}
+	
 	
 	//*
 	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의

@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById("chat-icon").addEventListener('click', btnBotClicked);
     document.getElementById("close-button").addEventListener('click', btnCloseClicked);
     document.getElementById("send-button").addEventListener('click', btnMsgSendClicked);
+	document.getElementById("go-back-all").addEventListener('click', btnGoBackClicked);
     
     // 입력 필드에서 Enter 키 입력 시 메시지 전송
     document.getElementById("question").addEventListener('keydown', function(event) {
@@ -144,6 +145,8 @@ function btnCloseClicked() {
     
     // 애니메이션 종료 후 실행할 함수
     function onAnimationEnd() {
+		
+		botContainer.removeEventListener('animationend', onAnimationEnd);
         botContainer.classList.remove('open', 'animate__animated', 'animate__bounceOut');
         saveBotState();
         disconnect();
@@ -153,8 +156,6 @@ function btnCloseClicked() {
         localStorage.setItem('chatReset', 'true');
         localStorage.removeItem('hasShownWelcomeMessage');
         
-        // 이벤트 리스너 제거
-        botContainer.removeEventListener('animationend', onAnimationEnd);
     }
     
     // 애니메이션 종료 이벤트 리스너 추가
@@ -168,6 +169,15 @@ function disconnect() {
             console.log("Disconnected...");
         });
     }
+}
+
+//다시 되돌아가기
+function btnGoBackClicked(){
+	document.getElementById("chat-content").innerHTML = "";
+	websocketStatus = 0;
+	disconnect();
+	connect();
+	showWelcomeMessage(true);
 }
 
 // 저장된 챗봇 UI 상태를 불러오고 적용하는 함수

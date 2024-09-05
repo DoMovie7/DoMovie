@@ -1,14 +1,16 @@
 package com.red.domovie.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.SignUpDTO;
@@ -29,6 +31,7 @@ public class LoginServiceProcess implements LoginService {
 
     private final LoginMapper loginMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailServiceProcess emailService;
 
     @Override
     @Transactional
@@ -70,8 +73,60 @@ public class LoginServiceProcess implements LoginService {
     }
 
 	@Override
-	public String findEmailByNameAndBirthDate(FindIdDTO request) {
+	public List<String> findEmailByNameAndBirthDate(FindIdDTO request) {
 		return loginMapper.findEmailByNameAndBirthDate(request);
 	}
+
+	//사용자가 넘긴 이메일로 이메일을 발송하기위한 로직
+    @Transactional
+    public void processFindPassword(String email) {
+    	//유저 엔터티로 만든 이유: 
+        UserEntity user = loginMapper.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("입력한 이메일과 일치하는 계정이 없습니다.");
+        }
+        //임의로 만든 토큰값
+        String resetToken = UUID.randomUUID().toString();
+        
+        
+        user.setPasswordResetToken(resetToken);
+        loginMapper.updateUser(user);
+       
+        
+        //최종적으로 인증을 위한 이메일 발송 로직 
+        emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
+    }
+
+
+   
+
+	@Override
+	public void isValidPasswordResetToken(String token, Model model) {
+		loginMapper.findByPasswordResetToken(token);
+		model.addAttribute("token", token);
+		
+	}
+
+	@Override
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+		
+		// 실제 넘어온 토큰값이 유저에 존재하는지 확인
+	    UserEntity user = loginMapper.findByPasswordResetToken(token);
+	    if (user == null) {
+	        throw new RuntimeException("유효하지 않은 토큰입니다.");
+	    }
+
+	    // 넘어온 패스워드를 인코딩 함
+	    String encodedPassword = passwordEncoder.encode(newPassword);
+	    
+	    System.out.println("Encoded password: " + encodedPassword);
+	    System.out.println("Token: " + token);
+	    
+	    // 인코딩된 비밀번호와 토큰을 사용하여 업데이트
+	    loginMapper.updatePassword(encodedPassword, token);
+	    
+	    logger.info("비밀번호 재설정 성공: {}", user.getEmail());
+    }
 
 }

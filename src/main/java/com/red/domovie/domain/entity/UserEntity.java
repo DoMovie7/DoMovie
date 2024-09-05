@@ -5,6 +5,9 @@ import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+import com.red.domovie.domain.enums.Tier;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +16,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 
+
+@DynamicUpdate
 @Setter
 @Getter
 @Builder
@@ -23,7 +29,7 @@ import java.util.HashSet;
 @Entity
 @ToString
 @Table(name = "user")
-public class UserEntity {
+public class UserEntity extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,9 +53,6 @@ public class UserEntity {
     @Column(nullable = false)
     private String birthDate; // 생년월일
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tier_id", nullable = true)
-    private TierEntity tierId;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -57,18 +60,45 @@ public class UserEntity {
     @Builder.Default
     @Column(name = "role")
     private Set<Role> roles = new HashSet<Role>(); // 'Role' Enum 타입을 별도로 정의
+    
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Tier tier =Tier.CORN ;
 
   //Role 등록하기 위한 편의 메서드 
   	public UserEntity addRole(Role role) {
   		roles.add(role);
-  		
   		return this;
   	}
   	@Column(name = "provider")
     private String provider;
+  	
   	@Column(name = "social_id")
   	private String socialId;
-
+  	
+  	@Column(name = "password_reset_token")
+    private String passwordResetToken; // 새로 추가된 비밀번호 재설정 토큰 필드
+  	
+  	@Column(name = "password_reset_token_expiry")
+    private LocalDateTime passwordResetTokenExpiry;
+  	
+  	public UserEntity update(ProfileUpdateDTO dto) {
+  	    // DTO에서 닉네임을 가져와서 엔티티의 필드를 업데이트합니다.
+  	    if (dto.getNickName() != null) {
+  	        this.nickName = dto.getNickName();
+  	    }
+  	    // 필요한 경우 다른 필드들도 업데이트합니다.
+  	    return this;
+  	}
+  	
+  	private String profileImageUrl;
+  	private String profileImagekey;
+  	public UserEntity profileImageUpdate(String profileImageUrl, String profileImagekey) {
+  		this.profileImageUrl=profileImageUrl;
+  		this.profileImagekey=profileImagekey;
+  		return UserEntity.this;
+  	}
 	
+
 
 }

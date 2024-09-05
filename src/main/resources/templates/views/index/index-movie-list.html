@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
-<div class="movie-item" th:each="dto:${list}" th:data-docid="${dto.docid}">
-	<img th:src="${dto.poster()}" th:alt="${dto.title}">
+<div class="movie-item animate__animated animate__flipInY" th:each="dto:${list}" th:data-docid="${dto.docid}">
+	<a th:href="@{/movies/detail/{id}(id=${dto.docid})}">
+		<img th:src="${dto.poster()}" th:alt="${dto.title}">
+		<span class="rating-badge">[[${dto.rating}]]</span> 
+	</a>
 	<ul class="movie-info">
 		<li><span>[[${dto.title}]]</span></li>
-		<li><span>[[${dto.prodYear}]]</span></li>
+		<li><span>[[${dto.dotDate()}]]</span></li>
 		<li><span>[[${dto.nation}]]</span></li>
+		
 		<li class="plots" style="display: none;" >
 			<th:block  th:each="pdto:${dto.plots.plot}" th:if="${pdto.plotLang eq '한국어'}">
 			<span >[[${pdto.plotText}]]</span>

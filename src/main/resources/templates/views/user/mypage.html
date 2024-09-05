@@ -3,8 +3,8 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="_csrf" content="${_csrf.token}" />
-	<meta name="_csrf_header" content="${_csrf.headerName}" />
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 	<link rel="stylesheet" href="/css/user/mypage.css">
 	<script src="/js/user/mypage.js" defer></script>
 	<title>마이페이지</title>
@@ -23,82 +23,58 @@
 					<h2>내 프로필</h2>
 				</div>
 				<div class="profile-container">
-					<div class="profile-image-container">
-						<img id="profile-picture"
-						src="/img/default-profile.jpg"
-						     alt="프로필 사진">
+					<label class="profile-image-container" th:unless="${#strings.isEmpty(user.profileImageUrl)}" th:style="|background-image: url(${user.profileImageUrl});|">
 						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
-					</div>
-					<form id="profile-form" class="profile-info">
+					</label>
+					<label class="profile-image-container" th:if="${#strings.isEmpty(user.profileImageUrl)}" >
+						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
+					</label>
+					<div class="profile-info">
 						<ul>
-							<li>
-								<span>이름 : </span><span id="name" th:text="${user.userName}"></span>
-							</li>
-							<li>
-								<span>생년월일 : </span>								
-								<span id="birthdate" th:text="${user.birthDate}"></span>
-							</li>
+							<li><span>이름 : </span><span id="name" th:text="${user.userName}"></span></li>
+							<li><span>생년월일 : </span><span id="birthdate" th:text="${user.birthDate}"></span></li>
 							<li>
 								<span>닉네임 : </span>
 								<span id="nickname" th:text="${user.nickName}"></span>
-								<input type="text" id="nickname-input" th:value="${user.nickName}" style="display: none;">
+								<button id="edit-nickname-btn">수정</button>
+								<form id="nickname-form" style="display: none;" method="post">
+									<input type="text" id="nickname-input" th:value="${user.nickName}">
+									<button type="submit" id="save-nickname-btn">수정완료</button>
+									<button type="button" id="cancel-nickname-btn">취소</button>
+								</form>
 							</li>
-							<li>
-								<span>핸드폰 : </span>
-								<span id="phoneNumber" th:text="${user.phoneNumber}"></span>
-								<input type="text" id="nickname-input" th:value="${user.phoneNumber}" style="display: none;">
-							</li>
-							<li>
-								<span>이메일 : </span><span id="email" th:text="${user.email}"></span>
-							</li>
+							<li><span>핸드폰 : </span><span id="phoneNumber" th:text="${user.phoneNumber}"></span></li>
+							<li><span>이메일 : </span><span id="email" th:text="${user.email}"></span></li>
 							<li>
 								<span>비밀번호 : </span>
 								<span>********</span>
 								<button type="button" id="change-password-btn">변경</button>
 							</li>
 						</ul>
-						<div class="button-group">
-							<button type="button" id="edit-btn">수정</button>
-							<button type="button" id="cancel-btn" style="display: none;">취소</button>
-							<button type="submit" id="save-btn" style="display: none;">수정완료</button>
-						</div>
-					</form>
+					</div>
 				</div>
 			</div>
-			<!-- 나의 등급 -->
 			<div id="tier-content" style="display: none;">
 				<h2>나의 등급</h2>
 				<div id="tier-image-container">
-					<img id="tier-image" src="" alt="등급 이미지">
+					<img id="tier-image" th:src="${user.tier.url}" alt="등급 이미지">
 				</div>
-				<p id="tier-description"></p>
-				<p>내 게시글 수: <span id="post-count"></span></p>
+				<p id="tier-description">
+					<span>나의 등급은</span>
+					<b><i th:text="|'${user.tier.desc}'|"></i></b>
+					<span>입니다.</span>
+				</p>
+				<p>내 게시글 수: <span id="post-count" th:text="${user.recommendCount}"></span></p>
 			</div>
-			<!-- 내가 쓴 글 -->
 			<div id="my-posts-content" style="display: none;">
 				<h2>내가 쓴 글</h2>
-				<!-- 게시글 목록을 표시할 컨테이너 -->
 				<ul id="posts-list-container">
-					<!-- 임시 게시글 데이터 -->
-					<li class="post-item">
-						<span><a href="#">띵작 영화 추천</a></span>
-						<p>2024-08-25</p>
-					</li>
-					<li class="post-item">
-						<span><a href="#">최근 본 영화 TOP 5</a></span>
-						<p>2024-08-10</p>
-					</li>
-					<li class="post-item">
-						<span><a href="#">이 영화는 좀 짜친다</a></span>
-						<p>2024-08-05</p>
-					</li>
+					<li>게시글이 존재하지 않습니다.</li>
 				</ul>
 			</div>
-			<!-- 비밀번호 변경 팝업 오버레이 -->
 			<div class="popup-overlay"></div>
-			<!-- 비밀번호 변경 팝업 -->
 			<div id="password-popup">
-				<form id="password-form">
+				<form id="password-form" method="post">
 					<input type="password" id="current-password" placeholder="현재 비밀번호" required>
 					<input type="password" id="new-password" placeholder="새 비밀번호" required>
 					<input type="password" id="confirm-password" placeholder="새 비밀번호 확인" required>

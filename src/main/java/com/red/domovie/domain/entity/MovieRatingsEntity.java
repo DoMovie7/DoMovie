@@ -2,6 +2,8 @@ package com.red.domovie.domain.entity;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,8 +20,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 
+@ToString
 @DynamicUpdate
 @Getter
 @NoArgsConstructor
@@ -28,7 +32,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "movie_ratings", 
 uniqueConstraints = {@UniqueConstraint(columnNames = {"movieId", "user_id"})})
 @Entity
-public class MovieRatingsEntity {
+public class MovieRatingsEntity extends BaseEntity{
 	
 	//유저와 무비 아이디를 복합키로 쓰는 고유 id
     @Id
@@ -53,6 +57,8 @@ public class MovieRatingsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+
 	
 	
 	
