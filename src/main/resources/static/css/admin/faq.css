@@ -17,12 +17,23 @@ h1 {
 	overflow: hidden;
 }
 
+.faq-buttons{
+	display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
 .faq-item {
 	border-bottom: 1px solid #e0e0e0;
 }
 
 .faq-item:last-child {
 	border-bottom: none;
+}
+
+.main-text-id{
+	display: flex;
+	align-items: center;
 }
 
 .faq-question {
@@ -70,7 +81,7 @@ h1 {
 	padding: 10px 20px;
 }
 
-.faq-actions button {
+.add-btn, .delete-btn, .save-btn, .cancel-btn, .complete-btn {
 	margin-left: 10px;
 	padding: 5px 10px;
 	border: 1px solid #d9d9d9;

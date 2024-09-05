@@ -20,5 +20,8 @@ public class ChattingRoomDTO {
 	private long adminId;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	
+	private String userName;
+	private String email;
 
 }
