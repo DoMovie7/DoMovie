@@ -5,6 +5,8 @@
 <title>Sign In</title>
 <link rel="stylesheet" th:href="@{/css/login/signin.css}">
 <link rel="stylesheet" th:href="@{/css/common/reset.css}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<script src="/js/login/eyes.js"></script>
 </head>
 <body class="loginWrap">
 	<div class="login-container">
@@ -16,8 +18,11 @@
 				<input type="text" name="email" placeholder="이메일" required>
 			</div>
 			<div class="input-group">
-				<input type="password" name="password" placeholder="비밀번호" required>
-			</div>
+                <input type="password" id="password" name="password" placeholder="비밀번호" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
 			<button type="submit" class="login-button">로그인</button>
 		</form>
 		<div class="login-options">
@@ -67,5 +72,6 @@
 			</button>
 		</div>
 	</div>
+	
 </body>
 </html>
