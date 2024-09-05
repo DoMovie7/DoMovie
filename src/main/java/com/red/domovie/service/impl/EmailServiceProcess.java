@@ -32,34 +32,35 @@ public class EmailServiceProcess implements EmailService {
     @Override
     public void sendPasswordResetEmail(String to, String resetToken) {
         try {
-            // 이메일 발송 전에 DB 업데이트 시도
             UserEntity user = loginMapper.findByEmail(to);
-            if (user != null) {
-                user.setPasswordResetToken(resetToken);
-                int updatedRows = loginMapper.updateUser(user);
-                log.info("Updated user rows: {}", updatedRows);
-                if (updatedRows == 0) {
-                    log.error("Failed to update user with reset token. Email: {}", to);
-                }
-            } else {
+            if (user == null) {
                 log.error("User not found for email: {}", to);
-                return; // 사용자를 찾지 못했으면 이메일을 보내지 않고 종료
+                return;
+            }
+
+            user.setPasswordResetToken(resetToken);
+            int updatedRows = loginMapper.updateUser(user);
+            log.info("Updated user rows: {}", updatedRows);
+            if (updatedRows == 0) {
+                log.error("Failed to update user with reset token. Email: {}", to);
+                return;
             }
 
             MimeMessage mimeMessage = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-            
+
+            String resetUrl = resetPasswordUrl + resetToken;
             String htmlMsg = String.format(
                 "<h3>비밀번호 재설정</h3>" +
                 "<p>비밀번호를 재설정하려면 다음 링크를 클릭하세요:</p>" +
-                "<p><a href='%s?token=%s'>비밀번호 재설정</a></p>" +
+                "<p><a href='%s'>비밀번호 재설정</a></p>" +
                 "<p>이 링크는 24시간 동안 유효합니다.</p>",
-                resetPasswordUrl, resetToken
+                resetUrl
             );
 
             helper.setTo(to);
             helper.setSubject("비밀번호 재설정");
-            helper.setText(htmlMsg, true); // true를 설정하여 HTML 사용
+            helper.setText(htmlMsg, true);
 
             emailSender.send(mimeMessage);
             log.info("Password reset email sent to: {}", to);

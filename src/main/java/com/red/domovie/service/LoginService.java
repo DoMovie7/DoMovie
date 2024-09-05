@@ -22,7 +22,7 @@ public interface LoginService {
 
 	void isValidPasswordResetToken(String token, Model model);
 
-	void resetPassword(String token, String newPassword, RedirectAttributes redirectAttributes);
+	void resetPassword(String token, String newPassword);
 
 
 

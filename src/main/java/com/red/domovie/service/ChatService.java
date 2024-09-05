@@ -6,6 +6,7 @@ import com.red.domovie.domain.dto.bot.FAQDTO;
 import com.red.domovie.domain.dto.bot.QuestionDTO;
 import com.red.domovie.domain.dto.chat.ChatRoomDTO;
 import com.red.domovie.domain.dto.chat.ChattingRoomDTO;
+import com.red.domovie.domain.dto.chat.PageDTO;
 import com.red.domovie.domain.entity.FAQEntity;
 
 public interface ChatService {
@@ -16,5 +17,7 @@ public interface ChatService {
 	List<ChattingRoomDTO> findAllChatRoom();
 
 	List<ChattingRoomDTO> findByRoomId(String key);
+
+	PageDTO findAllChattingRoom(int page, int size);
 
 }

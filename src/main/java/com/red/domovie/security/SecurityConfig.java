@@ -5,11 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.http.HttpMethod;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,28 +21,21 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // CSRF 설정
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/logout", "/api/check-email", "/api/find-id","/api/find-password","/reset-password")
+                .ignoringRequestMatchers("/logout", "/api/check-email", "/api/find-id", "/api/find-password", "/reset-password")
             )
-
-            // URI에 대한 보안 설정
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/mypage/**","/movies/detail/movie/rating").authenticated()
+                .requestMatchers("/mypage/**", "/movies/detail/movie/rating").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/check-email", "/api/find-id","/api/find-password","/reset-password").permitAll()
-                    .requestMatchers("/hometheater/hometheater_create", "/hometheater/create").authenticated()
-
+                .requestMatchers("/api/check-email", "/api/find-id", "/api/find-password").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/reset-password").permitAll()
+                .requestMatchers("/hometheater/hometheater_create", "/hometheater/create").authenticated()
                 .anyRequest().permitAll()
             )
-
-            // HTTP 기본 인증 설정
             .httpBasic(Customizer.withDefaults())
-
-            // 폼 로그인 설정
             .formLogin(login -> login
                 .loginPage("/signin")
                 .failureUrl("/signin?error=true")
@@ -52,21 +44,15 @@ public class SecurityConfig {
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", true)
             )
-
-            // 로그아웃 설정
             .logout(logout -> logout
-                .logoutUrl("/logout") // 로그아웃 URL 설정
-                .logoutSuccessUrl("/signin") // 로그아웃 성공 시 이동할 URL
-                .invalidateHttpSession(true) // 세션 무효화
-                .deleteCookies("JSESSIONID") // 로그아웃 시 삭제할 쿠키
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST")) // POST 방식으로 설정
-                .permitAll() // 로그아웃 요청 모두 허용
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/signin")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
+                .permitAll()
             )
-
-            // UserDetailsService 설정
             .userDetailsService(customUserDetailsService)
-
-            // OAuth2 로그인 설정
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/signin")
                 .defaultSuccessUrl("/", true)

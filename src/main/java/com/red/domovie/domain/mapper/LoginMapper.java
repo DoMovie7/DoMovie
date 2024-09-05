@@ -17,7 +17,8 @@ public interface LoginMapper {
     int countByEmail(String email);
     List<String> findEmailByNameAndBirthDate(FindIdDTO findIdDTO);
     UserEntity findByEmail(@Param("email") String email);
-    UserEntity findByPasswordResetToken(String resetToken);
+    UserEntity findByPasswordResetToken(@Param("token") String resetToken);
     int updateUser(UserEntity user);
+    void updatePassword(@Param("password") String encodedPassword, @Param("token") String token);
 }
 

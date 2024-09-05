@@ -5,17 +5,34 @@
 <mapper namespace="com.red.domovie.domain.mapper.RoomMapper">
 
 	<insert id="saveRoom" parameterType="com.red.domovie.domain.dto.bot.QuestionDTO">
-		insert into chatroom (room_id, user_id, created_at)
-		values(#{key}, #{userId}, CURRENT_TIMESTAMP)
+		insert into chatroom (room_id, user_id, created_at, updated_at)
+		values(#{key}, #{userId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	</insert>
 	
 	<select id="findAllRoom" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO">
-		select * from chatroom
-		order by created_at desc
+		SELECT c.*, u.user_name, u.email
+		FROM chatroom c
+		JOIN user u ON c.user_id = u.user_id
+		ORDER BY c.created_at DESC;
 	</select>
 	
 	<select id="findByRoomId" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO" parameterType="String">
 		select * from chatroom
 		where room_id = #{roomId}
 	</select>
+	
+	
+	<select id="findAllRooms" parameterType="map" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO">
+	    SELECT c.*, u.user_name, u.email
+	    FROM chatroom c
+	    JOIN user u ON c.user_id = u.user_id
+	    ORDER BY c.created_at DESC
+	    LIMIT #{offset}, #{size}
+	</select>
+	
+	<select id="countAllRooms" resultType="long">
+	    SELECT COUNT(*)
+	    FROM chatroom
+	</select>
+	
 </mapper>
