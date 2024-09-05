@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/hometheater")
@@ -69,7 +70,9 @@ public class HomeTheaterController {
     }
     @PostMapping("/{id}/comment")
     @PreAuthorize("isAuthenticated()")
-    public String addComment(@PathVariable("id") Long id, @ModelAttribute CommentSaveDTO commentForm) {
+    public String addComment(@PathVariable("id") Long id, @ModelAttribute CommentSaveDTO commentForm,
+                             @AuthenticationPrincipal UserDetails userDetails) {
+        commentForm.setAuthor(userDetails.getUsername());  // 이 줄을 추가하세요
         homeTheaterService.addComment(id,commentForm);
         return "redirect:/hometheater/" + id;
     }
@@ -106,7 +109,11 @@ public class HomeTheaterController {
             return ResponseEntity.badRequest().body("Failed to delete post: " + e.getMessage());
         }
     }
-
+//    @ResponseBody
+//    @PostMapping("/recommends/temp-upload")
+//    public Map<String,String> tempUpload(@RequestParam(name = "postfile") MultipartFile postfile){
+//        return HomeTheaterService.tempUploadProcess(postfile);
+//    }
 
 
 }

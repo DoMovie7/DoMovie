@@ -7,60 +7,8 @@
     <link rel="stylesheet" th:href="@{/css/hometheater/hometheater.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/hometheater/image-handler.js" defer></script>
-    <script th:inline="javascript">
-        $(document).ready(function() {
-            const postId = [[${post.id}]];
-            const currentUserEmail = [[${#authentication.name}]];
-
-            // 현재 사용자가 작성자인 경우에만 수정 버튼 표시
-            if ([[${post.authorEmail}]] === currentUserEmail) {
-                $('#editButton').show();
-            } else {
-                $('#editButton').hide();
-            }
-
-            $('#editButton').click(function() {
-                $('#postTitle, #postContent, .btn-group').hide();
-                $('#editForm').show();
-            });
-
-            $('#cancelButton').click(function() {
-                $('#editForm').hide();
-                $('#postTitle, #postContent, .btn-group').show();
-            });
-
-            $('#saveButton').click(function() {
-                const updatedData = {
-                    title: $('#editTitle').val(),
-                    content: $('#editContent').val()
-                };
-
-                $.ajax({
-                    url: '/hometheater/api/' + postId,
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify(updatedData),
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader([[${_csrf.headerName}]], [[${_csrf.token}]]);
-                    },
-                    success: function(response) {
-                        $('#postTitle').text(response.title);
-                        $('#postContent').html(response.content);
-                        $('#editForm').hide();
-                        $('#postTitle, #postContent, .btn-group').show();
-                        alert('게시글이 성공적으로 수정되었습니다.');
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 403) {
-                            alert('게시글 수정 권한이 없습니다.');
-                        } else {
-                            alert('수정에 실패했습니다: ' + error);
-                        }
-                    }
-                });
-            });
-        });
-    </script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 <main>
@@ -71,7 +19,7 @@
             <span th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd HH:mm')}">작성일</span>
         </div>
         <div class="post-thumbnail">
-            <img th:if="${post.thumbnailImageUrl}" th:src="${post.thumbnailImageUrl}" alt="첨부 이미지" class="thumbnail" style="width: 100%; max-width: 600px;">
+            <img th:src="${post.thumbnailImageUrl}" alt="첨부 이미지" class="thumbnail" style="width: 100%; max-width: 600px;">
         </div>
         <div id="postContent" class="post-content" th:utext="${post.content}">
             게시글 내용이 여기에 표시됩니다.
@@ -83,7 +31,8 @@
             <button id="cancelButton">취소</button>
         </div>
         <div class="btn-group">
-            <button id="editButton" class="btn btn-edit" style="display: none;">수정</button>
+            <button id="editButton" class="btn btn-edit">수정</button>
+            <button id="deleteButton" class="btn btn-delete">삭제</button>
         </div>
         <div class="comment-section">
             <h2>댓글</h2>
@@ -101,6 +50,77 @@
             </form>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            const postId = /*[[${post.id}]]*/ 'default';
+            const csrfToken = $("meta[name='_csrf']").attr("content");
+            const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+            // AJAX 설정에 CSRF 토큰 추가
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfToken);
+                }
+            });
+
+            // 수정 버튼 클릭 이벤트
+            $('#editButton').click(function() {
+                $('#postTitle').hide();
+                $('#postContent').hide();
+                $('#editForm').show();
+                $(this).hide();
+            });
+
+            // 취소 버튼 클릭 이벤트
+            $('#cancelButton').click(function() {
+                $('#editForm').hide();
+                $('#postTitle').show();
+                $('#postContent').show();
+                $('#editButton').show();
+            });
+
+            // 저장 버튼 클릭 이벤트
+            $('#saveButton').click(function() {
+                const title = $('#editTitle').val();
+                const content = $('#editContent').val();
+
+                $.ajax({
+                    url: `/hometheater/api/${postId}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ title: title, content: content }),
+                    success: function(response) {
+                        $('#postTitle').text(response.title).show();
+                        $('#postContent').html(response.content).show();
+                        $('#editForm').hide();
+                        $('#editButton').show();
+                        alert('게시글이 수정되었습니다.');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('게시글 수정에 실패했습니다. 다시 시도해 주세요.');
+                    }
+                });
+            });
+
+            // 삭제 버튼 클릭 이벤트
+            $('#deleteButton').click(function() {
+                if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+                    $.ajax({
+                        url: `/hometheater/api/${postId}`,
+                        type: 'DELETE',
+                        success: function(response) {
+                            alert('게시글이 삭제되었습니다.');
+                            window.location.href = '/hometheater/list'; // 리스트 페이지로 이동
+                        },
+                        error: function(xhr, status, error) {
+                            alert('게시글 삭제에 실패했습니다. 다시 시도해 주세요.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </main>
 </body>
 </html>
