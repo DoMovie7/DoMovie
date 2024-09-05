@@ -46,10 +46,18 @@
 
 /* 프로필 이미지 컨테이너 스타일 */
 .profile-image-container {
-	width: 40%;
+	width: 200px;
+	height: 200px;
+	/* width: 40%; */
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-image: url("/img/default-profile.jpg");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	border-radius: 50%;
+	cursor: pointer;
 }
 
 /* 프로필 사진 */
@@ -158,12 +166,6 @@
 	#change-password-btn:hover {
 	background-color: var(--main-grey2);
 	color: var(--main-white);
-}
-
-/* 달력 아이콘 스타일 */
-.calendar-icon {
-	cursor: pointer;
-	margin-left: 5px;
 }
 
 /* 비밀번호 변경 팝업 스타일 */

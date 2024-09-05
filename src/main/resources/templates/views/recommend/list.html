@@ -63,8 +63,8 @@
 				<tbody>
 					<!-- 서버에서 전달된 추천 글 목록을 반복하여 테이블 행을 생성합니다. -->
 					<tr th:each="dto : ${list}">
-						<!-- 추천 글의 번호를 표시합니다. -->
-						<td th:text="${dto.no}"></td>
+						<!-- RecommendListDTO 객체의 'no' 필드를 테이블 셀에 출력 -->
+						<td th:text="${dto.id}"></td>
 
 						<!-- 추천 글의 포스터 이미지를 표시합니다. -->
 						<td>
@@ -73,9 +73,9 @@
 
 						<!-- 추천 글의 제목을 표시하며, 클릭 시 해당 글의 상세 페이지로 이동하는 링크를 제공합니다. -->
 						<td class="title content">
-							<a th:href="|/recommends/${dto.no}|" th:text="${dto.title}"></a>
-							<!-- 댓글 수가 0보다 큰 경우, 댓글 수를 표시합니다. -->
-							<span th:if="${dto.commentCount > 0}" th:text="|[${dto.commentCount}]|"
+							<a th:href="|/recommends/${dto.id}|" th:text="${dto.title}"></a>
+							<!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
+							<span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|"
 								class="comment-count"></span>
 							<!--
 						gt: Thymeleaf에서 두 값을 비교하는 연산자로, 조건부 렌더링을 위해 사용됩니다. 

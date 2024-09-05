@@ -2,6 +2,7 @@ package com.red.domovie.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -19,7 +20,11 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,6 +35,11 @@ import com.red.domovie.domain.dto.movie.KmdbMovieResponse;
 import com.red.domovie.domain.dto.movie.MovieDTO;
 import com.red.domovie.service.MovieApiService;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+
+@Slf4j
 @Service
 public class MovieApiServiceProcess implements MovieApiService {
 
@@ -380,27 +390,43 @@ public class MovieApiServiceProcess implements MovieApiService {
     }
 
 
-	@Override
-	public List<KmdbMovieDTO> searchMovies(String keyword) {
+    @Override
+    public List<KmdbMovieDTO> searchMovies(String keyword) {
+    	
         RestTemplate restTemplate = new RestTemplate();
-        String apiUrl = KMDB_LIST_API_URL + "?ServiceKey=" + kmdbApiKey + "&title=" + keyword + "&listCount=10";
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
+        strBuilder.append("&detail=y");
+        strBuilder.append("&title=").append(keyword);
+        strBuilder.append("&listCount=5");
+        strBuilder.append("&ServiceKey=").append(kmdbApiKey);
+        strBuilder.append("&sort=prodYear,1");
         
-        ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
+        String url = strBuilder.toString();
 
         try {
-            // Parse JSON response
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(response.getBody());
-            JsonNode itemsNode = rootNode.path("items");
+            String response = restTemplate.getForObject(url, String.class);
+            
+            System.out.println(">>>>>>>>>>>>API Response: " + response); // 응답 로그 출력
+            
+            JSONObject jsonResponse = new JSONObject(response);
 
-            // Convert JSON nodes to MovieDTO objects
-            return mapper.readValue(itemsNode.toString(), mapper.getTypeFactory().constructCollectionType(List.class, MovieDTO.class));
+            if (jsonResponse.has("Data") && jsonResponse.getJSONArray("Data").length() > 0) {
+                JSONArray dataArray = jsonResponse.getJSONArray("Data");
+                JSONObject firstData = dataArray.getJSONObject(0);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                KmdbMovieResponse kmdbMovieResponse = objectMapper.readValue(firstData.toString(), new TypeReference<KmdbMovieResponse>() {});
+
+                
+                return kmdbMovieResponse.getResult();
+            }
+        } catch (JSONException e) {
+            log.error("JSON 파싱 오류: {}", e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // Return an empty list in case of error
+            log.error("API 호출 중 오류 발생: {}", e.getMessage());
         }
-	}
 
-
-    
+        log.warn("검색 결과가 없거나 오류가 발생했습니다.");
+        return new ArrayList<>(); // 빈 리스트 반환
+    }
 }

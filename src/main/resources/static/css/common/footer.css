@@ -4,19 +4,17 @@
     padding: 20px;
     font-size: 14px;
     white-space: nowrap;
+    display: flex;
+    justify-content: center;
 }
-.footer-top{
-    background-color: var(--main-black);
-    height: 70px;
-    width: 100%;
-    position: absolute;
-    margin-left: -20px;
+.footer-class{
+	display: flex;
+	justify-content: space-between;
+	width: 1200px;
 }
-
 .footer-content {
     max-width: 1200px;
     margin: 30px auto;
-    margin-left: 270px;
 }
 .footer-row {
     margin-bottom: 10px;
@@ -33,4 +31,12 @@
 }
 .footer a:hover {
     text-decoration: underline;
+}
+
+.admin-button{
+	margin-top : 20px;
+	padding: 10px;
+	border: 0.5px solid var(--main-white);
+	background-color: var(--main-black);
+	color: var(--main-white);
 }

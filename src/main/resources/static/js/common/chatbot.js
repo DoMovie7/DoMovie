@@ -261,7 +261,7 @@ function chatConnect(){
 	    client.connect({}, (frame) => {
 	        key = generateUniqueKey();  //고유 키 생성
 	        console.log(key);
-	        client.subscribe(`/topic/chatting/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
+	        client.subscribe(`/topic/answer/${key}`, (answer) => { // 특정 토픽을 구독하여 서버로부터 메시지를 받음
 	            var response = answer.body; //서버로부터 받은 메세지 객체
 	            var now = new Date();
 	            var time = formatTime(now);
@@ -273,7 +273,7 @@ function chatConnect(){
 	                        </div>
 	                        <div class="message">
 	                        <div class="bot-name">두비</div>
-	                            <div class="part chatbot">
+	                            <div class="part chat-chatbot">
 	                                <p>${response}</p>
 	                            </div>
 	                            <div class="time">${time}</div>
@@ -327,7 +327,7 @@ function btnMsgSendClicked() {
 	
     
 	if(websocketStatus == 1){
-		client.send(`/message/agent`, {}, JSON.stringify(data));
+		client.send(`/message/chat/query`, {}, JSON.stringify(data));
 	} else if(websocketStatus == 2){
 		client.send(`/message/openai`, {}, JSON.stringify(data));
 	} else{

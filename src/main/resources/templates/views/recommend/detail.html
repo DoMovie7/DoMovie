@@ -41,11 +41,7 @@
             <!-- 추천 글의 제목을 표시합니다. Thymeleaf를 사용하여 서버에서 전달된 추천 제목을 표시합니다. -->
 
             <p><strong>작성자:</strong> <span th:text="${recommend.author.userName}">작성자</span></p>
-            <!-- 추천 글의 작성자를 표시합니다. Thymeleaf를 사용하여 서버에서 제공하는 작성자의 사용자 이름을 표시합니다. -->
-
-            <p><strong>작성일:</strong> <span th:text="${#temporals.format(recommend.createdDate, 'yyyy.MM.dd')}">작성일</span></p>
-            <!-- 추천 글의 작성일을 표시합니다. Thymeleaf와 Java Temporal API를 사용하여 날짜를 'yyyy.MM.dd' 형식으로 포맷합니다. -->
-
+            <p><strong>작성일:</strong> <span th:text="${#temporals.format(recommend.createdAt, 'yyyy.MM.dd')}">작성일</span></p>
             <p><strong>장르:</strong> <span th:text="${recommend.genre}">장르</span></p>
             <!-- 추천 글의 장르를 표시합니다. Thymeleaf를 사용하여 서버에서 제공하는 장르 정보를 표시합니다. -->
 

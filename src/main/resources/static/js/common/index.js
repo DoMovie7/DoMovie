@@ -1,3 +1,17 @@
+const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 검색 버튼 클릭 시 submitSearch 함수 호출
+    document.getElementById('search-button').addEventListener('click', submitSearch);
+
+    // 입력 필드에서 엔터 키를 눌렀을 때 submitSearch 함수 호출
+    document.getElementById('keyword').addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            submitSearch();
+        }
+    });
+});
 //문서의 내용이 모두 로드되면 할일
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -76,23 +90,161 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-//변수지정
 
-//api
-/*function fetchAllMovies() {
-    fetch('/movies/all')
+
+
+// 영화 검색 함수
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('search-form');
+    
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 동작을 막음
+        searchMovies(); // 영화 검색
+    });
+
+    // 페이지 로드 시 검색 트렌드를 가져옴
+    fetchSearchTrends();
+});
+
+// 영화 검색 함수
+function searchMovies() {
+    const keyword = document.getElementById('keyword').value.trim();
+    if (keyword) {
+        fetch(`/movies/search?keyword=${encodeURIComponent(keyword)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                if (response.status === 204) {
+                    return Promise.resolve(null);
+                }
+                return response.text();
+            })
+            .then(text => {
+                if (text === null || text.trim() === '') {
+                    return [];
+                }
+                return JSON.parse(text);
+            })
+            .then(data => {
+                let movieList = document.getElementById('movie-list');
+                movieList.innerHTML = '';
+
+                if (data && data.length > 0) {
+                    // 검색 결과가 있을 때 h2 태그를 표시
+                    document.getElementById('search-results-title').style.display = 'block';
+                    
+                    data.forEach(movie => {
+                        const movieItem = document.createElement('div');
+                        movieItem.classList.add('movie-item');
+                        movieItem.innerHTML = `
+                            <a href="/movies/detail/${movie.DOCID}">
+                                <img src="${movie.posterUrl || 'path/to/default/image.jpg'}" alt="${cleanTitle(movie.title)} 포스터">
+                            </a>
+                            <p>${cleanTitle(movie.title)}</p>
+                            <p>개봉일: ${movie.dotDate || '정보 없음'}</p>
+                            <p>국가: ${movie.nation || '정보 없음'}</p>
+                            <p>장르: ${movie.genre || '정보 없음'}</p>
+                            <p class="rating-badge">${movie.rating || '정보 없음'}</p>
+                        `;
+                        movieList.appendChild(movieItem);
+                    });
+                } else {
+                    movieList.innerHTML = '<p>검색 결과가 없습니다.</p>';
+                    // 검색 결과가 없을 때 h2 태그를 숨김
+                    document.getElementById('search-results-title').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('movie-list').innerHTML = '<p>검색 중 오류가 발생했습니다.</p>';
+                // 오류 발생 시에도 h2 태그를 숨김
+                document.getElementById('search-results-title').style.display = 'none';
+            });
+    }
+}
+
+function cleanTitle(title) {
+    // !HS와 !HE를 제거하거나, 필요한 경우 강조 표시로 변환합니다.
+    return title.replace(/!HS/g, '<strong>').replace(/!HE/g, '</strong>');
+}
+function cleanTitle(title) {
+    // !HS와 !HE를 제거하거나, 필요한 경우 강조 표시로 변환합니다.
+    return title.replace(/!HS/g, '<strong>').replace(/!HE/g, '</strong>');
+    
+/*고급기능*/
+// 사용자 검색 행동을 기록하는 함수
+// HTML 문서가 완전히 로드된 후 실행
+}
+
+function submitSearch() {
+    console.log("111111");
+    const searchQuery = document.getElementById('keyword').value;
+
+    if (!searchQuery) {
+        alert("Please enter a search query!");
+        return;
+    }
+
+    const userSearchBehavior = {
+        searchQuery: searchQuery,
+        searchTime: new Date().toISOString(),
+        clickedResult: null,
+        sessionDuration: 0
+    };
+
+    fetch('/api/user/search', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            [header]: token // CSRF 토큰을 헤더에 추가
+        },
+        body: JSON.stringify(userSearchBehavior)
+    })
+    .then(async response => {
+        if (!response.ok) {
+            throw new Error('Failed to record search behavior');
+        }
+
+        // 응답 본문이 있는지 확인 (204 No Content 등 처리)
+        const text = await response.text();
+        return text ? JSON.parse(text) : {};
+    })
+    .then(data => {
+        // 서버로부터 받은 데이터가 유효한지 확인
+        console.log('Received data:', data);
+        //alert('Search behavior recorded successfully');
+        fetchSearchTrends(); // 검색 트렌드 새로 고침
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// 검색 트렌드를 서버에서 가져와 화면에 표시하는 함수
+function fetchSearchTrends() {
+    fetch('/api/trends')
         .then(response => response.json())
-        .then(data => {
-            const movieList = document.getElementById('movieList');
-            movieList.innerHTML = '';
+        .then(trends => {
+            const trendsList = document.getElementById('trendsList');
+            trendsList.innerHTML = ''; // 기존 목록 초기화
 
-            data.movieListResult.movieList.forEach(movie => {
-                movieList.innerHTML += `<p>${movie.movieNm} (${movie.prdtYear}) - ${movie.nationAlt}</p>`;
+            trends.forEach(trend => {
+                const anchor = document.createElement('a');
+                //anchor.href = "#"; // 트렌드 항목에 대한 링크가 필요하다면 수정
+                const span = document.createElement('span');
+                span.textContent = `${trend.keyword} (Searched ${trend.frequency} times)`;
+
+                anchor.appendChild(span);
+                trendsList.appendChild(anchor);
             });
         })
-        .catch(error => console.error('Error fetching movies:', error));
+        .catch(error => {
+            console.error('Error fetching search trends:', error);
+        });
 }
-*/
+
+
 
 // movieInfo.js
 // 클라이언트 측 코드 (JavaScript)
@@ -165,45 +317,10 @@ function fetchAnimationMovieInfo() {
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+
     fetchMovieInfo();
     fetchBoxOfficeInfo();
     fetchHorrorMovieInfo();
 	fetchupcomingMovieInfo();
 	fetchAnimationMovieInfo();
-});
-
-/*영화검색*/
-
-document.getElementById('search-button').addEventListener('click', function() {
-    const keyword = document.getElementById('keyword').value.trim();
-    if (keyword) {
-        fetch(`/movies/search?keyword=${encodeURIComponent(keyword)}`)
-            .then(response => response.json())
-            .then(data => {
-                const movieList = document.getElementById('movie-list');
-                movieList.innerHTML = ''; // Clear previous results
-
-                if (data.length > 0) {
-                    data.forEach(movie => {
-                        const movieItem = document.createElement('div');
-                        movieItem.classList.add('movie-item');
-                        movieItem.innerHTML = `
-                            <h3>${movie.title}</h3>
-                            <p>${movie.description}</p>
-                        `;
-                        movieList.appendChild(movieItem);
-                    });
-                } else {
-                    movieList.innerHTML = '<p>검색 결과가 없습니다.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('movie-list').innerHTML = '<p>검색 중 오류가 발생했습니다.</p>';
-            });
-    }
-});
-
-
 

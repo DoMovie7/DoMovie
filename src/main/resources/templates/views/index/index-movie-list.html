@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<div class="movie-item" th:each="dto:${list}" th:data-docid="${dto.docid}">
+<div class="movie-item animate__animated animate__flipInY" th:each="dto:${list}" th:data-docid="${dto.docid}">
 	<a th:href="@{/movies/detail/{id}(id=${dto.docid})}">
 		<img th:src="${dto.poster()}" th:alt="${dto.title}">
 		<span class="rating-badge">[[${dto.rating}]]</span> 

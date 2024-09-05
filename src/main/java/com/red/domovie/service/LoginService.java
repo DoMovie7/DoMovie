@@ -1,8 +1,10 @@
 package com.red.domovie.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.red.domovie.domain.dto.login.FindIdDTO;
 import com.red.domovie.domain.dto.login.SignUpDTO;
@@ -14,9 +16,16 @@ public interface LoginService {
 
 	Map<String, Boolean> checkEmailDuplication(String email);
 
-	String findEmailByNameAndBirthDate(FindIdDTO request);
+	List<String> findEmailByNameAndBirthDate(FindIdDTO request);
+
+	void processFindPassword(String email);
+
+	void isValidPasswordResetToken(String token, Model model);
+
+	void resetPassword(String token, String newPassword);
 
 
 
 
 }
+

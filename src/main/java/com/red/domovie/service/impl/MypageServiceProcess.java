@@ -1,25 +1,51 @@
 package com.red.domovie.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.red.domovie.common.util.DomovieFileUtil;
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
+import com.red.domovie.domain.dto.recommend.RecommendListDTO;
 import com.red.domovie.domain.entity.UserEntity;
+import com.red.domovie.domain.repository.RecommendRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 import com.red.domovie.service.MypageService;
 
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.services.s3.S3Client;
 
 @Service
 @RequiredArgsConstructor
 public class MypageServiceProcess implements MypageService {
 
+	private final DomovieFileUtil fileUtil;
+	
 	private final UserEntityRepository userEntityRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ModelMapper modelMapper;
+	private final RecommendRepository recommendRepository;
+	
+	
+	
+	private final S3Client s3Client;
+	
+	@Value("${spring.cloud.aws.s3.bucket}")
+	private String bucket;
+	
+	@Value("${spring.cloud.aws.s3.upload-src.profile}")
+	private String src;
 
 	@Override
 	public ProfileDTO getCurrentUser() {
@@ -32,8 +58,10 @@ public class MypageServiceProcess implements MypageService {
 
 		UserEntity user = userEntityRepository.findByEmail(username)
 				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		int count=recommendRepository.countByAuthor(user);
 
-		return ProfileDTO.from(user);
+		return modelMapper.map(user, ProfileDTO.class).recommendCount(count);
 	}
 
 	@Override
@@ -56,6 +84,41 @@ public class MypageServiceProcess implements MypageService {
 		}
 
 		userEntityRepository.save(user);
+	}
+
+	@Override
+	public List<RecommendListDTO> recommendsByUserProcess(Long userId) {
+		// userId를 이용해 해당 사용자를 조회합니다. 
+    // 사용자가 존재하지 않을 경우 예외를 던집니다.
+		UserEntity author = userEntityRepository.findById(userId).orElseThrow();
+		
+		// 조회된 사용자를 작성자로 하는 추천 글 목록을 조회합니다.
+		// 조회된 추천 글들을 RecommendListDTO로 변환한 후, 리스트로 수집하여 반환합니다.
+		return recommendRepository.findByAuthor(author).stream()
+				.map(reommmend->modelMapper.map(reommmend, RecommendListDTO.class))
+				.collect(Collectors.toList());
+			
+		
+	}
+
+	@Transactional
+	@Override
+	public Map<String, String> profileImageUpdateProcess(Long userId, MultipartFile profile) {
+		
+		//String newName=fileUtil.newFilenameWithoutExtension();
+		String key=src+fileUtil.newFilenameWithoutExtension();
+		//String orgName=profile.getOriginalFilename();
+		//s3 src폴더에 upload
+		Map<String, String> result=fileUtil.awsS3fileUpload(profile, s3Client, bucket, key);
+		//DB수정
+		UserEntity user=userEntityRepository.findById(userId).orElseThrow();
+		String prevImageKey=user.getProfileImagekey();
+		//수정
+		user.profileImageUpdate(result.get("url"), key);
+		if(prevImageKey!=null && prevImageKey.equals(""))
+			fileUtil.awsS3DeleteObject(s3Client, bucket, prevImageKey);
+		
+		return result;
 	}
 
 }

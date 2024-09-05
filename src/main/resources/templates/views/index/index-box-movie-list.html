@@ -4,7 +4,7 @@
     <title>Box Office Movies</title>
 </head>
 <body>
-	<div class="movie-item" th:each="dto : ${list}" th:data-docid="${dto.DOCID}">
+	<div class="movie-item animate__animated animate__flipInY" th:each="dto : ${list}" th:data-docid="${dto.DOCID}">
 	    <div class="image-container">
 	        <a th:href="@{/movies/detail/{id}(id=${dto.DOCID})}">
 	            <img th:src="${dto.posters}" th:alt="${dto.movieNm}">
