@@ -6,16 +6,17 @@
 	<link rel="stylesheet" href="/css/common/chatbot.css">
 </head>
 <main class="chat-main">
+	<input type="hidden" th:value="${roomId}" id="roomIdKey">
 	<div id="messageArea"><!-- id:chat-content  -->
 		
 	</div>
     <form  class="flex" name="messageForm"> <!-- id="input-container" -->
-        <input type="text" class="question" placeholder="메시지를 입력하세요" autocomplete="off"> <!-- id="question"  -->
+        <input type="text" class="question" placeholder="메시지를 입력하세요" autocomplete="off" id="answer"> <!-- id="question"  -->
         <button class="send-button" type="submit">보내기</button> <!--  id="send-button"  -->
     </form>
 	
-	<script src="/js/admin/faq.js"></script>
-    <script>
+	<script src="/js/admin/chat.js"></script>
+    <!-- <script>
         var stompClient = null; // WebSocket 클라이언트 변수
         var currentRoom = null; // 현재 사용자가 참여 중인 채팅방 ID
         var username = null;
@@ -188,5 +189,5 @@
         // 페이지 로드 시 WebSocket 연결 시작
         window.onload = connect;
         
-    </script>
+    </script> -->
 </main>

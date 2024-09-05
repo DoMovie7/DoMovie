@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.red.domovie.domain.dto.ResponseDTO;
 import com.red.domovie.domain.dto.bot.FAQDTO;
 import com.red.domovie.domain.dto.bot.QuestionDTO;
+import com.red.domovie.domain.dto.chat.AnswerDTO;
 import com.red.domovie.service.BotService;
 import com.red.domovie.service.CategoryService;
 import com.red.domovie.service.ChatService;
@@ -83,12 +84,24 @@ public class BotController {
 	
 	//상담사와 채팅
 	@MessageMapping("/chat/query")
-	public void agent(QuestionDTO dto) {
+	public void query(QuestionDTO dto) {
 		
 		System.out.println(">>>채팅 문의 :"+dto);
-		chatService.saveRoomProcess(dto);
+		if(chatService.findByRoomId(dto.getKey()).isEmpty()) {
+			chatService.saveRoomProcess(dto);
+		}
 		
 		messagingTemplate.convertAndSend("/topic/query/"+dto.getKey(), dto.getContent());
+		
+	}
+	
+	//유저에게 답변
+	@MessageMapping("/chat/answer")
+	public void answer(AnswerDTO dto) {
+		
+		System.out.println(">>>채팅 답변 :"+dto);
+		
+		messagingTemplate.convertAndSend("/topic/answer/"+dto.getKey(), dto.getContent());
 		
 	}
 

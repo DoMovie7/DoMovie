@@ -66,22 +66,16 @@ public class BotAdminController {
 	
 	@GetMapping("/admin/chat/list")
 	public String chatList(Model model) {
+		
 		List<ChattingRoomDTO> roomList = chatService.findAllChatRoom();
-		System.out.println(roomList);
         model.addAttribute("roomList",roomList);
+        
 		return "views/admin/chat-list";
 	}
 	
-	//연습
-	@GetMapping("/admin/chat")
-	public String chat() {
-		return "views/admin/chat";
-	}
-	
 	@GetMapping("/admin/chat/{roomId}")
-	public String chatting(@PathVariable("roomdId") long roomId, Model model) {
-		ChatRoomDTO room = chatService.findRoomById(roomId);
-        model.addAttribute("room",room);
+	public String chatting(@PathVariable("roomId") String roomId, Model model) {
+		model.addAttribute("roomdId", roomId);	
 		return "views/admin/chat";
 	}
 	

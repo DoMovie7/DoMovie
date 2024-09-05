@@ -13,4 +13,9 @@
 		select * from chatroom
 		order by created_at desc
 	</select>
+	
+	<select id="findByRoomId" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO" parameterType="String">
+		select * from chatroom
+		where room_id = #{roomId}
+	</select>
 </mapper>

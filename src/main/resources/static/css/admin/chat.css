@@ -14,6 +14,76 @@
 	margin-bottom: 20px;
 }
 
+#messageArea>div>div>div.part>p {
+	padding: 10px;
+	position: relative;
+	min-width: 50px;
+	word-wrap: break-word; /* 줄바꿈 허용 */
+	margin: 0px;
+	padding: 10px;
+}
+#messageArea>div>div>div.part.chatbot {
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background:  #f7d2b7;
+	word-wrap: break-word; /* 줄바꿈 허용 */
+	width: 170px;
+}
+#messageArea>div>div>div.part.guest {
+	border-top-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	background:  #ffc8c7;
+	word-wrap: break-word; /* 줄바꿈 허용 */
+	max-width: 170px;
+}
+
+/*/////////////////////////*/
+/*///////  스크롤 바 ////////*/
+/*/////////////////////////*/
+/* 전체 스크롤바 */
+#messageArea::-webkit-scrollbar {
+	padding-right: 3px;
+	width: 8px; /* 스크롤바의 너비 */
+	height: 8px; /* 수평 스크롤바의 높이 (선택 사항) */
+}
+
+/* 스크롤바의 트랙 (배경) */
+#messageArea::-webkit-scrollbar-track {
+	background: none; /* 배경 색상 */
+}
+
+/* 스크롤바의 핸들 (드래그 가능한 부분) */
+#messageArea::-webkit-scrollbar-thumb {
+	background: #f6a4a3; /* 핸들의 색상 */
+	border-radius: 4px; /* 핸들의 모서리 둥글게 */
+	border-radius: 5px;
+}
+
+/* 핸들을 호버했을 때 */
+#messageArea::-webkit-scrollbar-thumb:hover {
+	background: #fc9998; /* 핸들을 호버했을 때의 색상 */
+}
+
+#messageArea > div > div.icon > img{
+    width: 40px;
+    height: 40px;
+    margin: 0 10px;
+}
+
+#messageForm {
+	display: flex;
+	position: absolute; /* 입력 필드를 컨테이너 바닥에 고정 */
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff8f4; /* 입력 필드와 버튼을 감싸는 배경색 */
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+
 .flex {
 	display: flex;
 }
