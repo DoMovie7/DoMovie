@@ -286,3 +286,6 @@ h3 {
     color: var(--main-white);
     margin: 0 auto; /* 가로 가운데 정렬 */
 }
+#autocomplete-suggestions{
+	color: white;
+}

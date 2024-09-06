@@ -26,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -429,4 +430,58 @@ public class MovieApiServiceProcess implements MovieApiService {
         log.warn("검색 결과가 없거나 오류가 발생했습니다.");
         return new ArrayList<>(); // 빈 리스트 반환
     }
+    
+    //
+    @Override
+    public List<KmdbMovieDTO> getAutoCompleteSuggestions(String query) {
+        RestTemplate restTemplate = new RestTemplate();
+        StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
+        strBuilder.append("&detail=y");
+        strBuilder.append("&query=").append(query);
+        strBuilder.append("&listCount=5");
+        strBuilder.append("&ServiceKey=").append(kmdbApiKey);
+        strBuilder.append("&sort=prodYear,1");
+
+        String url = strBuilder.toString();
+        String response = restTemplate.getForObject(url, String.class);
+        System.out.println("API Response: " + response); // API 응답 로그 출력
+
+        List<KmdbMovieDTO> movies = new ArrayList<>();
+
+        try {
+            JSONObject jsonResponse = new JSONObject(response);
+
+            // JSON 구조에 따라 데이터 추출
+            if (jsonResponse.has("Data")) {
+                JSONArray dataArray = jsonResponse.getJSONArray("Data");
+                if (dataArray.length() > 0) {
+                    JSONObject dataObject = dataArray.getJSONObject(0); // 첫 번째 Data 객체 선택
+                    
+                    // Result 배열을 확인
+                    if (dataObject.has("Result")) {
+                        JSONArray resultArray = dataObject.getJSONArray("Result");
+                        for (int i = 0; i < resultArray.length(); i++) {
+                            JSONObject resultItem = resultArray.getJSONObject(i);
+                            KmdbMovieDTO movie = new KmdbMovieDTO();
+                            movie.setTitle(resultItem.optString("title")); // 제목 설정
+                            movies.add(movie);
+                        }
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return movies;
+    }
+
+
+
+
+
+
+
+    
 }

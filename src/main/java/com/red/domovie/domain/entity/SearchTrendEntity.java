@@ -35,7 +35,7 @@ public class SearchTrendEntity extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 각 검색 트렌드 기록의 고유 식별자
     private String keyword; // 트렌드로 기록된 검색 키워드
-    private int frequency; // 해당 키워드가 검색된 총 횟수
+    private int searchCount; // 해당 키워드가 검색된 총 횟수
    
     
    
