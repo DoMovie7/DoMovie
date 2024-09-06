@@ -14,7 +14,7 @@ public class ProfileDTO {
 	private String nickName; // 닉네임
 	private String email; // 이메일
 	private Tier tier; // 등급
-	private String profileImageUrl;
+	private String profileImageUrl; // 이미지 url
 	
 	private int  recommendCount;
 	

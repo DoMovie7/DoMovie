@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="_csrf" th:content="${_csrf.token}" />
 	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 	<link rel="stylesheet" href="/css/user/mypage.css">
 	<script src="/js/user/mypage.js" defer></script>
 	<title>마이페이지</title>
@@ -23,10 +24,11 @@
 					<h2>내 프로필</h2>
 				</div>
 				<div class="profile-container">
-					<label class="profile-image-container" th:unless="${#strings.isEmpty(user.profileImageUrl)}" th:style="|background-image: url(${user.profileImageUrl});|">
+					<label class="profile-image-container" th:unless="${#strings.isEmpty(user.profileImageUrl)}"
+						th:style="|background-image: url(${user.profileImageUrl});|">
 						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
 					</label>
-					<label class="profile-image-container" th:if="${#strings.isEmpty(user.profileImageUrl)}" >
+					<label class="profile-image-container" th:if="${#strings.isEmpty(user.profileImageUrl)}">
 						<input type="file" id="profile-upload" accept="image/*" style="display: none;">
 					</label>
 					<div class="profile-info">
@@ -56,15 +58,44 @@
 			</div>
 			<div id="tier-content" style="display: none;">
 				<h2>나의 등급</h2>
-				<div id="tier-image-container">
-					<img id="tier-image" th:src="${user.tier.url}" alt="등급 이미지">
+				<div id="tier-contanier">
+					<div class="tier-info">
+						<div id="tier-image-container">
+							<img id="tier-image" th:src="${user.tier.url}" alt="등급 이미지">
+						</div>
+						<p id="tier-description">
+							<span>나의 등급은 </span>
+							<b><i th:text="|'${user.tier.desc}'|"></i></b>
+							<span>입니다.</span>
+						</p>
+						<p>내 게시글 수: <span id="recommend-count" th:text="${user.recommendCount}"></span></p>
+					</div>
+					<div id="tier-category">
+						<ul>
+							<li>
+								<img class="tier-icon" src="/img/tier/Asset 1.png" alt="옥수수 등급 아이콘">
+								<div class="tier-info">
+									<span class="tier-name">옥수수</span>
+									<span class="tier-description">가장 낮은 등급으로 게시글 등록수가 0~1개일 때의 등급입니다.</span>
+								</div>
+							</li>
+							<li>
+								<img class="tier-icon" src="/img/tier/Asset 2.png" alt="터진 옥수수 등급 아이콘">
+								<div class="tier-info">
+									<span class="tier-name">터진 옥수수</span>
+									<span class="tier-description">중간 등급으로 게시글 등록수가 2~3개일 때의 등급입니다.</span>
+								</div>
+							</li>
+							<li>
+								<img class="tier-icon" src="/img/tier/Asset 3.png" alt="팝콘 등급 아이콘">
+								<div class="tier-info">
+									<span class="tier-name">팝콘</span>
+									<span class="tier-description">가장 높은 등급으로 게시글 등록수가 4개 이상일 때의 등급입니다.</span>
+								</div>
+							</li>
+						</ul>
+					</div>
 				</div>
-				<p id="tier-description">
-					<span>나의 등급은</span>
-					<b><i th:text="|'${user.tier.desc}'|"></i></b>
-					<span>입니다.</span>
-				</p>
-				<p>내 게시글 수: <span id="post-count" th:text="${user.recommendCount}"></span></p>
 			</div>
 			<div id="my-posts-content" style="display: none;">
 				<h2>내가 쓴 글</h2>
@@ -74,15 +105,30 @@
 			</div>
 			<div class="popup-overlay"></div>
 			<div id="password-popup">
-				<form id="password-form" method="post">
-					<input type="password" id="current-password" placeholder="현재 비밀번호" required>
-					<input type="password" id="new-password" placeholder="새 비밀번호" required>
-					<input type="password" id="confirm-password" placeholder="새 비밀번호 확인" required>
-					<div class="popup-buttons">
-						<button type="submit">확인</button>
-						<button type="button" id="close-popup">취소</button>
-					</div>
-				</form>
+			    <form id="password-form" method="post">
+			        <div class="password-input-container">
+			            <input type="password" id="current-password" placeholder="현재 비밀번호" required>
+			            <button type="button" class="toggle-password" data-target="current-password">
+			                <i class="fas fa-eye"></i>
+			            </button>
+			        </div>
+			        <div class="password-input-container">
+			            <input type="password" id="new-password" placeholder="새 비밀번호" required>
+			            <button type="button" class="toggle-password" data-target="new-password">
+			                <i class="fas fa-eye"></i>
+			            </button>
+			        </div>
+			        <div class="password-input-container">
+			            <input type="password" id="confirm-password" placeholder="새 비밀번호 확인" required>
+			            <button type="button" class="toggle-password" data-target="confirm-password">
+			                <i class="fas fa-eye"></i>
+			            </button>
+			        </div>
+			        <div class="popup-buttons">
+			            <button type="submit">확인</button>
+			            <button type="button" id="close-popup">취소</button>
+			        </div>
+			    </form>
 			</div>
 		</section>
 	</main>

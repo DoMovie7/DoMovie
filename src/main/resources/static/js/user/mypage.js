@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	const nicknameDisplay = document.getElementById('nickname');
 	const nicknameInput = document.getElementById('nickname-input');
 	const editNicknameBtn = document.getElementById('edit-nickname-btn');
-	const saveNicknameBtn = document.getElementById('save-nickname-btn');
 	const cancelNicknameBtn = document.getElementById('cancel-nickname-btn');
 	const changePasswordBtn = document.getElementById('change-password-btn');
 	const passwordPopup = document.getElementById('password-popup');
@@ -157,32 +156,86 @@ document.addEventListener('DOMContentLoaded', function() {
 				alert('비밀번호 변경 실패: ' + error.message);
 			});
 	}
+	
+	// 비밀번호 가시성 토글 기능
+    const toggleButtons = document.querySelectorAll('.toggle-password'); // <--- 추가 코드
+    toggleButtons.forEach(button => { // <--- 추가 코드
+        button.addEventListener('click', function() { // <--- 추가 코드
+            const targetId = this.getAttribute('data-target');
+            const passwordInput = document.getElementById(targetId);
+            const icon = this.querySelector('i');
 
-	// 나의 등급 페이지 로드 함수
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+
+	// 등급 계산 처리
+	function calculateTier(recommendCount) {
+        if (recommendCount >= 0 && recommendCount <= 1) {
+            return {
+                name: 'CORN',
+                description: '옥수수',
+                image: '/img/tier/Asset 1.png'
+            };
+        } else if (recommendCount >= 2 && recommendCount <= 3) {
+            return {
+                name: 'POPCORN',
+                description: '터진 옥수수',
+                image: '/img/tier/Asset 2.png'
+            };
+        } else {
+            return {
+                name: 'FULLPOPCORN',
+                description: '팝콘',
+                image: '/img/tier/Asset 3.png'
+            };
+        }
+    }
+
+	// 나의 등급 페이지 불러오기
 	function loadTierContent() {
-		fetch('/api/user-post-count', {
-			headers: {
-				[header]: token
-			},
-			credentials: 'include'
-		})
-			.then(response => response.json())
-			.then(data => {
-				const tierSystem = new TierSystem(data.postCount);
-				const currentTier = tierSystem.getCurrentTier();
+        fetch('/api/user-recommend-count', {
+            headers: {
+                [header]: token
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            const currentTier = calculateTier(data.recommendCount);
 
-				const tierImage = document.getElementById('tier-image');
-				const tierDescription = document.getElementById('tier-description');
-				const postCount = document.getElementById('post-count');
+            const tierImage = document.getElementById('tier-image');
+            const tierDescription = document.querySelector('#tier-description b i');
+            const recommendCount = document.getElementById('recommend-count');
 
-				if (tierImage && tierDescription && postCount) {
-					tierImage.src = currentTier.image;
-					tierDescription.textContent = currentTier.description;
-					postCount.textContent = data.postCount.toString();
-				}
-			})
-			.catch(error => console.error('Error fetching user info:', error));
-	}
+            if (tierImage && tierDescription && recommendCount) {
+                tierImage.src = currentTier.image;
+                tierImage.alt = `${currentTier.name} 등급 이미지`;
+                
+                // 등급 설명 업데이트
+                tierDescription.textContent = currentTier.description;
+                
+                // recommendCount 업데이트
+                recommendCount.textContent = data.recommendCount.toString();
+            }
+
+            // 등급 정보를 로드한 후 tier 컨텐츠를 표시
+            loadContent('tier');
+            setActiveButton(tierBtn);
+        })
+        .catch(error => {
+            console.error('Error fetching user info:', error);
+            alert('등급 정보를 불러오는 데 실패했습니다.');
+        });
+    }
 
 	// 닉네임 업데이트 함수
 	function updateNickname(e) {
@@ -223,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	tierBtn.addEventListener('click', () => {
 		loadContent('tier');
 		setActiveButton(tierBtn);
-		//loadTierContent();
+		loadTierContent();
 	});
 
 	myPostsBtn.addEventListener('click', () => {
