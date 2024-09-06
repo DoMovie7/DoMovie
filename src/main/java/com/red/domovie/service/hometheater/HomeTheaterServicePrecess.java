@@ -7,15 +7,17 @@ import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.entity.hometheater.Category;
 import com.red.domovie.domain.entity.hometheater.CommentEntity;
 import com.red.domovie.domain.entity.hometheater.HomeTheaterEntity;
+import com.red.domovie.domain.entity.hometheater.ItemImageEntity;
 import com.red.domovie.domain.repository.UserEntityRepository;
 import com.red.domovie.domain.repository.hometheater.CategoryRepository;
 import com.red.domovie.domain.repository.hometheater.CommentRepository;
 import com.red.domovie.domain.repository.hometheater.HomeTheaterRepository;
+import com.red.domovie.domain.repository.hometheater.ItemImageEntityRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,34 +30,39 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class HomeTheaterService{
+public class HomeTheaterServicePrecess {
+
     private final CategoryRepository categoryRepository;
     private final HomeTheaterRepository homeTheaterRepository;
     private final CommentRepository commentRepository;
-    private final ModelMapper modelMapper;
-    private final S3Service s3Service;
     private final UserEntityRepository userRepository;
+    private final ItemImageEntityRepository itemImageRepository;
+
+    private final ModelMapper modelMapper;
+
     private final S3Client s3Client;
     private final DomovieFileUtil domovieFileUtil;
 
-//    @Value("spring.cloud.aws.s3.bucket")
-//    private final String bucket;
-//    @Value("spring.cloud.aws.s3.upload-temp.theater")
-//    private final String temp;
-//    @Value("spring.cloud.aws.s3.upload-src.theater")
-//    private final String src;
-
-
-
-
+    @Value("${spring.cloud.aws.s3.bucket}")
+    private String bucket;
+    @Value("${spring.cloud.aws.s3.upload-temp.theater}")
+    private String temp;
+    @Value("${spring.cloud.aws.s3.upload-src.theater}")
+    private String src;
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     public List<HomeTheaterListDTO> getAllPosts() {
-        return homeTheaterRepository.findAll().stream()
-                .map(entity -> modelMapper.map(entity, HomeTheaterListDTO.class))
+        return homeTheaterRepository.findByOrderByIdDesc().stream()
+                .map(theater -> {
+                    ItemImageEntity mainItemImage= itemImageRepository.findByHomeTheater(theater).stream()
+                            .filter(image->image.isDefault()) // isDefault가 true인 이미지객체만통과
+                            .findFirst().orElse(null);//만약에 여러장이면 첫번째거만
+                    return modelMapper.map(theater, HomeTheaterListDTO.class)
+                            .thumbnailImageUrl(mainItemImage!=null?mainItemImage.getImageUrl():"/img/index/no-movie-img.jpg");
+                })
                 .collect(Collectors.toList());
     }
     private HomeTheaterListDTO convertToDto(HomeTheaterEntity entity) {
@@ -87,7 +94,7 @@ public class HomeTheaterService{
     }
 
     @Transactional
-    public void createPost(HomeTheaterSaveDTO homeTheaterSaveDTO, MultipartFile file, String email) {
+    public void createPost(HomeTheaterSaveDTO homeTheaterSaveDTO,ItemImageSaveDTO itemImageSaveDTO, String email) {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 
@@ -97,16 +104,27 @@ public class HomeTheaterService{
                 .author(user)
                 .build();
 
-        if (file != null && !file.isEmpty()) {
-            try {
-                String fileUrl = s3Service.uploadFile(file);
-                homeTheaterEntity.setThumbnailImageUrl(fileUrl);
-            } catch (IOException e) {
-                throw new RuntimeException("파일 업로드 중 오류 발생", e);
-            }
-        }
+        HomeTheaterEntity result=homeTheaterRepository.save(homeTheaterEntity);
 
-        homeTheaterRepository.save(homeTheaterEntity);
+        itemImageSaveDTO.toImageSaveListDTO().forEach(imageDto->{
+            //temp->src 이동
+            String tempKey=imageDto.getBucketKey();
+            String srcKey=src+imageDto.getNewName();
+            //1. s3에서 이미지 복사
+            String imageUrl=domovieFileUtil.awsS3CopyObject(s3Client, bucket, tempKey, bucket, srcKey);
+            //2. temp폴더 이미지는 삭제
+            domovieFileUtil.awsS3DeleteObject(s3Client, bucket, tempKey);
+
+            itemImageRepository.save(ItemImageEntity.builder()
+                            .imageUrl(imageUrl)//copy후 획득
+                            .bucketKey(srcKey)//이동시킨 버킷
+                            .orgName(imageDto.getOrgName())
+                            .newName(imageDto.getNewName())
+                            .isDefault(imageDto.isDefault())
+                            .homeTheater(result)//fk등록
+                    .build());
+        });
+
     }
 
 
@@ -152,16 +170,20 @@ public class HomeTheaterService{
 
         commentRepository.save(comment);
     }
-//    @Override
-//    public Map<String,String> tempUploadProcess(MultipartFile postfile){
-//        String newname =domovieFileUtil.newFilenameWithoutExtension();
-//        String tempkey=temp+newname;
-//        String orgName=postfile.getOriginalFilename();
-//
-//        Map<String, String> result=domovieFileUtil.awsS3fileUpload(postfile,s3Client,bucket,tempkey);
-//        result.put(tempkey,orgName);
-//        return null;
-//    }
+
+    public Map<String, String> tempUploadProcess(MultipartFile itemImage) {
+        String newName =domovieFileUtil.newFilenameWithoutExtension();
+        String tempkey=temp+newName;
+        String orgName=itemImage.getOriginalFilename();
+        System.out.println("bucket:"+bucket);
+        System.out.println("temp:"+temp);
+        System.out.println(orgName);
+        Map<String, String> result=domovieFileUtil.awsS3fileUpload(itemImage,s3Client,bucket,tempkey);
+        result.put("orgName",orgName);
+        result.put("newName",newName);
+        return result;
+    }
+
 
 }
 

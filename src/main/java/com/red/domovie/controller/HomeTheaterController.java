@@ -3,7 +3,7 @@ package com.red.domovie.controller;
 import com.red.domovie.domain.dto.hometheater.*;
 import com.red.domovie.domain.entity.hometheater.Category;
 
-import com.red.domovie.service.hometheater.HomeTheaterService;
+import com.red.domovie.service.hometheater.HomeTheaterServicePrecess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +23,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class HomeTheaterController {
 
-    private final HomeTheaterService homeTheaterService;
+    private final HomeTheaterServicePrecess homeTheaterServicePrecess;
 
     @GetMapping
     public String homeTheaterMain(Model model) {
-        List<Category> categories = homeTheaterService.getAllCategories();
+        List<Category> categories = homeTheaterServicePrecess.getAllCategories();
         model.addAttribute("categories", categories);
         return "views/hometheater/hometheater"; // 홈시어터 메인 페이지
     }
 
     @GetMapping("/list")
     public String listPosts(Model model) {
-        List<HomeTheaterListDTO> posts = homeTheaterService.getAllPosts();
-        List<Category> categories = homeTheaterService.getAllCategories();
+        List<HomeTheaterListDTO> posts = homeTheaterServicePrecess.getAllPosts();
+        List<Category> categories = homeTheaterServicePrecess.getAllCategories();
         model.addAttribute("posts", posts);
         model.addAttribute("categories", categories);
         return "views/hometheater/hometheater_list"; // 게시물 목록 페이지
@@ -45,24 +45,24 @@ public class HomeTheaterController {
     @PreAuthorize("isAuthenticated()")
     public String createPostForm(Model model) {
         model.addAttribute("homeTheaterSaveDTO", new HomeTheaterSaveDTO());
-        model.addAttribute("categories", homeTheaterService.getAllCategories());
+        model.addAttribute("categories", homeTheaterServicePrecess.getAllCategories());
         return "views/hometheater/hometheater_create";
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     @PreAuthorize("isAuthenticated()")
     public String createPost(@ModelAttribute HomeTheaterSaveDTO homeTheaterSaveDTO,
-                             @RequestParam("file") MultipartFile file,
+                             ItemImageSaveDTO itemImageSaveDTO,
                              @AuthenticationPrincipal UserDetails userDetails) {
-        homeTheaterService.createPost(homeTheaterSaveDTO, file, userDetails.getUsername());
+        homeTheaterServicePrecess.createPost(homeTheaterSaveDTO, itemImageSaveDTO, userDetails.getUsername());
         return "redirect:/hometheater/list";
     }
 
 
     @GetMapping("/{id}")
     public String getPost(@PathVariable("id") Long id, Model model) {
-        HomeTheaterDetailDTO post = homeTheaterService.getPostById(id);
-        List<Category> categories = homeTheaterService.getAllCategories();
+        HomeTheaterDetailDTO post = homeTheaterServicePrecess.getPostById(id);
+        List<Category> categories = homeTheaterServicePrecess.getAllCategories();
         model.addAttribute("post", post);
         model.addAttribute("categories", categories);
         model.addAttribute("commentForm", new CommentSaveDTO());
@@ -73,7 +73,7 @@ public class HomeTheaterController {
     public String addComment(@PathVariable("id") Long id, @ModelAttribute CommentSaveDTO commentForm,
                              @AuthenticationPrincipal UserDetails userDetails) {
         commentForm.setAuthor(userDetails.getUsername());  // 이 줄을 추가하세요
-        homeTheaterService.addComment(id,commentForm);
+        homeTheaterServicePrecess.addComment(id,commentForm);
         return "redirect:/hometheater/" + id;
     }
     @PutMapping("/api/{id}")
@@ -83,7 +83,7 @@ public class HomeTheaterController {
                                              @RequestBody HomeTheaterUpdateDTO updateDTO,
                                              @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            HomeTheaterDetailDTO updatedPost = homeTheaterService.updatePost(id, updateDTO, userDetails);
+            HomeTheaterDetailDTO updatedPost = homeTheaterServicePrecess.updatePost(id, updateDTO, userDetails);
             if (updatedPost != null) {
                 // ResponseEntity.ok() 대신 직접 ResponseEntity 객체 생성
                 return new ResponseEntity<>(updatedPost, HttpStatus.OK);
@@ -99,7 +99,7 @@ public class HomeTheaterController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deletePost(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            boolean isDeleted = homeTheaterService.deletePost(id, userDetails.getUsername());
+            boolean isDeleted = homeTheaterServicePrecess.deletePost(id, userDetails.getUsername());
             if (isDeleted) {
                 return ResponseEntity.ok().build();
             } else {
@@ -109,11 +109,12 @@ public class HomeTheaterController {
             return ResponseEntity.badRequest().body("Failed to delete post: " + e.getMessage());
         }
     }
-//    @ResponseBody
-//    @PostMapping("/recommends/temp-upload")
-//    public Map<String,String> tempUpload(@RequestParam(name = "postfile") MultipartFile postfile){
-//        return HomeTheaterService.tempUploadProcess(postfile);
-//    }
+
+    @ResponseBody
+    @PostMapping("/temp-upload")
+    public Map<String,String> tempUpload(@RequestParam(name = "itemImage") MultipartFile itemImage){
+        return homeTheaterServicePrecess.tempUploadProcess(itemImage);
+    }
 
 
 }
