@@ -47,6 +47,8 @@ public class MypageServiceProcess implements MypageService {
 	@Value("${spring.cloud.aws.s3.upload-src.profile}")
 	private String src;
 
+	
+	// 게시글 수 불러오기
 	@Override
 	public ProfileDTO getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,9 +58,11 @@ public class MypageServiceProcess implements MypageService {
 
 		String username = authentication.getName();
 
+		// findByEmail(username) -> username 이메일과 일치하는 사용자를 조회 후 없으면 예외처리 ("User not found" 출력)
 		UserEntity user = userEntityRepository.findByEmail(username)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
+		// user(로그인 된 회원)이 작성한 총 게시글 수를 변수 count에 저장
 		int count=recommendRepository.countByAuthor(user);
 
 		return modelMapper.map(user, ProfileDTO.class).recommendCount(count);
@@ -86,6 +90,8 @@ public class MypageServiceProcess implements MypageService {
 		userEntityRepository.save(user);
 	}
 
+	
+	// 게시글 불러오기
 	@Override
 	public List<RecommendListDTO> recommendsByUserProcess(Long userId) {
 		// userId를 이용해 해당 사용자를 조회합니다. 
