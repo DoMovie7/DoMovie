@@ -345,3 +345,51 @@
 .first-category-btn{
 	margin-top: 10px;
 }
+
+.msg.bot.loading .loading-animation {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 20px;
+  margin-left: 15px; /* 오른쪽으로 10px 이동 */
+    margin-top: 7px;
+    margin-bottom: 5px;
+}
+
+.msg.bot.loading .loading-animation::before,
+.msg.bot.loading .loading-animation::after,
+.msg.bot.loading .loading-animation > div {
+  content: '';
+  position: absolute;
+  top: 5px; /* 10px에서 5px로 변경하여 위로 올림 */
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #333; /* 필요에 따라 색상 조정 */
+  animation: loading 1.2s infinite ease-in-out both;
+}
+
+.msg.bot.loading .loading-animation::before {
+  left: 0px;
+  animation-delay: -0.32s;
+}
+
+.msg.bot.loading .loading-animation > div {
+  left: 20px;
+  animation-delay: -0.16s;
+}
+
+.msg.bot.loading .loading-animation::after {
+  left: 40px;
+}
+
+@keyframes loading {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* 로딩 메시지가 보이도록 보장 */
+.msg.bot.loading {
+  opacity: 1;
+  z-index: 1000;
+}
