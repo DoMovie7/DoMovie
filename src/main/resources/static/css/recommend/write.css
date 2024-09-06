@@ -10,7 +10,7 @@
 }
 
 /* 페이지 제목 스타일 */
-.page-title {
+.container .page-title {
     font-size: 24px; /* 제목의 글꼴 크기를 24px로 설정 */
     color: #333; /* 제목의 글자 색상을 어두운 회색으로 설정 */
     text-align: center; /* 제목의 텍스트를 중앙 정렬 */
@@ -19,22 +19,22 @@
 }
 
 /* 폼 스타일 */
-form {
+.container form {
     display: flex; /* 폼의 자식 요소들을 플렉스 박스로 설정하여 정렬 */
     flex-direction: column; /* 자식 요소들을 세로 방향으로 배치 */
 }
 
 /* 레이블 스타일 */
-label {
+.container label {
     font-size: 16px; /* 레이블의 글꼴 크기를 16px로 설정 */
     margin-bottom: 5px; /* 레이블 아래 여백을 5px로 설정 */
     color: #000; /* 레이블의 글자 색상을 검은색으로 설정 */
 }
 
 /* 입력 필드 스타일 */
-select,
-input[type="text"],
-input[type="file"] {
+.container select,
+.container input[type="text"],
+.container input[type="file"] {
     width: 100%; /* 입력 필드의 너비를 100%로 설정하여 부모 요소에 맞게 확장 */
     padding: 10px; /* 내부 여백을 10px로 설정 */
     margin-bottom: 20px; /* 입력 필드 아래 여백을 20px로 설정 */
@@ -44,7 +44,7 @@ input[type="file"] {
 }
 
 /* 버튼 스타일 */
-button {
+.container .r-btn {
     width: auto; /* 버튼의 너비를 자동으로 설정하여 내용에 맞게 조절 */
     flex: 1; /* 버튼이 컨테이너 내에서 균등하게 나누어지도록 설정 */
     padding: 10px; /* 버튼의 내부 여백을 10px로 설정 */
