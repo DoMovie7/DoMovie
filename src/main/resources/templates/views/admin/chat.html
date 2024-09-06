@@ -6,9 +6,33 @@
 	<link rel="stylesheet" href="/css/common/chatbot.css">
 </head>
 <main class="chat-main">
-	<input type="hidden" th:value="${roomId}" id="roomIdKey">
+	<input type="hidden" th:value="${roomInfo.roomId}" id="roomIdKey">
+	<input type="hidden" th:value="${roomInfo.userName}" id="userName">
+	<input type="hidden" th:value="${roomInfo.profileImageUrl}" id="profileImageUrl">
 	<div id="messageArea"><!-- id:chat-content  -->
-		
+		<div th:each="chat : ${chattingDTO}">
+			<div class="msg bot flex" th:if="${chat.isUser}==1">
+			    <div class="icon">
+			        <img th:src="${roomInfo.profileImageUrl ?: '/img/img_default.jpg'}" class="customer-img">
+			    </div>
+			    <div class="message">
+			    <div class="bot-name" th:text="|${roomInfo.userName} 고객님|">고객님</div>
+			        <div class="part chatbot">
+			            <p th:text="${chat.message}">${response}</p>
+			        </div>
+			        <div class="time time-display" th:attr="data-created-at=${chat.createdAt}">${time}</div>
+			    </div>
+			</div>
+			
+			<div class="msg user flex" th:if="${chat.isUser}==0">
+			    <div class="message">
+			        <div class="part guest">
+			            <p class="user-chat" th:text="${chat.message}">${answer}</p>
+			        </div>
+			        <div class="time time-display" th:attr="data-created-at=${chat.createdAt}">${time}</div>
+			    </div>
+			</div>
+		</div>
 	</div>
     <form  class="flex" name="messageForm"> <!-- id="input-container" -->
         <input type="text" class="question" placeholder="메시지를 입력하세요" autocomplete="off" id="answer"> <!-- id="question"  -->

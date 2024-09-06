@@ -10,10 +10,10 @@
 	</insert>
 	
 	<select id="findAllRoom" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO">
-		SELECT c.*, u.user_name, u.email
+		SELECT c.*, u.user_name, u.email, u.profile_image_url
 		FROM chatroom c
 		JOIN user u ON c.user_id = u.user_id
-		ORDER BY c.created_at DESC;
+		ORDER BY c.created_at DESC
 	</select>
 	
 	<select id="findByRoomId" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO" parameterType="String">
@@ -23,7 +23,7 @@
 	
 	
 	<select id="findAllRooms" parameterType="map" resultType="com.red.domovie.domain.dto.chat.ChattingRoomDTO">
-	    SELECT c.*, u.user_name, u.email
+	    SELECT c.*, u.user_name, u.email, u.profile_image_url
 	    FROM chatroom c
 	    JOIN user u ON c.user_id = u.user_id
 	    ORDER BY c.created_at DESC
@@ -33,6 +33,46 @@
 	<select id="countAllRooms" resultType="long">
 	    SELECT COUNT(*)
 	    FROM chatroom
+	</select>
+	
+	<insert id="saveChatQuestion" parameterType="com.red.domovie.domain.dto.bot.QuestionDTO">
+		insert into chat (room_id, message, created_at)
+		values(#{key}, #{content}, CURRENT_TIMESTAMP)
+	</insert>
+	
+	<insert id="saveChatAnswer" parameterType="com.red.domovie.domain.dto.chat.AnswerDTO">
+		insert into chat (room_id, message, created_at, is_user)
+		values(#{key}, #{content}, CURRENT_TIMESTAMP, 0)
+	</insert>
+	
+	<select id="findChatByRoomId" parameterType="String" resultType="com.red.domovie.domain.dto.chat.ChattingDTO">
+		SELECT 
+            c.*,
+            u.user_name,
+            u.email,
+            u.profile_image_url
+        FROM 
+            chat c
+        INNER JOIN 
+            chatroom cr ON c.room_id = cr.room_id
+        INNER JOIN 
+            user u ON cr.user_id = u.user_id
+        WHERE 
+            c.room_id = #{roomId}
+        ORDER BY 
+            c.created_at ASC
+	</select>
+	
+	<update id="updateTime" parameterType="String">
+		update chatroom
+		set updated_at = current_timestamp
+	</update>
+	
+	<select id="findByRoomInfo" resultType="com.red.domovie.domain.dto.chat.ChatRoomDTO" parameterType="String">
+		SELECT c.*, u.user_name, u.email, u.profile_image_url
+		FROM chatroom c
+		JOIN user u ON c.user_id = u.user_id
+		where room_id = #{roomId}
 	</select>
 	
 </mapper>

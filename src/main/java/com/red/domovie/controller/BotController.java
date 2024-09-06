@@ -91,6 +91,8 @@ public class BotController {
 			chatService.saveRoomProcess(dto);
 		}
 		
+		chatService.saveChatQuestion(dto);
+		chatService.timeUpdateRoom(dto.getKey());
 		messagingTemplate.convertAndSend("/topic/query/"+dto.getKey(), dto.getContent());
 		
 	}
@@ -101,6 +103,8 @@ public class BotController {
 		
 		System.out.println(">>>채팅 답변 :"+dto);
 		
+		chatService.saveChatAnswer(dto);
+		chatService.timeUpdateRoom(dto.getKey());
 		messagingTemplate.convertAndSend("/topic/answer/"+dto.getKey(), dto.getContent());
 		
 	}

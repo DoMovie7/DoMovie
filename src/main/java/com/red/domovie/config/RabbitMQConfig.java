@@ -26,6 +26,7 @@ public class RabbitMQConfig {
 	//스프링 부트의 자동 구성은 클래스 경로에 필요한 라이브러리와 설정이 감지되면 해당 설정을 자동으로 수행하여 빈을 생성 함.
 	private final ConnectionFactory connectionFactory;
 	
+	/*
 	@Value("${spring.rabbitmq.template.default-receive-queue}")
 	private String queue;
 	@Value("${spring.rabbitmq.template.exchange}")
@@ -55,52 +56,22 @@ public class RabbitMQConfig {
 	}
 	
 	
-	//*
 	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의
 	@Bean
     SimpleRabbitListenerContainerFactory myFactory() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        //ConnectionFactory connectionFactory = getCustomConnectionFactory();
         factory.setConnectionFactory(connectionFactory);
-        //factory.setMessageConverter(messageConverter());
         return factory;
     }
-    //*/
-    
-	/*
-	//RabbitMQ 메시지 리스너 컨테이너 팩토리를 정의
-	@Bean
-    SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory); // ConnectionFactory 설정
-        factory.setMessageConverter(messageConverter()); // 메시지 변환기로 Jackson2JsonMessageConverter를 사용
-        return factory;
-    }
-    */
 	
-	//*
 	//RabbitMQ 메시지 리스너 컨테이너를 정의
 	@Bean
     SimpleMessageListenerContainer container(Receiver receiver) {
 		SimpleMessageListenerContainer container=myFactory().createListenerContainer();
-		//container.setConnectionFactory(connectionFactory);
 		container.setQueueNames(queue);
 		container.setMessageListener(messageListenerAdapter(receiver)); // 메시지 리스너 어댑터 설정
 		return container;
 	}
-	//*/
-	
-	/*
-	@Bean
-    @ConditionalOnProperty(name = "rabbitmq.listener.enabled", havingValue = "true", matchIfMissing = true)
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, Receiver receiver) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(queue);
-        container.setMessageListener(messageListenerAdapter(receiver));
-        return container;
-    }
-    */
 	
 	
 	// 메시지 리스너 어댑터를 정의
@@ -112,7 +83,21 @@ public class RabbitMQConfig {
 		messageListenerAdapter.setMessageConverter(messageConverter());
 		return messageListenerAdapter;
 	}
+	*/
 	
+	//RabbitMQ 메시지를 수신하기 위한 리스너 컨테이너를 생성하는 데 사용되는 Bean
+	//RabbitMQ와의 통신에 필요한 리스너 컨테이너를 구성하고 관리할 수 있음.
+	//1. 리스너 컨테이너의 스레드 관리를 담당합니다. 이를 통해 리스너의 동작을 제어하고, 스레드 풀을 관리하여 메시지 처리의 성능과 확장성을 조절할 수 있음
+	//2. 커스텀한 설정을 적용할 수 있습니다. 예를 들어, 메시지 변환기(MessageConverter), Acknowledge 모드, 쓰레드 풀 사이즈 등을 설정할 수 있습니다. 이를 통해 다양한 요구사항에 맞게 리스너 컨테이너를 조정할 수 있음
+	//3. 여러 개의 리스너를 동시에 처리할 수 있는 컨테이너를 생성할 수 있습니다. 각 리스너는 별도의 설정을 가질 수 있으며, SimpleRabbitListenerContainerFactory를 사용하여 각 리스너의 독립적인 환경을 구성할 수 있음
+	@Bean
+	SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory() {
+		SimpleRabbitListenerContainerFactory factory=new SimpleRabbitListenerContainerFactory();
+		System.out.println(">>>>:"+connectionFactory);
+		factory.setConnectionFactory(connectionFactory);
+		factory.setMessageConverter(messageConverter());
+		return factory;
+	}
 	
 	
 	//RabbitMQ 메시지 변환기를 정의

@@ -7,6 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.red.domovie.domain.dto.bot.QuestionDTO;
+import com.red.domovie.domain.dto.chat.AnswerDTO;
+import com.red.domovie.domain.dto.chat.ChatRoomDTO;
+import com.red.domovie.domain.dto.chat.ChattingDTO;
 import com.red.domovie.domain.dto.chat.ChattingRoomDTO;
 
 @Mapper
@@ -21,5 +24,16 @@ public interface RoomMapper {
 	long countAllRooms();
 
 	List<ChattingRoomDTO> findAllRooms(Map<String, Integer> params);
+
+	void saveChatQuestion(QuestionDTO dto);
+
+	void saveChatAnswer(AnswerDTO dto);
+
+	List<ChattingDTO> findChatByRoomId(String roomId);
+
+	void updateTime(String key);
+
+	ChatRoomDTO findByRoomInfo(String roomId);
+
 
 }

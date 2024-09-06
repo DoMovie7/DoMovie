@@ -1,5 +1,6 @@
 package com.red.domovie.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import com.red.domovie.domain.mapper.FaqMapper;
 import com.red.domovie.domain.repository.FaqEntityRespository;
 import com.red.domovie.service.FAQService;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -50,10 +52,30 @@ public class FAQServiceProcess implements FAQService{
         FAQEntity updatedFAQ = faqRepository.save(faq);
         return FAQDTO.fromEntity(updatedFAQ);
     }
+	
+	public void deleteFAQ(Long id) {
+        FAQEntity faq = faqRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("FAQ not found with id: " + id));
 
-	@Override
-    public void deleteFAQ(Long id) {
-        faqRepository.deleteById(id);
+        // 재귀적으로 자식 엔터티들을 삭제
+        deleteChildrenRecursively(faq);
+
+        // 부모 엔터티에서 현재 FAQ 제거
+        if (faq.getParent() != null) {
+            faq.getParent().getChildren().remove(faq);
+        }
+
+        // 현재 FAQ 삭제
+        faqRepository.delete(faq);
+    }
+
+    private void deleteChildrenRecursively(FAQEntity faq) {
+        List<FAQEntity> children = new ArrayList<>(faq.getChildren());
+        for (FAQEntity child : children) {
+            deleteChildrenRecursively(child);
+            faq.getChildren().remove(child);
+            faqRepository.delete(child);
+        }
     }
 
 	@Override
