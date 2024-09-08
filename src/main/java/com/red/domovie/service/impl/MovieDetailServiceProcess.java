@@ -16,6 +16,7 @@ import org.thymeleaf.context.Context;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.red.domovie.common.util.KmdbMovieUtil;
+import com.red.domovie.domain.dto.movieDetail.GetAverageRatingDTO;
 import com.red.domovie.domain.dto.movieDetail.GetMovieDetailDTO;
 import com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO;
 import com.red.domovie.domain.dto.movieDetail.PostMovieRatingDTO;
@@ -94,6 +95,44 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 		//별점코멘트 저장
 		movieDetailMapper.saveMovieRating(userId,dto);
 		
+		
+	}
+
+
+    //리뷰수정
+	@Override
+	public void updateMovieRating(Long userId, PostMovieRatingDTO dto) {
+		System.out.println(userId);
+
+		
+		//별점수정코멘트 업데이트
+		movieDetailMapper.updateMovieRating(userId,dto);
+		
+	}
+
+
+    //평균 별점
+	@Override
+	public void findAverageRating(String movieID, Model model) {
+		
+		GetAverageRatingDTO dto=movieDetailMapper.findAverageRating(movieID);
+		System.out.println(dto);
+		
+		if(dto ==null){
+			dto = new GetAverageRatingDTO(); 
+			dto.setAvg(0);
+		}
+		model.addAttribute("averageRating",dto);
+		
+	}
+
+
+    //리뷰 삭제
+	@Override
+	public void deleteMovieRating(Long userId, String movieId) {
+		System.out.println(userId+"유저>>>>>>>>"+movieId);
+		String cleanMovieId = movieId.replace("\"", "");
+		movieDetailMapper.deleteMovieRating(cleanMovieId,userId);
 		
 	}
 
