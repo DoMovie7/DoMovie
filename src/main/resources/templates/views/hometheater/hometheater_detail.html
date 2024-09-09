@@ -19,7 +19,14 @@
             <span th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd HH:mm')}">작성일</span>
         </div>
         <div class="post-thumbnail">
-            <img th:src="${post.thumbnailImageUrl}" alt="첨부 이미지" class="thumbnail" style="width: 100%; max-width: 600px;">
+            <div>
+                <th:block>
+                <img th:src="${post.thumbnailImageUrl}" alt="첨부 이미지" class="thumbnail" style="width: 100%; max-width: 600px;">
+                </th:block>
+            </div>
+            <ul>
+                <li th:each="imgdto:${post.images}"><img th:src="${imgdto.imageUrl}"></li>
+            </ul>
         </div>
         <div id="postContent" class="post-content" th:utext="${post.content}">
             게시글 내용이 여기에 표시됩니다.

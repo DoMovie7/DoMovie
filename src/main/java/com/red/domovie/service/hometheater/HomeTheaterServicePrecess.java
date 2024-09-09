@@ -73,11 +73,17 @@ public class HomeTheaterServicePrecess {
 
 
     public HomeTheaterDetailDTO getPostById(Long id) {
-        HomeTheaterEntity entity = homeTheaterRepository.findById(id)
+        HomeTheaterEntity homeTheater = homeTheaterRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
-        HomeTheaterDetailDTO dto = modelMapper.map(entity, HomeTheaterDetailDTO.class);
-        dto.setAuthorEmail(entity.getAuthor().getEmail());  // 작성자의 이메일 설정
-        return modelMapper.map(entity, HomeTheaterDetailDTO.class);
+
+        List<ImageDetailDTO> images=itemImageRepository.findByHomeTheater(homeTheater).stream()
+                .map(imgEnt->modelMapper.map(imgEnt, ImageDetailDTO.class))
+                .collect(Collectors.toList());
+
+        HomeTheaterDetailDTO dto = modelMapper.map(homeTheater, HomeTheaterDetailDTO.class);
+        dto.setAuthorEmail(homeTheater.getAuthor().getEmail());  // 작성자의 이메일 설정
+        dto.setImages(images);
+        return dto;
     }
     @Transactional
     public boolean deletePost(Long id, String email) {
