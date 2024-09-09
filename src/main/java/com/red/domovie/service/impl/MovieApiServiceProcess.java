@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
@@ -39,7 +40,8 @@ public class MovieApiServiceProcess implements MovieApiService {
     private final ObjectMapper objectMapper = new ObjectMapper(); // Jackson ObjectMapper
 
     @Override
-    public void getBoxOffice(Model model) {
+    @Cacheable(value = "boxOfficeCache", key = "#root.method.name")
+    public List<BoxOfficeDTO> getBoxOffice() {
         LocalDate date = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = date.format(formatter);
@@ -66,12 +68,14 @@ public class MovieApiServiceProcess implements MovieApiService {
                 
                 boxOfficeDTOs.add(boxOfficeDTO);
             }
-            model.addAttribute("list", boxOfficeDTOs);
-
         } catch (Exception e) {
             log.error("API 호출 중 오류 발생: {}", e.getMessage());
         }
+        return boxOfficeDTOs;
     }
+
+
+
 
     private Map<String, String> fetchPosterFromKMDB(String movieNm, String releaseDts) {
         final String DEFAULT_POSTER = "/img/index/no-movie-img.jpg";
@@ -121,7 +125,8 @@ public class MovieApiServiceProcess implements MovieApiService {
     }
 
     @Override
-    public void getNewMovies(Model model) {
+    @Cacheable(value = "newMoviesCache", key = "#root.method.name")
+    public List<KmdbMovieDTO> getNewMovies() {
         LocalDate currentDate = LocalDate.now();
         LocalDate threeMonthsAgo = currentDate.minusMonths(3);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -138,6 +143,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         strBuilder.append("&sort=prodYear,1");
 
         String url = strBuilder.toString();
+        List<KmdbMovieDTO> filteredAndSortedMovies = new ArrayList<>();
 
         try {
             String response = restTemplate.getForObject(url, String.class);
@@ -145,11 +151,10 @@ public class MovieApiServiceProcess implements MovieApiService {
 
             if (jsonResponse.has("Data") && jsonResponse.get("Data").size() > 0) {
                 JsonNode firstData = jsonResponse.get("Data").get(0);
-
                 KmdbMovieResponse kmdbMovieResponse = objectMapper.treeToValue(firstData, KmdbMovieResponse.class);
                 List<KmdbMovieDTO> allMovies = kmdbMovieResponse.getResult();
 
-                List<KmdbMovieDTO> filteredAndSortedMovies = allMovies.stream()
+                filteredAndSortedMovies = allMovies.stream()
                     .filter(movie -> {
                         String repRlsDate = movie.getRepRlsDate();
                         if (repRlsDate == null || repRlsDate.equals("Unknown") || repRlsDate.length() != 8) {
@@ -165,16 +170,17 @@ public class MovieApiServiceProcess implements MovieApiService {
                     .sorted((m1, m2) -> m2.getRepRlsDate().compareTo(m1.getRepRlsDate()))
                     .limit(10)
                     .collect(Collectors.toList());
-
-                model.addAttribute("list", filteredAndSortedMovies);
             }
         } catch (Exception e) {
             log.error("API 호출 중 오류 발생: {}", e.getMessage());
         }
+        return filteredAndSortedMovies;
     }
 
+
     @Override
-    public void getUpcomingMovies(Model model) {
+    @Cacheable(value = "upcomingMoviesCache", key = "#root.method.name")
+    public List<KmdbMovieDTO> getUpcomingMovies() {
         LocalDate date = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = date.format(formatter);
@@ -188,6 +194,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         strBuilder.append("&use=극장용");
         
         String url = strBuilder.toString();
+        List<KmdbMovieDTO> upcomingMoviesList = new ArrayList<>();
 
         try {
             String response = restTemplate.getForObject(url, String.class);
@@ -195,14 +202,15 @@ public class MovieApiServiceProcess implements MovieApiService {
 
             if (jsonResponse.has("Data") && jsonResponse.get("Data").size() > 0) {
                 JsonNode firstData = jsonResponse.get("Data").get(0);
-                
                 KmdbMovieResponse kmdbMovieResponse = objectMapper.treeToValue(firstData, KmdbMovieResponse.class);
-                model.addAttribute("list", kmdbMovieResponse.getResult());
+                upcomingMoviesList = kmdbMovieResponse.getResult();
             }
         } catch (Exception e) {
             log.error("API 호출 중 오류 발생: {}", e.getMessage());
         }
+        return upcomingMoviesList;
     }
+
 
     @Override
     public void getHorrorMovies(Model model) {
@@ -403,4 +411,10 @@ public class MovieApiServiceProcess implements MovieApiService {
 
         return movies;
     }
+
+
+
+
+
+
 }

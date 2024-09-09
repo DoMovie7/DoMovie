@@ -47,8 +47,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="post : ${posts}" th:data-category="${post.category}">
-                <td th:text="${post.id}"></td>
+            <tr th:each="post, iterStat : ${posts}" th:data-category="${post.category}">
+                <td th:text="${posts.size() - iterStat.index}"></td>
                 <td>
                     <img th:if="${post.thumbnailImageUrl != null}" th:src="${post.thumbnailImageUrl}"
                          alt="대표 이미지"
