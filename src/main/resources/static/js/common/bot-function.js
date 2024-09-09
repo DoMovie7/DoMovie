@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             btnMsgSendClicked();
         }
     });
+	
+	
     
 });
 

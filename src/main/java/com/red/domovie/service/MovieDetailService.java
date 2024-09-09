@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.ui.Model;
 
 import com.red.domovie.domain.dto.movieDetail.PostMovieRatingDTO;
-import com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO;
 
 public interface MovieDetailService {
 	//영화 상세정보 가져오기
@@ -16,5 +15,9 @@ public interface MovieDetailService {
 	void findUserMovieRating(Long userId, String movieID, Model model);
     //전체 사용자리뷰 가져오기
 	void findAllComments(String movieID, Model model);
+	//사용자 리뷰 수정
+	void updateMovieRating(Long userId, PostMovieRatingDTO dto);
+	void findAverageRating(String movieID, Model model);
+	void deleteMovieRating(Long userId, String movieId);
 
 }

@@ -3,6 +3,7 @@ package com.red.domovie.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -41,7 +42,7 @@ public class MypageController {
 		return "views/user/mypage";
 	}
 
-	// 프로필 수정 처리
+	// 닉네임, 비밀번호 수정 처리
 	@PostMapping("/updateProfile")
 	@ResponseBody
 	public ResponseEntity<?> updateProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -54,6 +55,7 @@ public class MypageController {
 		}
 	}
 	
+	// S3 및 서버에 이미지 저장, 업로드 처리
 	@ResponseBody
 	@PostMapping("/mypage/profile/temp-upload")
 	public Map<String, String> profileTempUpload(@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -70,4 +72,21 @@ public class MypageController {
 		return mypageService.recommendsByUserProcess(userDetails.getUserId());
 	}
 
+	
+	// 등급 불러오기 fetch api를 사용해 비동기식 구현
+	@GetMapping("/api/user-recommend-count")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getUserRecommendCount() {
+		
+        ProfileDTO profileDTO = mypageService.getCurrentUser();
+        
+        // 
+        if (profileDTO == null) {
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "User not authenticated"));
+        }
+        
+        return ResponseEntity.ok(Map.of("recommendCount", profileDTO.getRecommendCount()));
+    }
+	
 }

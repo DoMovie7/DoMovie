@@ -46,6 +46,7 @@
 
 /* 프로필 이미지 컨테이너 스타일 */
 .profile-image-container {
+	margin-left: 50px;
 	width: 200px;
 	height: 200px;
 	/* width: 40%; */
@@ -216,6 +217,26 @@
 	align-items: center;
 }
 
+.password-input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.fas {
+    color: var(--sub-grey);
+}
+
 #password-form input {
 	width: 100%;
 	padding: 10px;
@@ -251,26 +272,115 @@
 
 /* 나의 등급 페이지 스타일 */
 #tier-content {
-	text-align: center;
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-radius: 10px;
+}
+
+#tier-contanier {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.tier-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 #tier-image-container {
-	height: 200px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin: 20px auto;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
 }
 
 #tier-image {
-	max-width: 100%;
-	max-height: 100%;
-	object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 #tier-description {
-	font-size: 1.2em;
-	margin: 10px 0;
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+#recommend-count {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+#tier-category {
+    flex: 1;
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#tier-category ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#tier-category li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #333333;
+    padding: 15px;
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+}
+
+#tier-category li:hover {
+    transform: translateY(-5px);
+}
+
+.tier-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+#tier-category .tier-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#tier-category .tier-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: #ffd700;
+}
+
+#tier-category .tier-description {
+    font-size: 0.9em;
+    color: #cccccc;
+}
+
+@media (max-width: 768px) {
+    #tier-contanier {
+        flex-direction: column;
+    }
+
+    #tier-category {
+        margin-top: 20px;
+    }
 }
 
 /* 내가 쓴 글 페이지 스타일 */

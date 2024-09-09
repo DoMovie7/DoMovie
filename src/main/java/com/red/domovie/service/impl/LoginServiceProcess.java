@@ -119,14 +119,8 @@ public class LoginServiceProcess implements LoginService {
 
 	    // 넘어온 패스워드를 인코딩 함
 	    String encodedPassword = passwordEncoder.encode(newPassword);
-	    
-	    System.out.println("Encoded password: " + encodedPassword);
-	    System.out.println("Token: " + token);
-	    
 	    // 인코딩된 비밀번호와 토큰을 사용하여 업데이트
 	    loginMapper.updatePassword(encodedPassword, token);
-	    
-	    logger.info("비밀번호 재설정 성공: {}", user.getEmail());
     }
 
 }

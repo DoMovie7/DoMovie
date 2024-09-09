@@ -167,7 +167,7 @@ h3 {
 
 .movie-item {
 	width: 215px;
-	height: 400px;
+	height: 420px;
 	background-color: var(--main-black);
 	border-radius: 10px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -179,10 +179,13 @@ h3 {
 .movie-item img {
     width: 175px;
     height: 250px;
+    margin-bottom: 5px;
     border-radius: 4px;
 }
-
-
+.movie-title{
+	font-weight: bold;
+	font-size: 18px;
+}
 
 
 .box-rank {
@@ -285,4 +288,27 @@ h3 {
     border-radius: 10px;
     color: var(--main-white);
     margin: 0 auto; /* 가로 가운데 정렬 */
+}
+
+/**/
+#autocomplete-suggestions {
+	color:var(--main-white);
+    display: flex;
+    flex-wrap: nowrap; /* 기본적으로 한 줄에 모두 표시, 필요시 줄 바꿈을 원하지 않으면 nowrap 사용 */
+    overflow-x: auto;  /* 내용이 많으면 가로 스크롤 허용 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    padding: 10px; /* 필요시 여백 조절 */
+}
+
+.autocomplete-suggestion {
+    padding: 5px 10px;
+    margin-right: 5px;
+    
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.autocomplete-suggestion:hover {
+    background-color: var(--main-red);
 }

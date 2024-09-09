@@ -3,49 +3,56 @@
 	th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
 
 <head>
-	<!-- 페이지 제목 -->
+	<!-- 페이지 제목을 설정합니다. -->
 	<title>영화추천 - 두무비</title>
-	<!-- 추천 목록 페이지에 필요한 CSS 파일을 링크 -->
+	<!-- 추천 목록 페이지에 필요한 CSS 파일을 링크합니다. -->
 	<link rel="stylesheet" th:href="@{/css/recommend/list.css}">
+	<!-- 추천 페이지에 필요한 JavaScript 파일을 링크합니다. -->
 	<script src="/js/recommend.js"></script>
 </head>
 
 <body>
 	<main id="recommend">
 		<div class="container">
-			<!-- 페이지 제목 -->
+			<!-- 페이지 제목을 표시합니다. -->
 			<p class="page-title">영화&nbsp;추천</p>
+			<!-- 장르 선택 메뉴를 표시하는 내비게이션 바를 생성합니다. -->
 			<nav id="genre-menu">
 				<div class="tabs">
 					<ul>
-						<!-- 반복문을 사용하여 리스트 항목을 생성 -->
-						<!-- 인덱스가 0일 때 active 클래스를 추가 -->
+						<!-- 'ALL' 탭을 기본으로 활성화 상태로 표시합니다. -->
 						<li onclick="" data-content="0" class="tab active">ALL</li>
+						<!-- 서버에서 전달된 장르 목록을 반복하여 탭을 생성합니다. -->
 						<th:block th:each="genre, status : ${T(com.red.domovie.domain.entity.Genre).values()}">
-							<li onclick="" th:data-content="${status.index+1}" class="tab" th:text="${genre.koName}">장르
-							</li>
+							<!-- 각 장르 탭을 클릭할 때마다 data-content 속성이 달라지며, 해당 탭이 선택됩니다. -->
+							<li onclick="" th:data-content="${status.index+1}" class="tab" th:text="${genre.koName}">
+								장르</li>
 						</th:block>
 					</ul>
 				</div>
 			</nav>
 
+			<!-- 검색 기능을 제공하는 검색 컨테이너입니다. -->
 			<div class="search-container">
+				<!-- 검색 범주를 선택하는 드롭다운 메뉴입니다. -->
 				<select id="filterCategory">
 					<option value="title">제목</option>
 					<option value="content">내용</option>
 					<option value="author">글쓴이</option>
 				</select>
+				<!-- 사용자가 검색어를 입력할 수 있는 입력 필드입니다. -->
 				<input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+				<!-- 검색 버튼입니다. 검색 아이콘을 포함하고 있습니다. -->
 				<button id="searchButton"><i class="fas fa-search"></i></button>
-				<a href="/recommends/new" id="writeButton">글&nbsp;작성</a> <!-- 글쓰기 버튼 추가 -->
+				<!-- 새로운 추천 글을 작성하기 위한 버튼입니다. -->
+				<a href="/recommends/new" id="writeButton">글&nbsp;작성</a>
 			</div>
-  
 
-			<!-- 영화 추천 목록을 담을 테이블 -->
+			<!-- 영화 추천 목록을 표시하는 테이블입니다. -->
 			<table class="board-table">
 				<thead>
 					<tr>
-						<!-- 테이블 헤더 -->
+						<!-- 테이블 헤더로, 각 열의 제목을 나타냅니다. -->
 						<th>번호</th>
 						<th>포스터</th>
 						<th class="title">제목</th>
@@ -54,17 +61,17 @@
 					</tr>
 				</thead>
 				<tbody>
-					<!-- list 변수에 담긴 RecommendListDTO 객체를 반복하여 테이블 행 생성 -->
+					<!-- 서버에서 전달된 추천 글 목록을 반복하여 테이블 행을 생성합니다. -->
 					<tr th:each="dto : ${list}">
 						<!-- RecommendListDTO 객체의 'no' 필드를 테이블 셀에 출력 -->
 						<td th:text="${dto.id}"></td>
 
-						<!-- RecommendListDTO 객체의 'imgUrl' 필드를 이미지 소스로 사용 -->
+						<!-- 추천 글의 포스터 이미지를 표시합니다. -->
 						<td>
 							<img th:src="${dto.imgUrl}" alt="Poster" height="100px">
 						</td>
 
-						<!-- RecommendListDTO 객체의 'title' 필드를 링크로 사용하고, 'commentCount'가 0보다 클 경우 댓글 수를 표시 -->
+						<!-- 추천 글의 제목을 표시하며, 클릭 시 해당 글의 상세 페이지로 이동하는 링크를 제공합니다. -->
 						<td class="title content">
 							<a th:href="|/recommends/${dto.id}|" th:text="${dto.title}"></a>
 							<!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
@@ -79,25 +86,23 @@
 						 -->
 						</td>
 
-						<!-- RecommendListDTO 객체의 'user' 필드를 테이블 셀에 출력 -->
-						<td>
-							<div th:text="${dto.email}"></div>
-							<div th:text="${'('+dto.userName+')'}"></div>
+						<!-- 추천 글 작성자의 이메일과 이름을 표시합니다. -->
+						<td >
+							<div th:text="${dto.author.email}"></div>
+							<div th:text="${'('+dto.author.userName+')'}"></div>
 						</td>
 
-						<!-- RecommendListDTO 객체의 'createdAt' 필드를 지정된 형식으로 포맷하여 출력 -->
-						<td th:text="${#temporals.format(dto.createdAt, 'yyyy.MM.dd')}"></td>
+						<!-- 추천 글이 작성된 날짜를 지정된 형식으로 포맷하여 표시합니다. -->
+						<td th:text="${dto.createdAt.toLocalDate}"></td>
 					</tr>
-					<!--list비어있으면-->
+					<!-- 추천 글 목록이 비어 있을 경우, 이를 알리는 메시지를 표시합니다. -->
 					<tr th:if="${#lists.isEmpty(list)}">
 						<td colspan="5" style="text-align: center; padding: 40px 0;">현재 영화 추천글이 존재하지 않습니다.</td>
-						
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</main>
-
 </body>
 
 </html>

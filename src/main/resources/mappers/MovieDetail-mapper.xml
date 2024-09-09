@@ -23,7 +23,7 @@
 	</insert>
    
    <!--특정 사용자 리뷰 -->
-	<select id="findUserMovieRating" resultType="com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO">
+	<select id="findUserMovieRating" resultType="com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO">
 		SELECT mr.movie_id as movieId, mr.rating, mr.comments,
 		u.user_id as userId, u.nick_name as nickName
 		FROM movie_ratings mr
@@ -35,7 +35,7 @@
 	</select>
 
 	
-	<select id="findMovieRatingList" resultType="com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO">
+	<select id="findMovieRatingList" resultType="com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO">
         SELECT mr.movie_id as movieId, mr.rating, mr.comments,
                u.user_id as userId, u.nick_name as nickName
         FROM movie_ratings mr
@@ -48,8 +48,30 @@
     <select id="countMovieRatings" resultType="long">
         SELECT COUNT(*) FROM movie_ratings WHERE movie_id = #{movieID}
     </select>
-	
+    
+	<update id="updateMovieRating">
+	    UPDATE movie_ratings
+	    SET 
+	        rating = #{dto.rating}, 
+	        comments = #{dto.comments}, 
+	        updated_at = NOW() -- 수정된 시각 업데이트
+	    WHERE 
+	        user_id = #{userId} -- 특정 사용자
+	        AND movie_id = #{dto.movieId} -- 특정 영화
+	</update>
 
+	<select id="findAverageRating"
+		resultType="com.red.domovie.domain.dto.movieDetail.GetAverageRatingDTO">
+		SELECT AVG(rating) AS avg
+		FROM movie_ratings
+		WHERE movie_id = #{movieID};
+	</select>
+
+	<delete id="deleteMovieRating">
+		DELETE FROM movie_ratings
+		WHERE movie_id = #{movieId}
+		AND user_id = #{userId}
+	</delete>
 
 
     

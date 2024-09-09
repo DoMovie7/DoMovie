@@ -23,5 +23,6 @@ public class ChattingRoomDTO {
 	
 	private String userName;
 	private String email;
+	private String profileImageUrl;
 
 }
