@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/logout", "/api/check-email", "/api/find-id", "/api/find-password", "/reset-password")
             )
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/mypage/**", "/movies/detail/movie/rating").authenticated()
+                .requestMatchers("/mypage/**", "/movies/detail/comment/usercomments").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/check-email", "/api/find-id", "/api/find-password").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/reset-password").permitAll()
