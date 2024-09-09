@@ -24,10 +24,9 @@ import java.util.HashSet;
 @Setter
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@ToString
 @Table(name = "user")
 public class UserEntity extends BaseEntity{
 
@@ -64,6 +63,9 @@ public class UserEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Tier tier =Tier.CORN ;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<SocialLoginEntity> socialLogins;
 
   //Role 등록하기 위한 편의 메서드 
   	public UserEntity addRole(Role role) {

@@ -34,6 +34,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     
     private OAuth2User processSocialLogin(OAuth2User oAuth2User, String registrationId) {
         String email = extractEmail(oAuth2User, registrationId);
+        System.out.println("social-email:"+email);
         String name = extractName(oAuth2User, registrationId);
         String socialId = extractSocialId(oAuth2User, registrationId);
         
@@ -43,6 +44,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         
         return new CustomUserDetails(user, oAuth2User.getAttributes());
     }
+    
+    private UserEntity updateExistingUser(UserEntity existingUser, String name, String provider, String socialId) {
+        log.info("Updating existing user: {} with provider: {}", existingUser.getEmail(), provider);
+        existingUser.setUserName(name);
+        if (existingUser.getProvider() == null || existingUser.getProvider().isEmpty()) {
+            existingUser.setProvider(provider);
+            existingUser.setSocialId(socialId);
+        } else if (!existingUser.getProvider().equals(provider)) {
+            log.warn("User {} already exists with different provider: {}", existingUser.getEmail(), existingUser.getProvider());
+            // 여기서 필요한 경우 추가적인 처리를 할 수 있습니다.
+        }
+        return userRepository.save(existingUser);
+    }
+    
     
     private String extractName(OAuth2User oAuth2User, String registrationId) {
     	Map<String, Object> attributes = oAuth2User.getAttributes();
@@ -74,12 +89,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	private String extractEmail(OAuth2User oAuth2User, String registrationId) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
+        System.out.println(">>>>>");
+		for(String attributeName:attributes.keySet()) {
+			System.out.print(attributeName+":");
+			System.out.println(attributes.get(attributeName));
+		}
+		System.out.println("<<<<<");
+        System.out.println("idididid-->"+registrationId);
         String email = null;
         switch (registrationId) {
             case "google":
                 email = (String) attributes.get("email");
                 break;
             case "naver":
+            	
                 Map<String, Object> response = (Map<String, Object>) attributes.get("response");
                 email = (String) response.get("email");
                 break;
@@ -134,16 +157,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return userRepository.save(entity);
     }
 
-    private UserEntity updateExistingUser(UserEntity existingUser, String name, String provider, String socialId) {
-        log.info("Updating existing user: {} with provider: {}", existingUser.getEmail(), provider);
-        existingUser.setUserName(name);
-        if (existingUser.getProvider() == null || existingUser.getProvider().isEmpty()) {
-            existingUser.setProvider(provider);
-            existingUser.setSocialId(socialId);
-        } else if (!existingUser.getProvider().equals(provider)) {
-            log.warn("User {} already exists with different provider: {}", existingUser.getEmail(), existingUser.getProvider());
-            // 여기서 필요한 경우 추가적인 처리를 할 수 있습니다.
-        }
-        return userRepository.save(existingUser);
-    }
+    
 }
