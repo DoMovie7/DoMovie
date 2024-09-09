@@ -1,5 +1,7 @@
 package com.red.domovie.domain.entity;
 
+import java.util.Objects;
+
 import org.hibernate.annotations.DynamicUpdate;
 
 import jakarta.persistence.Entity;
@@ -25,12 +27,22 @@ public class SocialLoginEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
-
     private String provider;  // "google", "naver", "kakao" 등
     private String providerId;
+    private String nickName;
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SocialLoginEntity that = (SocialLoginEntity) o;
+        return Objects.equals(providerId, that.providerId) &&
+               Objects.equals(provider, that.provider);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(providerId, provider);
+    }
 
 }

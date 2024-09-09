@@ -11,9 +11,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.red.domovie.domain.entity.Role;
+import com.red.domovie.domain.entity.SocialLoginEntity;
 import com.red.domovie.domain.entity.UserEntity;
+import com.red.domovie.domain.repository.SocialLoginEntityRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserEntityRepository userRepository;
+    private final SocialLoginEntityRepository socialLoginyRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -32,15 +36,33 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return processSocialLogin(oAuth2User, registrationId);
     }
     
+    @Transactional
     private OAuth2User processSocialLogin(OAuth2User oAuth2User, String registrationId) {
         String email = extractEmail(oAuth2User, registrationId);
         System.out.println("social-email:"+email);
         String name = extractName(oAuth2User, registrationId);
         String socialId = extractSocialId(oAuth2User, registrationId);
         
+        UserEntity user=userRepository.findByEmail(email).orElse(null);
+        
+        if(user!=null) {
+        	System.out.println(">>>기존");
+        	user=user.provider(registrationId)
+        			.addSocial(SocialLoginEntity.builder()
+        			.provider(registrationId)
+        			.providerId(socialId)
+        			.nickName(name)
+        			.build());
+        	userRepository.save(user);
+        }else {
+        	user=createSocialUser(email, name, registrationId, socialId);
+        }
+        
+        /*
         UserEntity user = userRepository.findByEmailOrSocialId(email, socialId)
                 .map(existingUser -> updateExistingUser(existingUser, name, registrationId, socialId))
                 .orElseGet(() -> createSocialUser(email, name, registrationId, socialId));
+        */
         
         return new CustomUserDetails(user, oAuth2User.getAttributes());
     }
@@ -50,7 +72,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         existingUser.setUserName(name);
         if (existingUser.getProvider() == null || existingUser.getProvider().isEmpty()) {
             existingUser.setProvider(provider);
-            existingUser.setSocialId(socialId);
+            //existingUser.setSocialId(socialId);
         } else if (!existingUser.getProvider().equals(provider)) {
             log.warn("User {} already exists with different provider: {}", existingUser.getEmail(), existingUser.getProvider());
             // 여기서 필요한 경우 추가적인 처리를 할 수 있습니다.
@@ -141,7 +163,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private UserEntity createSocialUser(String email, String name, String provider, String socialId) {
         log.info("Creating new social user: {} with provider: {}", email, provider);
 
-
+        System.out.println(">>>신규");
         UserEntity entity = UserEntity.builder()
                 .email(email != null ? email : socialId)
                 .userName(name)
@@ -150,9 +172,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .phoneNumber("미입력")
                 .birthDate("미입력")
                 .provider(provider)
-                .socialId(socialId)
                 .build()
-                .addRole(Role.USER);
+                .addRole(Role.USER)
+                .addSocial(SocialLoginEntity.builder()
+            			.provider(provider)
+            			.providerId(socialId)
+            			.nickName(name)
+            			.build())
+                ;
 
         return userRepository.save(entity);
     }
