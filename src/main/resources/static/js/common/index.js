@@ -136,8 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
-
 // 영화 검색 함수
 document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('search-form');
@@ -213,73 +211,6 @@ function cleanTitle(title) {
     return title.replace(/!HS/g, '<strong>').replace(/!HE/g, '</strong>');
 }   
 
-document.addEventListener('DOMContentLoaded', function() {
-    updateTrendingKeywords();
-});
-
-// 인기검색어
-function search() {
-    const keyword = document.getElementById('searchKeyword').value;
-    console.log('Attempting to search for:', keyword);
-    if (keyword) {
-        fetch('/search/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [header]: token
-            },
-            body: JSON.stringify({ keyword: keyword }),
-        })
-        .then(response => {
-            console.log('Search response status:', response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Search response data:', data);
-            updateTrendingKeywords();
-        })
-        .catch(error => console.error('Error during search:', error));
-    } else {
-        console.log('No keyword entered');
-    }
-}
-
-function updateTrendingKeywords() {
-       console.log('Fetching trending keywords...');
-       fetch('/search/trends?limit=10')
-           .then(response => {
-               console.log('Response status:', response.status);
-               return response.json();
-           })
-           .then(data => {
-               console.log('Received data:', data);
-               const trendingList = document.getElementById('trendingKeywords');
-               trendingList.innerHTML = '';
-               if (data.length === 0) {
-                   console.log('No trending keywords available');
-                   trendingList.innerHTML = '<li>No trending keywords available</li>';
-               } else {
-                   data.forEach(item => {
-                       console.log('Processing item:', item);
-                       const listItem = document.createElement('li');
-                       listItem.textContent = `${item.keyword} (${item.searchCount}회 검색됨)`;
-                       trendingList.appendChild(listItem);
-                   });
-               }
-           })
-           .catch(error => {
-               console.error('Error updating trending keywords:', error);
-               const trendingList = document.getElementById('trendingKeywords');
-               trendingList.innerHTML = '<li>Failed to load trending keywords</li>';
-           });
-   }
-
-// 페이지 로드 시 초기 인기 검색어 로드
-document.addEventListener('DOMContentLoaded', function() {
-    updateTrendingKeywords();
-    // 주기적으로 인기 검색어 업데이트 (예: 30초마다)
-    setInterval(updateTrendingKeywords, 30000);
-});
 
 // movieInfo.js
 // 클라이언트 측 코드 (JavaScript)
