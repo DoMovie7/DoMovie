@@ -24,7 +24,7 @@ public class MovieSearchController {
     public ResponseEntity<List<KmdbMovieDTO>> getAutoCompleteSuggestions(@RequestParam(name = "query") String query) {
         try {
             List<KmdbMovieDTO> suggestions = movieApiService.getAutoCompleteSuggestions(query);
-            System.out.println("Suggestions: " + suggestions);
+            //System.out.println("Suggestions: " + suggestions);
             return ResponseEntity.ok(suggestions);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
