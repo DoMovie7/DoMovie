@@ -184,14 +184,60 @@ textarea {
 .btn-primary:hover {
     background-color: #DB242D;
 }
+/***********************************************/
+
+
 .post-thumbnail {
-    width: 50px;
-    height: 50px;
+    margin-bottom: 20px;
+}
+
+.post-thumbnail > div {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.post-thumbnail img.thumbnail {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    display: inline-block;
+}
+
+.post-thumbnail ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.post-thumbnail ul li {
+    width: calc(33.333% - 10px);
+    max-width: 200px;
+}
+
+.post-thumbnail ul li img {
+    width: 100%;
+    height: auto;
     object-fit: cover;
     border-radius: 5px;
-    margin-right: 10px;
-    vertical-align: middle;
 }
+
+@media (max-width: 768px) {
+    .post-thumbnail ul li {
+        width: calc(50% - 10px);
+    }
+}
+
+@media (max-width: 480px) {
+    .post-thumbnail ul li {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+
 /********************************************/
 
 /* 전체 카테고리 메뉴 스타일 */
