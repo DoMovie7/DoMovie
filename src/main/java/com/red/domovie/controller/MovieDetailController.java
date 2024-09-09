@@ -104,6 +104,9 @@ public class MovieDetailController {
 			movieDetailService.saveMovieRating(userDetails.getUserId(),dto);
 			
 			
+		}else {
+			
+			return "redirect:/login";
 		}
 		
 		  return null;

@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 		if (commentBtn != null) {
+			
 
 			commentBtn.addEventListener('click', function() {
 				// 사용자 입력 데이터 가져오기

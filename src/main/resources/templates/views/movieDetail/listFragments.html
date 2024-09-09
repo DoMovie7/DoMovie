@@ -154,7 +154,7 @@
 	<p>전체 리뷰</p>
  	<ul th:if="${movieRatingList != null}">
  		<li th:each="movieRatingList : ${movieRatingList}">
- 			<span th:text="${movieRatingList.nickName}">전송희</span><span th:text="${movieRatingList.rating/2}">4.5</span>
+ 			<span th:text="${movieRatingList.nickName}">전송희</span><span class="reviewRating" th:text="${movieRatingList.rating/2}">4.5</span>
  			<p th:text="${movieRatingList.comments}">임영웅이 좋아요</p>
  		
  		</li>
@@ -165,5 +165,5 @@
 
 
 <div class="stararea" th:fragment="averageRating">
-	<span class="starpoint"  th:style="'width:' + (${averageRating.avg * 10} + '%')"></span> <span class="point" th:text=${averageRating.avg/2}>4.0</span>
+	<span class="starpoint"  th:style="'width:' + (${averageRating.avg * 10} + '%')"></span> <span class="point" th:text="${#numbers.formatDecimal(averageRating.avg/2, 1, 1)}">4.0</span>
 </div>

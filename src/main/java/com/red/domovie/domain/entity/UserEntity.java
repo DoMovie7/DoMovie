@@ -24,10 +24,9 @@ import java.util.HashSet;
 @Setter
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@ToString
 @Table(name = "user")
 public class UserEntity extends BaseEntity{
 
@@ -64,6 +63,22 @@ public class UserEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Tier tier =Tier.CORN ;
+    
+
+    public UserEntity tierUpdate(Tier tier) {
+    	this.tier=tier;
+  		return this;
+  	}
+    
+    @JoinColumn(name = "user_id")
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<SocialLoginEntity> socialLogins=new HashSet<>();
+    
+    public UserEntity addSocial(SocialLoginEntity socialLogin) {
+    	socialLogins.add(socialLogin);
+  		return this;
+  	}
 
   //Role 등록하기 위한 편의 메서드 
   	public UserEntity addRole(Role role) {
@@ -72,9 +87,10 @@ public class UserEntity extends BaseEntity{
   	}
   	@Column(name = "provider")
     private String provider;
-  	
-  	@Column(name = "social_id")
-  	private String socialId;
+  	public UserEntity provider(String provider) {
+  		this.provider=provider;
+  		return this;
+  	}
   	
   	@Column(name = "password_reset_token")
     private String passwordResetToken; // 새로 추가된 비밀번호 재설정 토큰 필드

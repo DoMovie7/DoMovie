@@ -7,27 +7,25 @@
     <title>글쓰기 페이지</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
     <link rel="stylesheet" href="/css/recommend/write.css">
-
 </head>
 <body>
 <main>
     <div class="container">
         <p class="page-title">홈시어터 정보 공유 게시판 글쓰기</p>
 
-        <form id="writeForm" method="post" action="/hometheater" >
+        <form id="writeForm" method="post" action="/hometheater" enctype="multipart/form-data">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <p>대표 이미지</p>
             <label class="posterLabel" style="width: 200px; height: 200px;">
                 <span>대표 이미지 업로드</span>
-                <input type="file" onchange="fileuploadS3Temp(this)" class="item-img" data-isdefault="true"  accept="image/*"  style="display: none">
+                <input type="file" onchange="fileuploadS3Temp(this)" class="item-img" data-isdefault="true" accept="image/*" style="display: none">
                 <div class="file-data"></div>
-
             </label>
             <p>추가 이미지</p>
             <div id="sub-images" class="sub-images" style="display: flex">
                 <label class="posterLabel sub" style="width: 200px; height: 200px;">
                     <span>+</span>
-                    <input type="file" onchange="fileuploadS3Temp(this)"  class="item-img sub-img" data-isdefault="false"  accept="image/*" style="display: none">
+                    <input type="file" onchange="fileuploadS3Temp(this)" class="item-img sub-img" data-isdefault="false" accept="image/*" style="display: none">
                     <div class="file-data"></div>
                 </label>
             </div>
@@ -40,10 +38,10 @@
                         th:text="${category.type}">카테고리명</option>
             </select>
 
-            <label for="title">제&nbsp;목</label>
+            <label for="title">제목</label>
             <input type="text" id="title" name="title" required>
 
-            <label for="editor">내&nbsp;용</label>
+            <label for="editor">내용</label>
             <div id="editor"></div><br><br>
             <input type="hidden" id="content" name="content">
 
@@ -55,7 +53,7 @@
     </div>
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <script src="/js/hometheater/fileupload.js"></script>
-</main>
 
+</main>
 </body>
 </html>

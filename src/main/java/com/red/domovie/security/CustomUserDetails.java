@@ -22,6 +22,7 @@ public class CustomUserDetails extends User implements OAuth2User {
     private final String email; // =username
     private final String userName; // 한글이름
     private final String nickName; // 추가된 닉네임
+    private final String provider; // 추가된 닉네임
     private Map<String, Object> attributes;
 
     public CustomUserDetails(UserEntity entity) {
@@ -32,6 +33,7 @@ public class CustomUserDetails extends User implements OAuth2User {
         this.email = entity.getEmail();
         this.userName = entity.getUserName();
         this.nickName = entity.getNickName();
+        this.provider=entity.getProvider();
     }
 
     // OAuth2User를 위한 생성자

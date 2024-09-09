@@ -1,5 +1,6 @@
 package com.red.domovie.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
 import com.red.domovie.domain.dto.recommend.RecommendListDTO;
+import com.red.domovie.domain.enums.Tier;
 import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.MypageService;
 
@@ -34,6 +36,7 @@ public class MypageController {
 	public String mypage(Model model) {
 		ProfileDTO user = mypageService.getCurrentUser();
 		if (user != null) {
+			System.out.println(user);
 			model.addAttribute("user", user);
 		} else {
 			// 사용자 정보가 없을 때의 처리
@@ -76,17 +79,9 @@ public class MypageController {
 	// 등급 불러오기 fetch api를 사용해 비동기식 구현
 	@GetMapping("/api/user-recommend-count")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> getUserRecommendCount() {
+    public ResponseEntity<?> getUserRecommendCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		
-        ProfileDTO profileDTO = mypageService.getCurrentUser();
-        
-        // 
-        if (profileDTO == null) {
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "User not authenticated"));
-        }
-        
-        return ResponseEntity.ok(Map.of("recommendCount", profileDTO.getRecommendCount()));
+        return ResponseEntity.ok(mypageService.getTierProcess(userDetails.getUserId()));
     }
 	
 }
