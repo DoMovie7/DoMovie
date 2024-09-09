@@ -61,6 +61,7 @@ public class HomeTheaterEntity extends BaseEntity{
 
     //////////////////////////////
     @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ItemImageEntity> images = new ArrayList<>();
     ////////////////////////////
 
