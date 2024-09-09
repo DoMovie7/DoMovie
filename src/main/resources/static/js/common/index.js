@@ -282,13 +282,9 @@ function fetchAnimationMovieInfo() {
         })
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
-
         //
     fetchMovieInfo();
     fetchBoxOfficeInfo();
     fetchHorrorMovieInfo();
 	fetchupcomingMovieInfo();
 	fetchAnimationMovieInfo();
-
-
-
