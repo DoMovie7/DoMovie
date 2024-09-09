@@ -12,7 +12,7 @@
 	            <span class="box-rank" th:text="${dto.rank}"></span>
 	        </a>
 	    </div>
-	    <h4 th:text="${dto.movieNm}"></h4>
+	    <h4 class="movie-title" th:text="${dto.movieNm}"></h4>
 	    <ul class="box-office-info">
 	        <li><span th:text="${dto.openDt}"></span></li>
 	        <li><span>일일관람객:</span><span th:text="|${#numbers.formatInteger(dto.audiCnt, 3, 'COMMA')}명|"></span></li>

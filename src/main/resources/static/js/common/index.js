@@ -80,7 +80,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-//자동검색어
+//추천검색
+
 document.addEventListener('DOMContentLoaded', function() {
     const keywordInput = document.getElementById('keyword');
     const suggestionsBox = document.getElementById('autocomplete-suggestions');
@@ -90,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
- keywordInput.addEventListener('input', function() {
+    keywordInput.addEventListener('input', function() {
         const query = keywordInput.value;
         if (query.length > 2) {
             fetchAutoCompleteSuggestions(query);
@@ -99,34 +100,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-function fetchAutoCompleteSuggestions(query) {
-    fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Received data:', data); // 데이터 확인
-            suggestionsBox.innerHTML = '';
-            
-            if (data && Array.isArray(data) && data.length > 0) {
-                data.forEach(item => {
-                    const suggestionItem = document.createElement('div');
-                    suggestionItem.classList.add('autocomplete-suggestion');
-                    suggestionItem.textContent = item.title; // title 속성 사용
-                    suggestionItem.addEventListener('click', function() {
-                        keywordInput.value = this.textContent;
-                        suggestionsBox.innerHTML = '';
-                        searchMovies(keywordInput.value); // 자동 완성 클릭 시 영화 검색
+    function fetchAutoCompleteSuggestions(query) {
+        fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Received data:', data); // 데이터 확인
+                suggestionsBox.innerHTML = '';
+                
+                if (data && Array.isArray(data) && data.length > 0) {
+                    data.forEach(item => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.classList.add('autocomplete-suggestion');
+                        
+                        // 강조태그 제거 및 불필요한 공백 처리
+                        const cleanedTitle = item.title
+                            .replace(/!HS|!HE/g, '')  // 강조태그 제거
+                            .replace(/\s+/g, ' ')    // 연속된 공백을 하나로 줄임
+                            .trim();                 // 시작과 끝의 공백 제거
+                        
+                        suggestionItem.textContent = cleanedTitle; // title 속성 사용
+                        suggestionItem.addEventListener('click', function() {
+                            keywordInput.value = this.textContent;
+                            suggestionsBox.innerHTML = '';
+                            searchMovies(keywordInput.value); // 자동 완성 클릭 시 영화 검색
+                        });
+                        suggestionsBox.appendChild(suggestionItem);
                     });
-                    suggestionsBox.appendChild(suggestionItem);
-                });
-            } else {
-                suggestionsBox.innerHTML = '<div class="autocomplete-suggestion">추천 검색어 없음</div>';
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-
+                } else {
+                    suggestionsBox.innerHTML = '<div class="autocomplete-suggestion">추천 검색어 없음</div>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 });
+
 
 
 
@@ -178,7 +185,7 @@ function searchMovies() {
                             <a href="/movies/detail/${movie.DOCID}">
                                 <img src="${movie.posterUrl || 'path/to/default/image.jpg'}" alt="${cleanTitle(movie.title)} 포스터">
                             </a>
-                            <p>${cleanTitle(movie.title)}</p>
+                            <p class="movie-title">${cleanTitle(movie.title)}</p>
                             <p>개봉일: ${movie.dotDate || '정보 없음'}</p>
                             <p>국가: ${movie.nation || '정보 없음'}</p>
                             <p>장르: ${movie.genre || '정보 없음'}</p>
@@ -205,6 +212,74 @@ function cleanTitle(title) {
     // !HS와 !HE를 제거하거나, 필요한 경우 강조 표시로 변환합니다.
     return title.replace(/!HS/g, '<strong>').replace(/!HE/g, '</strong>');
 }   
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateTrendingKeywords();
+});
+
+// 인기검색어
+function search() {
+    const keyword = document.getElementById('searchKeyword').value;
+    console.log('Attempting to search for:', keyword);
+    if (keyword) {
+        fetch('/search/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify({ keyword: keyword }),
+        })
+        .then(response => {
+            console.log('Search response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Search response data:', data);
+            updateTrendingKeywords();
+        })
+        .catch(error => console.error('Error during search:', error));
+    } else {
+        console.log('No keyword entered');
+    }
+}
+
+function updateTrendingKeywords() {
+       console.log('Fetching trending keywords...');
+       fetch('/search/trends?limit=10')
+           .then(response => {
+               console.log('Response status:', response.status);
+               return response.json();
+           })
+           .then(data => {
+               console.log('Received data:', data);
+               const trendingList = document.getElementById('trendingKeywords');
+               trendingList.innerHTML = '';
+               if (data.length === 0) {
+                   console.log('No trending keywords available');
+                   trendingList.innerHTML = '<li>No trending keywords available</li>';
+               } else {
+                   data.forEach(item => {
+                       console.log('Processing item:', item);
+                       const listItem = document.createElement('li');
+                       listItem.textContent = `${item.keyword} (${item.searchCount}회 검색됨)`;
+                       trendingList.appendChild(listItem);
+                   });
+               }
+           })
+           .catch(error => {
+               console.error('Error updating trending keywords:', error);
+               const trendingList = document.getElementById('trendingKeywords');
+               trendingList.innerHTML = '<li>Failed to load trending keywords</li>';
+           });
+   }
+
+// 페이지 로드 시 초기 인기 검색어 로드
+document.addEventListener('DOMContentLoaded', function() {
+    updateTrendingKeywords();
+    // 주기적으로 인기 검색어 업데이트 (예: 30초마다)
+    setInterval(updateTrendingKeywords, 30000);
+});
 
 // movieInfo.js
 // 클라이언트 측 코드 (JavaScript)

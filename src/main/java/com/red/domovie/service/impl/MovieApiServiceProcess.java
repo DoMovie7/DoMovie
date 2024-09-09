@@ -438,7 +438,7 @@ public class MovieApiServiceProcess implements MovieApiService {
         StringBuilder strBuilder = new StringBuilder(KMDB_LIST_API_URL);
         strBuilder.append("&detail=y");
         strBuilder.append("&query=").append(query);
-        strBuilder.append("&listCount=5");
+        strBuilder.append("&listCount=5"); // API에서 가져올 목록 수
         strBuilder.append("&ServiceKey=").append(kmdbApiKey);
         strBuilder.append("&sort=prodYear,1");
 
@@ -456,15 +456,28 @@ public class MovieApiServiceProcess implements MovieApiService {
                 JSONArray dataArray = jsonResponse.getJSONArray("Data");
                 if (dataArray.length() > 0) {
                     JSONObject dataObject = dataArray.getJSONObject(0); // 첫 번째 Data 객체 선택
-                    
+
                     // Result 배열을 확인
                     if (dataObject.has("Result")) {
                         JSONArray resultArray = dataObject.getJSONArray("Result");
+                        int addedCount = 0; // 추가된 영화 수를 카운트
+
                         for (int i = 0; i < resultArray.length(); i++) {
                             JSONObject resultItem = resultArray.getJSONObject(i);
                             KmdbMovieDTO movie = new KmdbMovieDTO();
                             movie.setTitle(resultItem.optString("title")); // 제목 설정
-                            movies.add(movie);
+                            movie.setGenre(resultItem.optString("genre")); // 장르 설정
+
+                            // 장르가 "에로" 또는 "드라마"가 아닌 경우만 리스트에 추가
+                            if (!movie.getGenre().contains("에로") && !movie.getGenre().contains("드라마")) {
+                                movies.add(movie);
+                                addedCount++;
+                            }
+
+                            // 5개의 추천 검색어가 모이면 루프 종료
+                            if (addedCount >= 5) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -476,12 +489,6 @@ public class MovieApiServiceProcess implements MovieApiService {
 
         return movies;
     }
-
-
-
-
-
-
 
     
 }

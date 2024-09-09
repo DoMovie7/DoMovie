@@ -10,5 +10,11 @@ public class SearchTrendDTO {
 	private Long id;
 	private String keyword;
 	private int searchCount;
+	
+    public SearchTrendDTO(Long id, String keyword, int searchCount) {
+        this.id = id;
+        this.keyword = keyword;
+        this.searchCount = searchCount;
+    }
 
 }
