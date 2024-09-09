@@ -1,43 +1,47 @@
 body {
-	font-family: Arial, sans-serif;
-	background-color: #f4f4f4;
-	margin: 0;
-	padding: 0;
-	line-height: 1.6;
-	height: 100vh;
-} 
-
-main{
-	padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.main-text{
-	margin-bottom: 20px;
+main {
+    padding: 0;
+    flex: 1;
+}
+
+.main-text {
+    margin-bottom: 20px;
 }
 
 .class-page {
-	display: flex;
-	height: 100%;
+    display: flex;
+    flex: 1;
+    min-height: 0; /* This is important for nested flexbox to work properly */
 }
 
 .side-bar {
-	width: 200px;
-	min-width: 200px;
-	background-color: #2c3e50;
-	color: white;
-	padding: 20px;
-	overflow-y: auto;
-	height: 100%;
+    width: 200px;
+    min-width: 200px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .side-bar > a {
-	padding: 10px 0;
+    display: block;
+    padding: 10px 0;
 }
 
 .right-section {
-	flex-grow: 1;
-	display: flex;
-	flex-direction: column;
-	padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
 }
-
