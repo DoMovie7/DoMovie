@@ -64,6 +64,11 @@ public class UserEntity extends BaseEntity{
     @Builder.Default
     private Tier tier =Tier.CORN ;
     
+
+    public UserEntity tierUpdate(Tier tier) {
+    	this.tier=tier;
+  		return this;
+  	}
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<SocialLoginEntity> socialLogins;
 

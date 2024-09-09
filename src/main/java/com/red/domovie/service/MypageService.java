@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
 import com.red.domovie.domain.dto.recommend.RecommendListDTO;
+import com.red.domovie.domain.enums.Tier;
 
 public interface MypageService {
 
@@ -18,5 +19,7 @@ public interface MypageService {
 	List<RecommendListDTO> recommendsByUserProcess(Long userId);
 
 	Map<String, String> profileImageUpdateProcess(Long userId, MultipartFile profile);
+
+	Map<String, Object> getTierProcess(Long userId);
 
 }
