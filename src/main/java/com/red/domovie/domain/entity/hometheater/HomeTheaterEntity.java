@@ -40,7 +40,8 @@ public class HomeTheaterEntity extends BaseEntity{
     private int viewCount;
 
     private int commentCount;
-
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     private String thumbnailImageUrl;
