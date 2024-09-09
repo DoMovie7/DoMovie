@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
 
     @Bean
-    public CacheManager cacheManager() {
+    CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("boxOfficeCache", "newMoviesCache", "upcomingMoviesCache");
         cacheManager.setCaffeine(caffeineCacheBuilder());
         return cacheManager;

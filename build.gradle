@@ -53,7 +53,7 @@ ext {
 }
 
 dependencies {
-
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
 	implementation 'org.springframework.data:spring-data-commons:3.3.3'
