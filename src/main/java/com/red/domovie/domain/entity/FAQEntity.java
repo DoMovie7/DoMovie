@@ -51,6 +51,7 @@ public class FAQEntity {
 
     @JsonBackReference
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<FAQEntity> children = new ArrayList<>();
     
     /*
