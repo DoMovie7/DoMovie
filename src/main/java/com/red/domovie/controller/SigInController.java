@@ -121,7 +121,7 @@ public class SigInController {
 	// 로그인 성공 시 리다이렉트될 페이지
 	@GetMapping("/")
 	public String home() {
-		return "/index";
+		return "index";
 	}
 
 }
