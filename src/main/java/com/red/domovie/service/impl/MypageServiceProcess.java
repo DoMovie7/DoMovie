@@ -1,5 +1,6 @@
 package com.red.domovie.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.red.domovie.common.util.DomovieFileUtil;
@@ -19,6 +19,7 @@ import com.red.domovie.domain.dto.mypage.ProfileDTO;
 import com.red.domovie.domain.dto.mypage.ProfileUpdateDTO;
 import com.red.domovie.domain.dto.recommend.RecommendListDTO;
 import com.red.domovie.domain.entity.UserEntity;
+import com.red.domovie.domain.enums.Tier;
 import com.red.domovie.domain.repository.RecommendRepository;
 import com.red.domovie.domain.repository.UserEntityRepository;
 import com.red.domovie.service.MypageService;
@@ -49,6 +50,7 @@ public class MypageServiceProcess implements MypageService {
 
 	
 	// 게시글 수 불러오기
+	@Transactional
 	@Override
 	public ProfileDTO getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -64,6 +66,16 @@ public class MypageServiceProcess implements MypageService {
 		
 		// user(로그인 된 회원)이 작성한 총 게시글 수를 변수 count에 저장
 		int count=recommendRepository.countByAuthor(user);
+		System.out.println("count:"+count);
+		
+		if(count<2 && !user.getTier().equals(Tier.CORN)) {
+			user=user.tierUpdate(Tier.CORN);
+		}else if(count<4 && !user.getTier().equals(Tier.POPCORN)) {
+			user=user.tierUpdate(Tier.POPCORN);
+		}else if(!user.getTier().equals(Tier.FULLPOPCORN)){
+			user=user.tierUpdate(Tier.FULLPOPCORN);
+		}
+		
 
 		return modelMapper.map(user, ProfileDTO.class).recommendCount(count);
 	}
@@ -125,6 +137,31 @@ public class MypageServiceProcess implements MypageService {
 			fileUtil.awsS3DeleteObject(s3Client, bucket, prevImageKey);
 		
 		return result;
+	}
+
+	@Transactional
+	@Override
+	public Map<String, Object> getTierProcess(Long userId) {
+		// findByEmail(username) -> username 이메일과 일치하는 사용자를 조회 후 없으면 예외처리 ("User not found" 출력)
+		UserEntity user = userEntityRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		// user(로그인 된 회원)이 작성한 총 게시글 수를 변수 count에 저장
+		int count=recommendRepository.countByAuthor(user);
+		if(count<2 && !user.getTier().equals(Tier.CORN)) {
+			user=user.tierUpdate(Tier.CORN);
+		}else if(count<4 && !user.getTier().equals(Tier.POPCORN)) {
+			user=user.tierUpdate(Tier.POPCORN);
+		}else if(!user.getTier().equals(Tier.FULLPOPCORN)){
+			user=user.tierUpdate(Tier.FULLPOPCORN);
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("recommendCount", count);
+	    response.put("tierName", user.getTier().name());
+	    response.put("desc", user.getTier().desc());
+	    response.put("url", user.getTier().url());
+		return response;
 	}
 
 }

@@ -1,10 +1,14 @@
 package com.red.domovie.domain.dto.mypage;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.red.domovie.domain.enums.Tier;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Getter
+@ToString
 public class ProfileDTO {
 
 	private long userId; // 사용자ID
