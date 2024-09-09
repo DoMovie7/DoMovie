@@ -53,6 +53,8 @@ ext {
 }
 
 dependencies {
+
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
 	implementation 'org.springframework.data:spring-data-commons:3.3.3'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'

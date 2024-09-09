@@ -36,26 +36,26 @@ document.addEventListener('DOMContentLoaded', function() {
 		[profileBtn, tierBtn, myPostsBtn].forEach(btn => btn.classList.remove('active'));
 		button.classList.add('active');
 
-		//게시글 갖고오기
-		fetch("/mypage/recommends")
-			.then(response => response.json())
-			.then(data => {
-				console.log("list:", data);
-				let str = "";
-				data.forEach(function(dto) {
-					str += `
-				<li class="post-item">
-					<span><a href="/recommends/${dto.id}" >${dto.title}</a></span>
-					<p>${dto.createdAt.substring(0, 10)}</p>
-				</li>
-				`
-				});
-				const postsListContainer = document.querySelector('#posts-list-container');
-				postsListContainer.innerHTML = str;
-			})
-			.catch(error => {
-				alert('게시글 로드 오류!');
+	//게시글 갖고오기
+	fetch("/mypage/recommends")
+		.then(response => response.json())
+		.then(data => {
+			console.log("list:", data);
+			let str = "";
+			data.forEach(function(dto) {
+				str += `
+			<li class="post-item">
+				<span><a href="/recommends/${dto.id}" >${dto.title}</a></span>
+				<p>${dto.createdAt.substring(0, 10)}</p>
+			</li>
+			`
 			});
+			const postsListContainer = document.querySelector('#posts-list-container');
+			postsListContainer.innerHTML = str;
+		})
+		.catch(error => {
+			alert('게시글 로드 오류!');
+		});
 	}
 
 	// 닉네임 수정 모드 토글 함수
@@ -210,26 +210,28 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            const currentTier = calculateTier(data.recommendCount);
-
+			console.log("data:",data)
+            //const currentTier = calculateTier(data.recommendCount);
+			//*
             const tierImage = document.getElementById('tier-image');
             const tierDescription = document.querySelector('#tier-description b i');
             const recommendCount = document.getElementById('recommend-count');
-
+			
             if (tierImage && tierDescription && recommendCount) {
-                tierImage.src = currentTier.image;
-                tierImage.alt = `${currentTier.name} 등급 이미지`;
+                tierImage.src = data.url;
+                tierImage.alt = `${data.url} 등급 이미지`;
                 
                 // 등급 설명 업데이트
-                tierDescription.textContent = currentTier.description;
+                tierDescription.textContent = data.desc;
                 
                 // recommendCount 업데이트
-                recommendCount.textContent = data.recommendCount.toString();
+                recommendCount.textContent = data.recommendCount;
             }
-
+			//*/
             // 등급 정보를 로드한 후 tier 컨텐츠를 표시
-            loadContent('tier');
-            setActiveButton(tierBtn);
+            //loadContent('tier');
+            //setActiveButton(tierBtn);
+            
         })
         .catch(error => {
             console.error('Error fetching user info:', error);
@@ -268,41 +270,50 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	// 이벤트 리스너 추가
+	// 내 프로필 탭 클릭 이동
 	profileBtn.addEventListener('click', () => {
 		loadContent('profile');
 		setActiveButton(profileBtn);
 	});
 
+	// 나의 등급 탭 클릭 이동
 	tierBtn.addEventListener('click', () => {
 		loadContent('tier');
 		setActiveButton(tierBtn);
-		loadTierContent();
+		//loadTierContent();
 	});
 
+	// 내가 쓴 글 탭 클릭 이동
 	myPostsBtn.addEventListener('click', () => {
 		loadContent('my-posts');
 		setActiveButton(myPostsBtn);
 	});
 
+	// 닉네임 수정 버튼 클릭 시 닉네임 수정 모드로 전환
 	editNicknameBtn.addEventListener('click', () => {
 		toggleNicknameEditMode(true);
 	});
 
+	// 닉네임 수정 폼 제출 시 새 닉네임으로 업데이트
 	nicknameForm.addEventListener('submit', updateNickname);
 
+	// 닉네임 수정 취소 버튼 클릭 시 수정 모드 종료
 	cancelNicknameBtn.addEventListener('click', () => {
 		toggleNicknameEditMode(false);
 	});
 
+	// 비밀번호 변경 버튼 클릭 시 비밀번호 변경 팝업 표시
 	changePasswordBtn.addEventListener('click', showPasswordPopup);
 
+	// 비밀번호 변경 팝업 닫기 버튼 클릭 시 팝업 닫기
 	closePopupBtn.addEventListener('click', closePasswordPopup);
 
+	// 비밀번호 변경 폼 제출 시 새 비밀번호로 업데이트
 	passwordForm.addEventListener('submit', changePassword);
 
 	// 프로필 이미지 업로드
 	fileInput.addEventListener("change", fileuploadS3Temp);
-	
+	// 파일 입력 변경 시 S3 임시 폴더에 프로필 이미지 업로드
 	function fileuploadS3Temp(){
 		//s3 temp 폴더 파일업로드해야함
 		//FormData 객체를 사용하여 파일 데이터를 서버에 전송할수있다

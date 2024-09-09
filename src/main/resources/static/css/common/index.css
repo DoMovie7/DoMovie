@@ -23,19 +23,20 @@ main{padding-top:110px }
 
 
 .indexslide-wrap>li:nth-of-type(1) {
-	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/Junsu/Junsu_19207742.jpg");
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/TransformersOne/TransformersOne_1920774.jpg");
+	
 
 }
 
 
 .indexslide-wrap>li:nth-of-type(2) {
-	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/NoWayUp/NoWayUp_1920774.jpg");
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/TaintedLove/TaintedLove_1920774.jpg");
 
 }
 
 
 .indexslide-wrap>li:nth-of-type(3) {
-	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/YouShineInTheMoonlight/YouShineInTheMoonlight_1920774.jpg");
+	background-image: url("https://cf2.lottecinema.co.kr/lotte_image/2024/WeOver/WeOver_1920774.jpg");
 
 }
 

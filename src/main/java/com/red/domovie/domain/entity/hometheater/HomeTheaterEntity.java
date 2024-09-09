@@ -40,12 +40,15 @@ public class HomeTheaterEntity extends BaseEntity{
     private int viewCount;
 
     private int commentCount;
-
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     private String thumbnailImageUrl;
 
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public HomeTheaterEntity update( HomeTheaterUpdateDTO updateDTO) {
         this.title = updateDTO.getTitle();
@@ -56,6 +59,10 @@ public class HomeTheaterEntity extends BaseEntity{
     @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> commentEntities;
 
+    //////////////////////////////
+    @OneToMany(mappedBy = "homeTheater", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemImageEntity> images = new ArrayList<>();
+    ////////////////////////////
 
     public boolean isAuthor(UserEntity user) {
         return this.author.getUserId() == user.getUserId();

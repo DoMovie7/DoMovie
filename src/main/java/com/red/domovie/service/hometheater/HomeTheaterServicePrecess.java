@@ -76,13 +76,18 @@ public class HomeTheaterServicePrecess {
         HomeTheaterEntity homeTheater = homeTheaterRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
 
-        List<ImageDetailDTO> images=itemImageRepository.findByHomeTheater(homeTheater).stream()
-                .map(imgEnt->modelMapper.map(imgEnt, ImageDetailDTO.class))
+        List<ImageDetailDTO> images = itemImageRepository.findByHomeTheater(homeTheater).stream()
+                .map(imgEnt -> modelMapper.map(imgEnt, ImageDetailDTO.class))
+                .collect(Collectors.toList());
+
+        List<CommentListDTO> comments = commentRepository.findByHomeTheaterId(id).stream()
+                .map(comment -> modelMapper.map(comment, CommentListDTO.class))
                 .collect(Collectors.toList());
 
         HomeTheaterDetailDTO dto = modelMapper.map(homeTheater, HomeTheaterDetailDTO.class);
-        dto.setAuthorEmail(homeTheater.getAuthor().getEmail());  // 작성자의 이메일 설정
+        dto.setAuthorEmail(homeTheater.getAuthor().getEmail());
         dto.setImages(images);
+        dto.setComments(comments);
         return dto;
     }
     @Transactional
@@ -93,6 +98,11 @@ public class HomeTheaterServicePrecess {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 
         if (post.isAuthor(user) || user.getRoles().contains(Role.ADMIN)) {
+            // 1. 연관된 이미지 먼저 삭제
+            List<ItemImageEntity> images = itemImageRepository.findByHomeTheater(post);
+            itemImageRepository.deleteAll(images);
+
+            // 2. 게시글 삭제
             homeTheaterRepository.delete(post);
             return true;
         }
