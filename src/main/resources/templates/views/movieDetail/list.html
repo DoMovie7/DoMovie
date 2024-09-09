@@ -3,9 +3,11 @@
 	th:replace="~{views/common/layout :: layout(~{::head} ,~{::main} ) }">
 
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.13.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.13.3/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/movieDetail/movieDetail.css">
 	<script src="/js/movieDetail/movieDetail.js" defer></script>
-
+   
 </head>
 
 <body>
@@ -18,10 +20,13 @@
 				<iframe th:src="${movieDetail.vodUrl}" sandbox="allow-same-origin allow-scripts" frameborder="0"allowfullscreen ></iframe>
 			</div>
 			
-			<div th:if="${#strings.length(movieDetail.vodUrl) < 4}" class="video scroll">
+			<div th:if="${#strings.length(movieDetail.vodUrl) < 4 and movieDetail.stll != null}" class="video scroll">
 				<img alt="" th:src="${movieDetail.stll}">
 			</div>
 
+			<div th:if="${#strings.length(movieDetail.vodUrl) < 4} and ${movieDetail.stll == null}" class="video scroll">
+    			<img alt="" th:src="${movieDetail.poster}">
+			</div>
 
 			<div class="movie-info">
 				<ul>
@@ -45,8 +50,7 @@
 				</div>
 				<div class="movie-detail-contents">
 
-					<div class="stararea">
-						<span class="starpoint"></span> <span class="point">4.0</span>
+					<div class="stararea-wrap">
 					</div>
 
 					<div class="movie-description">

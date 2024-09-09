@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.red.domovie.domain.dto.bot.FAQDTO;
 import com.red.domovie.domain.dto.chat.ChatRoomDTO;
+import com.red.domovie.domain.dto.chat.ChattingDTO;
 import com.red.domovie.domain.dto.chat.ChattingRoomDTO;
 import com.red.domovie.domain.dto.chat.PageDTO;
 import com.red.domovie.domain.entity.FAQEntity;
@@ -47,28 +48,22 @@ public class BotAdminController {
 	
 	@PostMapping("/admin/faqs/first")
     public String addFirstFAQ(@RequestParam(name = "name") String name) {
-		System.out.println(">>>>>>>name : "+name);
 		faqService.addFirstFAQ(name);
         return "redirect:/admin/faqs";
     }
 	
-	//////////////////////////////
-	@PostMapping("/admin/faqs")
+	@DeleteMapping("/admin/faqs/{id}")
     @ResponseBody
-    public FAQDTO addFAQ(@RequestBody FAQDTO faqDTO) {
-        return faqService.addFAQ(faqDTO);
+    public void deleteFAQ(@PathVariable(name="id") Long id) {
+		
+        faqService.deleteFAQ(id);
     }
-
+	
+	//////////////////////////////
     @PutMapping("/admin/faqs/{parentId}")
     @ResponseBody
     public FAQDTO updateFAQ(@PathVariable Long parentId, @RequestBody FAQDTO faqDTO) {
         return faqService.updateFAQ(parentId, faqDTO);
-    }
-
-    @DeleteMapping("/admin/faqs/{id}")
-    @ResponseBody
-    public void deleteFAQ(@PathVariable Long id) {
-        faqService.deleteFAQ(id);
     }
 	//////////////////////////////
 	
@@ -83,7 +78,10 @@ public class BotAdminController {
 	
 	@GetMapping("/admin/chat/{roomId}")
 	public String chatting(@PathVariable("roomId") String roomId, Model model) {
-		model.addAttribute("roomdId", roomId);
+		ChatRoomDTO roomInfo = chatService.findRoomInfo(roomId);
+		model.addAttribute("roomInfo", roomInfo);
+		List<ChattingDTO> chattingDTO = chatService.findChatByRoomId(roomId);
+		model.addAttribute("chattingDTO", chattingDTO);
 		return "views/admin/chat";
 	}
 	

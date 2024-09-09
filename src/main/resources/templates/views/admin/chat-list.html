@@ -96,7 +96,7 @@
         <ul th:each="room : ${pageDTO.content}" style="list-style-type: none; padding: 0; margin: 0;">
             <li class="chat-room">
                 <div class="chat-text-left">
-                    <img>
+                    <img th:src="${room.profileImageUrl ?: '/img/img_default.jpg'}">
                     <a th:href="@{|/admin/chat/${room.roomId}|}" th:text="|${room.userName}고객님 (${room.email})|">채팅방</a>
                 </div>
                 <span th:text="${room.createdAt}"></span>

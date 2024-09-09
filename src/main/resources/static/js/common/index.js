@@ -1,17 +1,7 @@
 const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 검색 버튼 클릭 시 submitSearch 함수 호출
-    document.getElementById('search-button').addEventListener('click', submitSearch);
 
-    // 입력 필드에서 엔터 키를 눌렀을 때 submitSearch 함수 호출
-    document.getElementById('keyword').addEventListener('keyup', function(event) {
-        if (event.key === 'Enter') {
-            submitSearch();
-        }
-    });
-});
 //문서의 내용이 모두 로드되면 할일
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -90,20 +80,74 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+//추천검색
+
+document.addEventListener('DOMContentLoaded', function() {
+    const keywordInput = document.getElementById('keyword');
+    const suggestionsBox = document.getElementById('autocomplete-suggestions');
+
+    if (!keywordInput || !suggestionsBox) {
+        console.error('필수 요소가 누락되었습니다.');
+        return;
+    }
+
+    keywordInput.addEventListener('input', function() {
+        const query = keywordInput.value;
+        if (query.length > 2) {
+            fetchAutoCompleteSuggestions(query);
+        } else {
+            suggestionsBox.innerHTML = '';
+        }
+    });
+
+    function fetchAutoCompleteSuggestions(query) {
+        fetch(`/autocomplete?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Received data:', data); // 데이터 확인
+                suggestionsBox.innerHTML = '';
+                
+                if (data && Array.isArray(data) && data.length > 0) {
+                    data.forEach(item => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.classList.add('autocomplete-suggestion');
+                        
+                        // 강조태그 제거 및 불필요한 공백 처리
+                        const cleanedTitle = item.title
+                            .replace(/!HS|!HE/g, '')  // 강조태그 제거
+                            .replace(/\s+/g, ' ')    // 연속된 공백을 하나로 줄임
+                            .trim();                 // 시작과 끝의 공백 제거
+                        
+                        suggestionItem.textContent = cleanedTitle; // title 속성 사용
+                        suggestionItem.addEventListener('click', function() {
+                            keywordInput.value = this.textContent;
+                            suggestionsBox.innerHTML = '';
+                            searchMovies(keywordInput.value); // 자동 완성 클릭 시 영화 검색
+                        });
+                        suggestionsBox.appendChild(suggestionItem);
+                    });
+                } else {
+                    suggestionsBox.innerHTML = '<div class="autocomplete-suggestion">추천 검색어 없음</div>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+});
+
+
 
 
 
 // 영화 검색 함수
 document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('search-form');
-    
+
+	
     searchForm.addEventListener('submit', function(event) {
         event.preventDefault(); // 기본 폼 제출 동작을 막음
         searchMovies(); // 영화 검색
     });
 
-    // 페이지 로드 시 검색 트렌드를 가져옴
-    fetchSearchTrends();
 });
 
 // 영화 검색 함수
@@ -141,7 +185,7 @@ function searchMovies() {
                             <a href="/movies/detail/${movie.DOCID}">
                                 <img src="${movie.posterUrl || 'path/to/default/image.jpg'}" alt="${cleanTitle(movie.title)} 포스터">
                             </a>
-                            <p>${cleanTitle(movie.title)}</p>
+                            <p class="movie-title">${cleanTitle(movie.title)}</p>
                             <p>개봉일: ${movie.dotDate || '정보 없음'}</p>
                             <p>국가: ${movie.nation || '정보 없음'}</p>
                             <p>장르: ${movie.genre || '정보 없음'}</p>
@@ -167,84 +211,75 @@ function searchMovies() {
 function cleanTitle(title) {
     // !HS와 !HE를 제거하거나, 필요한 경우 강조 표시로 변환합니다.
     return title.replace(/!HS/g, '<strong>').replace(/!HE/g, '</strong>');
-}
-function cleanTitle(title) {
-    // !HS와 !HE를 제거하거나, 필요한 경우 강조 표시로 변환합니다.
-    return title.replace(/!HS/g, '<strong>').replace(/!HE/g, '</strong>');
-    
-/*고급기능*/
-// 사용자 검색 행동을 기록하는 함수
-// HTML 문서가 완전히 로드된 후 실행
-}
+}   
 
-function submitSearch() {
-    console.log("111111");
-    const searchQuery = document.getElementById('keyword').value;
+document.addEventListener('DOMContentLoaded', function() {
+    updateTrendingKeywords();
+});
 
-    if (!searchQuery) {
-        alert("Please enter a search query!");
-        return;
-    }
-
-    const userSearchBehavior = {
-        searchQuery: searchQuery,
-        searchTime: new Date().toISOString(),
-        clickedResult: null,
-        sessionDuration: 0
-    };
-
-    fetch('/api/user/search', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            [header]: token // CSRF 토큰을 헤더에 추가
-        },
-        body: JSON.stringify(userSearchBehavior)
-    })
-    .then(async response => {
-        if (!response.ok) {
-            throw new Error('Failed to record search behavior');
-        }
-
-        // 응답 본문이 있는지 확인 (204 No Content 등 처리)
-        const text = await response.text();
-        return text ? JSON.parse(text) : {};
-    })
-    .then(data => {
-        // 서버로부터 받은 데이터가 유효한지 확인
-        console.log('Received data:', data);
-        //alert('Search behavior recorded successfully');
-        fetchSearchTrends(); // 검색 트렌드 새로 고침
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-// 검색 트렌드를 서버에서 가져와 화면에 표시하는 함수
-function fetchSearchTrends() {
-    fetch('/api/trends')
-        .then(response => response.json())
-        .then(trends => {
-            const trendsList = document.getElementById('trendsList');
-            trendsList.innerHTML = ''; // 기존 목록 초기화
-
-            trends.forEach(trend => {
-                const anchor = document.createElement('a');
-                //anchor.href = "#"; // 트렌드 항목에 대한 링크가 필요하다면 수정
-                const span = document.createElement('span');
-                span.textContent = `${trend.keyword} (Searched ${trend.frequency} times)`;
-
-                anchor.appendChild(span);
-                trendsList.appendChild(anchor);
-            });
+// 인기검색어
+function search() {
+    const keyword = document.getElementById('searchKeyword').value;
+    console.log('Attempting to search for:', keyword);
+    if (keyword) {
+        fetch('/search/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify({ keyword: keyword }),
         })
-        .catch(error => {
-            console.error('Error fetching search trends:', error);
-        });
+        .then(response => {
+            console.log('Search response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Search response data:', data);
+            updateTrendingKeywords();
+        })
+        .catch(error => console.error('Error during search:', error));
+    } else {
+        console.log('No keyword entered');
+    }
 }
 
+function updateTrendingKeywords() {
+       console.log('Fetching trending keywords...');
+       fetch('/search/trends?limit=10')
+           .then(response => {
+               console.log('Response status:', response.status);
+               return response.json();
+           })
+           .then(data => {
+               console.log('Received data:', data);
+               const trendingList = document.getElementById('trendingKeywords');
+               trendingList.innerHTML = '';
+               if (data.length === 0) {
+                   console.log('No trending keywords available');
+                   trendingList.innerHTML = '<li>No trending keywords available</li>';
+               } else {
+                   data.forEach(item => {
+                       console.log('Processing item:', item);
+                       const listItem = document.createElement('li');
+                       listItem.textContent = `${item.keyword} (${item.searchCount}회 검색됨)`;
+                       trendingList.appendChild(listItem);
+                   });
+               }
+           })
+           .catch(error => {
+               console.error('Error updating trending keywords:', error);
+               const trendingList = document.getElementById('trendingKeywords');
+               trendingList.innerHTML = '<li>Failed to load trending keywords</li>';
+           });
+   }
 
+// 페이지 로드 시 초기 인기 검색어 로드
+document.addEventListener('DOMContentLoaded', function() {
+    updateTrendingKeywords();
+    // 주기적으로 인기 검색어 업데이트 (예: 30초마다)
+    setInterval(updateTrendingKeywords, 30000);
+});
 
 // movieInfo.js
 // 클라이언트 측 코드 (JavaScript)
@@ -317,10 +352,12 @@ function fetchAnimationMovieInfo() {
         .catch(error => console.error('영화 정보를 가져오는 도중 오류가 발생했습니다:', error));
 }
 
-
+        //
     fetchMovieInfo();
     fetchBoxOfficeInfo();
     fetchHorrorMovieInfo();
 	fetchupcomingMovieInfo();
 	fetchAnimationMovieInfo();
+
+
 

@@ -2,7 +2,6 @@ package com.red.domovie.domain.entity;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import com.red.domovie.domain.dto.movieDetail.getMovieRatingDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

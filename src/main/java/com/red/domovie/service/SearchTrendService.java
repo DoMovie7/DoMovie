@@ -2,9 +2,10 @@ package com.red.domovie.service;
 
 import java.util.List;
 
-import com.red.domovie.domain.entity.SearchTrendEntity;
-
+import com.red.domovie.domain.dto.movie.SearchTrendDTO;
 
 public interface SearchTrendService {
-    List<SearchTrendEntity> getAllSearchTrends();
+
+    void saveOrUpdateKeyword(String keyword);
+    List<SearchTrendDTO> getTopSearchTrends(int limit);
 }

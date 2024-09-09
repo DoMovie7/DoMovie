@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class getMovieRatingDTO {
+public class GetMovieRatingDTO {
 	
 	private Long userId;
 	private String nickName;

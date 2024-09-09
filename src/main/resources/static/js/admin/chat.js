@@ -1,6 +1,7 @@
 let client;  // WebSocket 클라이언트 객체
 let key = document.getElementById('roomIdKey').value;
-console.log("key : ", clearAnswer);
+let userName = document.getElementById('userName').value;
+let profileImageUrl = document.getElementById('profileImageUrl').value;
 
 //채팅 연결
 function chatConnect(){
@@ -15,11 +16,11 @@ function chatConnect(){
 	            
 	            // 봇의 응답 메시지 HTML 생성
 	            var tag = `<div class="msg bot flex">
-	                        <!--<div class="icon">
-	                            <img src="/img/chatbot-img.png">
-	                        </div>-->
+	                        <div class="icon">
+	                            <img src="${profileImageUrl || '/img/img_default.jpg'}" class="customer-img">
+	                        </div>
 	                        <div class="message">
-	                        <div class="bot-name">고객님</div>
+	                        <div class="bot-name">${userName} 고객님</div>
 	                            <div class="part chatbot">
 	                                <p>${response}</p>
 	                            </div>
@@ -74,7 +75,8 @@ function btnMsgSendClicked() {
 // 페이지 로드 시 초기화 및 이벤트 리스너 설정
 document.addEventListener('DOMContentLoaded', (event) => {
 	chatConnect();
-    
+	formatAllTimes();
+	
     // 입력 필드에서 Enter 키 입력 시 메시지 전송
     document.getElementById("answer").addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
@@ -187,4 +189,14 @@ function showDateIfNew() {
         chatContent.innerHTML = dateTag + chatContent.innerHTML;
         localStorage.setItem('lastDisplayedDate', today);  // 현재 날짜를 로컬 스토리지에 저장
     }
+}
+
+function formatAllTimes(){
+	var timeElements = document.querySelectorAll('.time-display');
+	    timeElements.forEach(function(element) {
+	        var dateTimeString = element.getAttribute('data-created-at');
+	        if (dateTimeString) {
+	            element.textContent = formatTime(new Date(dateTimeString));
+	        }
+	    });
 }

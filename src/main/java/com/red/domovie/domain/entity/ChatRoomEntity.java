@@ -1,6 +1,9 @@
 package com.red.domovie.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import groovy.transform.ToString;
 import jakarta.persistence.Column;
@@ -31,5 +34,5 @@ public class ChatRoomEntity extends BaseEntity{
 	
 	@Column(nullable = true)
 	private long adminId;
-
+	
 }

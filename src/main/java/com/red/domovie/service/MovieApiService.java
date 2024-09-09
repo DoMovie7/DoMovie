@@ -22,4 +22,9 @@ public interface MovieApiService {
 
 	List<KmdbMovieDTO> searchMovies(String keyword);
 
+	List<KmdbMovieDTO> getAutoCompleteSuggestions(String query);
+
+
+
+
 }

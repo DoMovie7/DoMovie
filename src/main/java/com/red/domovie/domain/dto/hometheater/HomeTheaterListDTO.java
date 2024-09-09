@@ -18,4 +18,9 @@ public class HomeTheaterListDTO {
     private int commentCount;
     private String thumbnailImageUrl;  // 대표 이미지 경로 추가
     private String category;
+
+    public HomeTheaterListDTO thumbnailImageUrl(String thumbnailImageUrl){
+        this.thumbnailImageUrl=thumbnailImageUrl;
+        return this;
+    }
 }

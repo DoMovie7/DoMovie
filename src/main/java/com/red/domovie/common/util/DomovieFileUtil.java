@@ -54,25 +54,26 @@ public class DomovieFileUtil {
 	 * @param bucket
 	 * @param key
 	 */
-	public void awsS3DeleteObject(S3Client s3Client,String bucket,String key) {
+	public void awsS3DeleteObject(S3Client s3Client,String bucket,String bucketKey) {
 		s3Client.deleteObject(DeleteObjectRequest.builder()
 								.bucket(bucket)
-								.key(key)//tempKey
+								.key(bucketKey)//tempKey
 								.build());
 	}
 	
 	
 	/**
-	 * @param s3Client AWS S3Client 객체
-	 * @param bucket   S3의 버킷이름
-	 * @param key      버킷의 객체(현재는 이미지파일)의 key 
+	 * @param multipartFile : MultipartFile 객체
+	 * @param s3Client      :AWS S3Client 객체
+	 * @param bucket        :S3의 버킷이름
+	 * @param key           :버킷의 객체(현재는 이미지파일)의 key 
 	 * @return  Map 객체에 업로드한 url, key 를 반환
 	 */
-	public Map<String, String> awsS3fileUpload(MultipartFile multipartFile,S3Client s3Client,String bucket,String key) {
+	public Map<String, String> awsS3fileUpload(MultipartFile multipartFile,S3Client s3Client,String bucket,String bucketKey) {
 				
 		PutObjectRequest putObjectRequest=PutObjectRequest.builder()
 				.bucket(bucket)
-				.key(key)
+				.key(bucketKey)
 				.contentType(multipartFile.getContentType())
 				.acl(ObjectCannedACL.PUBLIC_READ)
 				.build();
@@ -87,11 +88,11 @@ public class DomovieFileUtil {
 		}
 		
 		
-		String url=getS3BucketObjectUrl(s3Client, bucket, key);
+		String url=getS3BucketObjectUrl(s3Client, bucket, bucketKey);
 		
 		Map<String, String> result=new HashMap<>();
 		result.put("url", url);
-		result.put("key", key);
+		result.put("bucketKey", bucketKey);
 		
 		return result;
 	}
@@ -108,9 +109,9 @@ public class DomovieFileUtil {
 	 * @param key
 	 * @return
 	 */
-	private String getS3BucketObjectUrl(S3Client s3Client,String bucket,String key) {
+	private String getS3BucketObjectUrl(S3Client s3Client,String bucket,String bucketKey) {
 		return s3Client.utilities()
-				.getUrl(obj->obj.bucket(bucket).key(key))
+				.getUrl(obj->obj.bucket(bucket).key(bucketKey))
 				.toString()
 				.substring(6);
 	}
