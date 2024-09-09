@@ -14,12 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     Promise.all([
 		findUserComments(movieId),
-    	findAllComments(movieId)
+    	findAllComments(movieId),
+    	findAverageRating(movieId)
 
 	]).then(() => {
 		setTimeout(() => {
 			initializeRating();
 			writeComment();
+			updateUserComments();
+			deleteUserComments();
 		}, 100);
 
 
@@ -27,10 +30,276 @@ document.addEventListener('DOMContentLoaded', function() {
 	}).catch(error => {
         console.error('Error loading comments:', error);
     });
-	
-   
     
-	//유저 코멘트 불러오기
+    
+    
+	 // 리뷰 작성 버튼 클릭 이벤트
+	 
+	function writeComment() {
+
+		const commentBtn = document.querySelector('.commentBtn')
+		
+
+
+		if (commentBtn != null) {
+
+			commentBtn.addEventListener('click', function() {
+				// 사용자 입력 데이터 가져오기
+
+				const rating = document.querySelector('input[name="rating"]:checked').value;
+				const comments = document.querySelector('input[name="comment"]').value;
+
+				// 서버로 전송할 데이터 객체 생성
+				const data = { rating, movieId, comments };
+
+				// 서버로 POST 요청 보내기
+				fetch("/movies/detail/comment/usercomments", {
+					method: 'POST',
+					headers: {
+						[csrfHeader]: csrfToken,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.text(); // 서버에서 HTML 조각을 반환하므로 text()로 처리
+					})
+					.then(html => {
+
+
+						// 입력 필드 초기화
+						//document.querySelector('input[name="comment"]').value = '';
+						//initStars(); // 별점 초기화
+						
+							
+						 Promise.all([
+							findUserComments(movieId),
+					    	findAllComments(movieId),
+					    	findAverageRating(movieId)
+					
+						]).then(() => {
+							setTimeout(() => {
+								initializeRating();
+								writeComment();
+								updateUserComments();
+								deleteUserComments();
+							}, 100);
+					
+					
+					
+						}).catch(error => {
+					        console.error('Error loading comments:', error);
+					    });
+
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('리뷰 작성 중 오류가 발생했습니다. 다시 시도해 주세요.');
+					});
+			});
+
+
+
+		}
+
+
+
+	}/*별점남기기끝*/
+	
+	
+	//유저 코멘트 수정하기
+ function updateUserComments(){
+	
+	const updateBtn= document.querySelector('.updateBtn');
+	
+	if(updateBtn != null){
+		
+		const updateWriteWrap= document.querySelector('.update-write-comment');
+        const userRatingWrap= document.querySelector('.user-rating-wrap');
+        const submitUpdateBtn= document.querySelector('.submitUpdateBtn');
+        const cancleUpdateBtn= document.querySelector('.cancleUpdateBtn');
+        const form = document.querySelector('.update-write-comment form');
+		
+		updateBtn.addEventListener('click',function(){
+			
+			updateWriteWrap.style.display ='block';
+			userRatingWrap.style.display='none';
+			//업데이트 취소버튼
+			cancleUpdateBtn.addEventListener('click',function(){
+				
+				updateWriteWrap.style.display ='none';
+				userRatingWrap.style.display='block';
+				form.reset();
+				
+			})
+			
+			//수정 제출 버튼
+			submitUpdateBtn.addEventListener('click',function(){
+				
+				// 사용자 입력 데이터 가져오기
+                const movieId = document.querySelector('.movieId').textContent;
+				const rating = document.querySelector('input[name="rating"]:checked').value;
+				const comments = document.querySelector('input[name="comment"]').value;
+
+				// 서버로 전송할 데이터 객체 생성
+				const data = { rating, movieId, comments };
+
+				// 서버로 put 요청 보내기
+				fetch("/movies/detail/comment/usercomments", {
+					method: 'PUT',
+					headers: {
+						[csrfHeader]: csrfToken,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.text(); // 서버에서 HTML 조각을 반환하므로 text()로 처리
+					})
+					.then(html => {
+
+
+						// 입력 필드 초기화
+						//document.querySelector('input[name="comment"]').value = '';
+						//initStars(); // 별점 초기화
+						
+						 Promise.all([
+							findUserComments(movieId),
+					    	findAllComments(movieId),
+					    	findAverageRating(movieId)
+					    	
+						]).then(() => {
+							setTimeout(() => {
+								initializeRating();
+								writeComment();
+								updateUserComments();
+								deleteUserComments();
+							}, 100);
+					
+					
+					
+						}).catch(error => {
+					        console.error('Error loading comments:', error);
+					    });
+
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('리뷰 작성 중 오류가 발생했습니다. 다시 시도해 주세요.');
+					});
+				
+				
+				
+			})
+			
+		});
+	}
+	
+	
+ }
+ 
+ //유저 코멘트 삭제하기
+  function deleteUserComments(){
+	
+	const updateBtn= document.querySelector('.deleteBtn');
+
+	  if (updateBtn != null) {
+		
+		updateBtn.addEventListener('click',function(){
+			  Swal.fire({
+			  title: '리뷰를 정말 삭제하시겠습니까?',
+			  text: '다시 되돌릴 수 없습니다.',
+			  icon: 'warning',
+
+			  showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+			  confirmButtonColor: '#DB242D', // confrim 버튼 색깔 지정
+			  cancelButtonColor: '#040707', // cancel 버튼 색깔 지정
+			  confirmButtonText: '삭제', // confirm 버튼 텍스트 지정
+			  cancelButtonText: '취소', // cancel 버튼 텍스트 지정 
+
+		  }).then(result => {
+	
+			  
+			
+			  if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+			  
+			       const movieId = document.querySelector('.movieId').textContent;
+			      console.log("리뷰삭제 시작중");
+			       
+			     fetch("/movies/detail/comment/usercomments", {
+					method: 'DELETE',
+					headers: {
+						[csrfHeader]: csrfToken,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(movieId)
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.text(); 
+					})
+					.then(html => {
+
+                            console.log("리뷰삭제 성공함");
+						// 입력 필드 초기화
+						//document.querySelector('input[name="comment"]').value = '';
+						//initStars(); // 별점 초기화
+						
+						 Promise.all([
+							findUserComments(movieId),
+					    	findAllComments(movieId),
+					    	findAverageRating(movieId)
+					    	
+						]).then(() => {
+							setTimeout(() => {
+								initializeRating();
+								writeComment();
+								updateUserComments();
+								deleteUserComments();
+							}, 100);
+					
+					
+					
+						}).catch(error => {
+					        console.error('Error loading comments:', error);
+					    });
+					    
+					     Swal.fire('삭제가 완료되었습니다.', '언제든 다시 리뷰를 작성 할 수 있습니다.', 'success');
+
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('리뷰 작성 중 오류가 발생했습니다. 다시 시도해 주세요.');
+					});
+			       
+			       
+			  
+			  
+			     
+
+				 
+			  }
+		  });
+
+			
+		})
+
+
+	}
+	
+	
+ }
+  
+
+//유저 코멘트 불러오기
 	function findUserComments(movieId) {
 
 		fetch(`/movies/detail/${movieId}/usercomments`, {
@@ -84,77 +353,33 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 
 	}
-
-
-
-   
-
-
-   
 	
-
-	 // 리뷰 작성 버튼 클릭 이벤트
-	 
-	function writeComment() {
-
-		const commentBtn = document.querySelector('.commentBtn')
+	//평균 점수 불러오기 
+	function findAverageRating(movieId) {
 		
 
+		fetch(`/movies/detail/${movieId}/average`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'text/html'
+			}
 
-		if (commentBtn != null) {
-
-			commentBtn.addEventListener('click', function() {
-				// 사용자 입력 데이터 가져오기
-
-				const rating = document.querySelector('input[name="rating"]:checked').value;
-				const comments = document.querySelector('input[name="comment"]').value;
-
-				// 서버로 전송할 데이터 객체 생성
-				const data = { rating, movieId, comments };
-
-				// 서버로 POST 요청 보내기
-				fetch("/movies/detail/comment/write", {
-					method: 'POST',
-					headers: {
-						[csrfHeader]: csrfToken,
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(data)
-				})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error('Network response was not ok');
-						}
-						return response.text(); // 서버에서 HTML 조각을 반환하므로 text()로 처리
-					})
-					.then(html => {
-
-
-						// 입력 필드 초기화
-						//document.querySelector('input[name="comment"]').value = '';
-						//initStars(); // 별점 초기화
-
-						findUserComments(movieId);
-						findAllComments(movieId);
-
-					})
-					.catch(error => {
-						console.error('Error:', error);
-						alert('리뷰 작성 중 오류가 발생했습니다. 다시 시도해 주세요.');
-					});
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.text();
+			})
+			.then(html => {
+				document.querySelector('.stararea-wrap').innerHTML = html;
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('전체 댓글을 불러오는 중 오류가 발생했습니다.');
 			});
 
-
-
-		}
-
-
-
-	}/*별점남기기끝*/
-
-  
-
-});// 끝
+	}
 
 
 
@@ -164,6 +389,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+
+//별점 선택 함수
 function initializeRating() {
 	console.log('initializeRating function called');
 	const rateWrap = document.querySelectorAll('.rating');
@@ -274,6 +502,15 @@ function initializeRating() {
 
 }
 
+
+
+
+	
+   
+    
+	
+
+});// 끝
 
 
 

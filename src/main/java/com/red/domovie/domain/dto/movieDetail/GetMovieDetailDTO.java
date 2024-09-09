@@ -66,7 +66,7 @@ public class GetMovieDetailDTO {
                 .vodUrl(movieData.path("vods").path("vod").get(0).path("vodUrl").asText())
                 .staffs(staffs)
                 .poster(movieData.path("posters").asText().split("\\|")[0])
-                .stll(movieData.path("stlls").asText().split("\\|")[1])
+                .stll(getStillImage(movieData.path("stlls").asText()))
                 .build();
     }
     
@@ -89,6 +89,15 @@ public class GetMovieDetailDTO {
         } catch (NumberFormatException e) {
             return runtime; // 파싱 실패 시 원본 값 반환
         }
+    }
+    
+    //스틸컷유무 확인 후 반환
+    private static String getStillImage(String stllsString) {
+        if (stllsString == null || stllsString.isEmpty()) {
+            return null;
+        }
+        String[] stlls = stllsString.split("\\|");
+        return stlls.length > 1 ? stlls[1] : null;
     }
     
 }
