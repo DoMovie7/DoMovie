@@ -5,9 +5,8 @@ import java.util.Map;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.red.domovie.domain.dto.recommend.RecommendFileSaveDTO;
 import com.red.domovie.domain.dto.recommend.RecommendSaveDTO;
-import com.red.domovie.domain.entity.RecommendEntity;
+import com.red.domovie.domain.dto.recommend.RecommendUpdateDTO;
 
 // RecommendService는 추천 목록과 관련된 비즈니스 로직을 처리하기 위한 서비스 계층의 인터페이스입니다.
 // 이 인터페이스는 추천 목록의 조회, 저장, 관리와 같은 기능을 정의합니다.
@@ -27,8 +26,20 @@ public interface RecommendService {
     // 특정 추천 글을 조회하는 메서드입니다.
     // 매개변수로 전달된 추천 글의 ID를 사용하여 해당 글을 데이터베이스에서 조회하고, RecommendEntity 객체로 반환합니다.
     // 이 메서드는 특정 글의 상세 정보를 조회할 때 사용됩니다.
-	RecommendEntity getPost(Long id);
+    void getPost(Long id, Model model);
+	
+	
+    // 추천 글을 삭제하는 메서드입니다.
+    void deletePost(long id);
 
+    
 	Map<String, String> tempUploadProcss(MultipartFile posterfile);
 
+	// 추천 글을 수정하는 메서드입니다.
+	void updateProcess(Long id, RecommendUpdateDTO dto);
+
+	// 장르별 추천 목록을 설정하는 메서드입니다.
+	void listProcess(Model model, int genreIdx);
+
+	
 }
