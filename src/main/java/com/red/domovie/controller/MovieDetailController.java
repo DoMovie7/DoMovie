@@ -66,17 +66,17 @@ public class MovieDetailController {
 	
 	//비동기 처리를 위한 전체 리뷰 요청
 	@GetMapping("/movies/detail/{movieID}/comments")
-	public String findAllComments(@PathVariable(name = "movieID") String movieID,Model model){
+	public String findAllComments(@PathVariable(name = "movieID") String movieID,Model model ,@RequestParam(name = "page" ,defaultValue = "1") int page){
 		
 		
 		
 	    //영화에 맞는 모든 리뷰 가져오기
-		movieDetailService.findAllComments(movieID,model);
+		movieDetailService.findAllComments(movieID,model, page);
 		
 		return "views/movieDetail/listFragments :: reviewList";
 			
 		}
-	
+
 	
 	//비동기처리를 위한 평균평점 요청
 	@GetMapping("/movies/detail/{movieID}/average")

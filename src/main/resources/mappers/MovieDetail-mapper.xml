@@ -35,19 +35,22 @@
 	</select>
 
 	
-	<select id="findMovieRatingList" resultType="com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO">
-        SELECT mr.movie_id as movieId, mr.rating, mr.comments,
-               u.user_id as userId, u.nick_name as nickName
-        FROM movie_ratings mr
-        JOIN user u ON mr.user_id = u.user_id
-        WHERE mr.movie_id = #{movieID}
-        ORDER BY mr.created_at DESC
-    </select>
-    
-    
-    <select id="countMovieRatings" resultType="long">
-        SELECT COUNT(*) FROM movie_ratings WHERE movie_id = #{movieID}
-    </select>
+	<select id="findMovieRatingListPaginated" resultType="com.red.domovie.domain.dto.movieDetail.GetMovieRatingDTO">
+	    SELECT mr.movie_id as movieId, mr.rating, mr.comments,
+	           u.user_id as userId, u.nick_name as nickName
+	    FROM movie_ratings mr
+	    JOIN user u ON mr.user_id = u.user_id
+	    WHERE mr.movie_id = #{movieID}
+	    ORDER BY mr.created_at DESC
+	    LIMIT #{offset}, #{size}
+	</select>
+	
+	<select id="countTotalMovieRatings" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM movie_ratings 
+	    WHERE movie_id = #{movieID}
+	</select>
+
     
 	<update id="updateMovieRating">
 	    UPDATE movie_ratings

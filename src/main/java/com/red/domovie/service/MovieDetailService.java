@@ -14,7 +14,7 @@ public interface MovieDetailService {
 	//사용자 리뷰 가져오기
 	void findUserMovieRating(Long userId, String movieID, Model model);
     //전체 사용자리뷰 가져오기
-	void findAllComments(String movieID, Model model);
+	void findAllComments(String movieID, Model model, int page);
 	//사용자 리뷰 수정
 	void updateMovieRating(Long userId, PostMovieRatingDTO dto);
 	void findAverageRating(String movieID, Model model);

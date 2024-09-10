@@ -31,6 +31,10 @@ public interface MovieDetailMapper {
 	GetAverageRatingDTO findAverageRating(@Param("movieID") String movieID);
 
 	void deleteMovieRating(@Param("movieId") String movieId,@Param("userId") Long userId);
+
+	List<GetMovieRatingDTO> findMovieRatingListPaginated(@Param("movieID") String movieID,@Param("offset") int offset,@Param("size") int SIZE);
+
+	int countTotalMovieRatings(@Param("movieID") String movieID);
 	
 	
 
