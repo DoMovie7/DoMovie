@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(html => {
                 // 'tabId' 요소의 내용을 로드한 HTML로 업데이트합니다.
                 // 'tabId'는 코드에서 정의되지 않았으므로 실제로는 적절한 요소 ID로 변경해야 합니다.
-                document.getElementById(tabId).innerHTML = html;
+                document.getElementById("tabId").innerHTML = html;
             })
             .catch(error => {
                 // 오류가 발생한 경우, 콘솔에 오류 메시지를 출력합니다.

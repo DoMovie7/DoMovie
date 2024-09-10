@@ -65,8 +65,14 @@ body {
 .board-table th {
     background-color: #f8f8f8; /* 테이블 헤더의 배경 색상을 연한 회색으로 설정 */
     font-weight: bold; /* 헤더 글자를 굵게 설정 */
+ 
 }
-
+.board-table .img {
+    width: 70px !important;
+    height: 100px;
+    background: no-repeat center/contain;
+    margin: 0 auto;
+}
 .board-table .title {
     width: 500px; /* 제목 셀의 너비를 500px로 설정 */
 }
@@ -198,3 +204,4 @@ body {
     align-items: center; /* 버튼의 아이템들을 수직 중앙 정렬 */
     font-size: 13px; /* 버튼의 글자 크기를 13px로 설정 */
 }
+

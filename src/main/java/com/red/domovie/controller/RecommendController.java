@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Role;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.red.domovie.domain.dto.recommend.RecommendFileSaveDTO;
 import com.red.domovie.domain.dto.recommend.RecommendSaveDTO;
+import com.red.domovie.domain.dto.recommend.RecommendUpdateDTO;
 import com.red.domovie.domain.entity.RecommendEntity;
 import com.red.domovie.security.CustomUserDetails;
 import com.red.domovie.service.RecommendService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -74,32 +77,57 @@ public class RecommendController {
         return "redirect:/recommends"; // 저장 후 추천 목록 페이지로 리다이렉트합니다.
     }
     
+    //상세페이지
     @GetMapping("/recommends/{id}")
     public String viewRecommend(@PathVariable("id") Long id, Model model) {
-        RecommendEntity recommendEntity = recommendService.getPost(id);
-        model.addAttribute("recommend", recommendEntity);
+        recommendService.getPost(id, model);
         return "views/recommend/detail"; // 상세 페이지를 반환합니다.
     }
     
+    
+    //장르별 영화추천정보 출력
     @GetMapping("/genres/{genreIdx}/recommendations")
     public String listByGenre(Model model, @PathVariable("genreIdx") int genreIdx) {
         // recommendService의 listProcess 메서드를 호출하여 모델을 설정합니다.
-        recommendService.listProcess(model);
+        recommendService.listProcess(model, genreIdx);
         
         // "views/recommend/list"라는 뷰를 반환합니다. 이 뷰는 Thymeleaf 템플릿을 참조합니다.
-        return "views/recommend/list";
+        return "views/recommend/list-data";
     }
     
     @ResponseBody//js fetchapi 성공시 then으로 전달한다.
     @PostMapping("/recommends/temp-upload")
     public Map<String, String> tempUpload(@RequestParam(name = "posterfile") MultipartFile posterfile) {
-      
-        
         return recommendService.tempUploadProcss(posterfile);
     }
     
     
-    
+    // 추천 글 수정 페이지를 보여주는 메서드입니다.
+    @GetMapping("/recommends/{id}/edit")
+    public String editRecommend(@PathVariable("id") Long id, Model model) {
+        recommendService.getPost(id, model);
+        
+        return "views/recommend/edit"; // 수정 페이지로 이동합니다.
+    }
+
+    // 추천 글을 수정하는 메서드입니다.
+    @PutMapping("/recommends/{id}")
+    public String updateRecommend(
+            @PathVariable("id") Long id,
+            @ModelAttribute RecommendUpdateDTO dto) {
+    	recommendService.updateProcess(id, dto);
+        return "redirect:/recommends/" + id; // 수정 후 상세 페이지로 리다이렉트
+    }
+
+    // 추천 글을 삭제하는 메서드입니다.
+    @DeleteMapping("/recommends/{id}")
+    public String deleteRecommend(@PathVariable("id") long id) {
+        recommendService.deletePost(id); // 추천 글 삭제 서비스 호출
+        return "redirect:/recommends"; // 삭제 후 목록 페이지로 리다이렉트
+    }
+
+   
+}
    
     
-}
+
