@@ -182,6 +182,11 @@ h3 {
     height: 250px;
     margin-bottom: 5px;
     border-radius: 4px;
+    transition: transform 0.3s ease; /* 이미지 확대 애니메이션을 부드럽게 하기 위해 transition 추가 */
+}
+
+.movie-item img:hover {
+    transform: scale(1.05); /* 호버 시 이미지를 1.05배 확대 */
 }
 .movie-title{
 	font-weight: bold;

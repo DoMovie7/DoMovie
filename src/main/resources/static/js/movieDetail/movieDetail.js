@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     Promise.all([
 		findUserComments(movieId),
-    	findAllComments(movieId),
+    	findAllComments(1),
     	findAverageRating(movieId)
 
 	]).then(() => {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
 							
 						 Promise.all([
 							findUserComments(movieId),
-					    	findAllComments(movieId),
+					    	findAllComments(1),
 					    	findAverageRating(movieId)
 					
 						]).then(() => {
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						
 						 Promise.all([
 							findUserComments(movieId),
-					    	findAllComments(movieId),
+							findAllComments(1),
 					    	findAverageRating(movieId)
 					    	
 						]).then(() => {
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						
 						 Promise.all([
 							findUserComments(movieId),
-					    	findAllComments(movieId),
+					        findAllComments(1),
 					    	findAverageRating(movieId)
 					    	
 						]).then(() => {
@@ -328,32 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	}
 
-	//전체 코멘트 불러오기 
 
-	function findAllComments(movieId) {
-
-		fetch(`/movies/detail/${movieId}/comments`, {
-			method: 'GET',
-			headers: {
-				'Accept': 'text/html'
-			}
-
-		})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok');
-				}
-				return response.text();
-			})
-			.then(html => {
-				document.querySelector('.comments-list').innerHTML = html;
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				alert('전체 댓글을 불러오는 중 오류가 발생했습니다.');
-			});
-
-	}
 	
 	//평균 점수 불러오기 
 	function findAverageRating(movieId) {
@@ -514,4 +489,31 @@ function initializeRating() {
 });// 끝
 
 
+	//전체 코멘트 불러오기 
 
+	function findAllComments(page = 1) {
+		
+		const movieId = document.querySelector('.movieId').textContent;
+
+		fetch(`/movies/detail/${movieId}/comments?page=${page}`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'text/html'
+			}
+
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.text();
+			})
+			.then(html => {
+				document.querySelector('.comments-list').innerHTML = html;
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('전체 댓글을 불러오는 중 오류가 발생했습니다.');
+			});
+
+	}

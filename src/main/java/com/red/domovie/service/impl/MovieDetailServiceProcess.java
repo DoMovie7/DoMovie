@@ -73,10 +73,15 @@ public class MovieDetailServiceProcess implements MovieDetailService {
 
 	// 영화에 따른 전체 리뷰를 가져오는 메서드
 	@Override
-	public void findAllComments(String movieID, Model model) {
-		
-		List<GetMovieRatingDTO> movieRatingList= movieDetailMapper.findMovieRatingList(movieID);
-		model.addAttribute("movieRatingList", movieRatingList);
+	public void findAllComments(String movieID, Model model, int page) {
+		final int SIZE = 4;
+		int offset = (page - 1) * SIZE;
+		 List<GetMovieRatingDTO> movieRatingList = movieDetailMapper.findMovieRatingListPaginated(movieID, offset, SIZE);
+		 int totalItems = movieDetailMapper.countTotalMovieRatings(movieID);
+		 int totalPages = (int) Math.ceil((double) totalItems / SIZE);
+		    model.addAttribute("movieRatingList", movieRatingList);
+		    model.addAttribute("currentPage", page);
+		    model.addAttribute("totalPages", totalPages);
 
 	}
 
