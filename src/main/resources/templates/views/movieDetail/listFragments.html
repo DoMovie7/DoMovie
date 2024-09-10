@@ -154,11 +154,18 @@
 	<p>전체 리뷰</p>
  	<ul th:if="${movieRatingList != null}">
  		<li th:each="movieRatingList : ${movieRatingList}">
- 			<span th:text="${movieRatingList.nickName}">전송희</span><span class="reviewRating" th:text="${movieRatingList.rating/2}">4.5</span>
+ 			<span th:text="${movieRatingList.nickName}">전송희</span>
+ 			<span class="reviewRating" th:text="${movieRatingList.rating/2}">4.5</span>
  			<p th:text="${movieRatingList.comments}">임영웅이 좋아요</p>
  		
  		</li>
  	</ul>
+ 	
+	<div class="pagination">
+	    <button class="cmbtn3" th:if="${currentPage > 1}" th:onclick="'findAllComments(' + ${currentPage - 1} + ')'">이전</button>
+	    <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span>
+	    <button  class="cmbtn3" th:if="${currentPage < totalPages}" th:onclick="'findAllComments(' + ${currentPage + 1} + ')'">다음</button>
+	</div>
  	
 	
 </div>
