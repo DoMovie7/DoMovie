@@ -32,8 +32,6 @@ public class IndexController {
         // 타임리프 템플릿 이름 반환
         return "views/index/index-movie-list";
     }
-
-    
     
     @GetMapping("/movies/boxOffice")
     public String getBoxOffice(Model model) {
@@ -46,7 +44,6 @@ public class IndexController {
         // 렌더링할 뷰의 이름을 반환합니다.
         return "views/index/index-box-movie-list";
     }
-
     
     @GetMapping("/movies/horror")
     public String getHorrorMovies(Model model) {
@@ -74,7 +71,6 @@ public class IndexController {
         // 타임리프 템플릿 이름 반환
         return "views/index/index-movie-list";
     }
-
     
     @GetMapping("/movies/search")
     @ResponseBody
@@ -82,6 +78,5 @@ public class IndexController {
         List<KmdbMovieDTO> movies = movieApiService.searchMovies(keyword);
         return ResponseEntity.ok(movies);
     }
-    
     
 }

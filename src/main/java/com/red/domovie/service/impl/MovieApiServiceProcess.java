@@ -42,6 +42,8 @@ public class MovieApiServiceProcess implements MovieApiService {
     @Override
     @Cacheable(value = "boxOfficeCache", key = "#root.method.name")
     public List<BoxOfficeDTO> getBoxOffice() {
+       // log.info("getBoxOffice 메서드 호출 - 캐시되지 않은 경우에만 이 로그가 표시됩니다.");
+
         LocalDate date = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = date.format(formatter);
@@ -73,9 +75,6 @@ public class MovieApiServiceProcess implements MovieApiService {
         }
         return boxOfficeDTOs;
     }
-
-
-
 
     private Map<String, String> fetchPosterFromKMDB(String movieNm, String releaseDts) {
         final String DEFAULT_POSTER = "/img/index/no-movie-img.jpg";
