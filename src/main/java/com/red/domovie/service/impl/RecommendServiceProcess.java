@@ -130,7 +130,10 @@ public class RecommendServiceProcess implements RecommendService {
 
 	@Override
 	public void deletePost(long id) {
-		recommendRepository.delete(recommendRepository.findById(id).orElseThrow());
+		RecommendEntity result=recommendRepository.findById(id).orElseThrow();
+		recommendRepository.delete(result);
+		//s3 이미지 삭제
+		domovieFileUtil.awsS3DeleteObject(s3Client, bucket, result.getBucketKey());
 		
 	}
 
