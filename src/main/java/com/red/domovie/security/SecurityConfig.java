@@ -21,7 +21,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -30,6 +30,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/mypage/**", "/movies/detail/comment/usercomments").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,"/recommends/**","/genres/**").permitAll()
                 .requestMatchers("/api/check-email", "/api/find-id", "/api/find-password").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/reset-password").permitAll()
                 .requestMatchers("/hometheater/hometheater_create", "/hometheater/create").authenticated()

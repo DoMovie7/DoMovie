@@ -45,63 +45,65 @@
 				<!-- 검색 버튼입니다. 검색 아이콘을 포함하고 있습니다. -->
 				<button id="searchButton"><i class="fas fa-search"></i></button>
 				<!-- 새로운 추천 글을 작성하기 위한 버튼입니다. -->
-				<a href="/recommends/new" id="writeButton">글&nbsp;작성</a>
+				<a sec:authorize="hasRole('USER')" href="/recommends/new" id="writeButton">글&nbsp;작성</a>
 			</div>
 
 			<!-- 영화 추천 목록을 표시하는 테이블입니다. -->
-			<table class="board-table">
-				<thead>
-					<tr>
-						<!-- 테이블 헤더로, 각 열의 제목을 나타냅니다. -->
-						<th>번호</th>
-						<th>포스터</th>
-						<th class="title">제목</th>
-						<th>글쓴이</th>
-						<th>날짜</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!-- 서버에서 전달된 추천 글 목록을 반복하여 테이블 행을 생성합니다. -->
-					<tr th:each="dto : ${list}">
-						<!-- RecommendListDTO 객체의 'no' 필드를 테이블 셀에 출력 -->
-						<td th:text="${dto.id}"></td>
-
-						<!-- 추천 글의 포스터 이미지를 표시합니다. -->
-						<td>
-							<img th:src="${dto.imgUrl}" alt="Poster" height="100px">
-						</td>
-
-						<!-- 추천 글의 제목을 표시하며, 클릭 시 해당 글의 상세 페이지로 이동하는 링크를 제공합니다. -->
-						<td class="title content">
-							<a th:href="|/recommends/${dto.id}|" th:text="${dto.title}"></a>
-							<!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
-							<span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|"
-								class="comment-count"></span>
-							<!--
-						gt: Thymeleaf에서 두 값을 비교하는 연산자로, 조건부 렌더링을 위해 사용됩니다. 
-						여기서는 dto.commentCount가 0보다 큰 경우에만 특정 HTML 요소를 렌더링합니다.
-						
-						|[${dto.commentCount}]|: Thymeleaf의 문자열 템플릿 구문으로, 데이터를 형식화하여 문자열로 출력합니다. 
-						dto.commentCount 값을 대괄호로 감싸서 표시합니다.
-						 -->
-						</td>
-
-						<!-- 추천 글 작성자의 이메일과 이름을 표시합니다. -->
-						<td >
-							<div th:text="${dto.author.email}"></div>
-							<div th:text="${'('+dto.author.userName+')'}"></div>
-						</td>
-
-						<!-- 추천 글이 작성된 날짜를 지정된 형식으로 포맷하여 표시합니다. -->
-						<td th:text="${dto.createdAt.toLocalDate}"></td>
-					</tr>
-					<!-- 추천 글 목록이 비어 있을 경우, 이를 알리는 메시지를 표시합니다. -->
-					<tr th:if="${#lists.isEmpty(list)}">
-						<td colspan="5" style="text-align: center; padding: 40px 0;">현재 영화 추천글이 존재하지 않습니다.</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+			<section id="tabId">
+				<table class="board-table" >
+					<thead>
+						<tr>
+							<!-- 테이블 헤더로, 각 열의 제목을 나타냅니다. -->
+							<th>번호</th>
+							<th>포스터</th>
+							<th class="title">제목</th>
+							<th>글쓴이</th>
+							<th>날짜</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 서버에서 전달된 추천 글 목록을 반복하여 테이블 행을 생성합니다. -->
+						<tr th:each="dto : ${list}">
+							<!-- RecommendListDTO 객체의 'no' 필드를 테이블 셀에 출력 -->
+							<td th:text="${dto.id}"></td>
+	
+							<!-- 추천 글의 포스터 이미지를 표시합니다. -->
+							<td >
+								<div class="img" th:style="|background-image: url(${dto.imgUrl});|"></div>
+							</td>
+	
+							<!-- 추천 글의 제목을 표시하며, 클릭 시 해당 글의 상세 페이지로 이동하는 링크를 제공합니다. -->
+							<td class="title content">
+								<a th:href="|/recommends/${dto.id}|" th:text="${dto.title}"></a>
+								<!-- 댓글 수가 0보다 클 경우 댓글 수를 표시 -->
+								<span th:if="${dto.commentCount gt 0}" th:text="|[${dto.commentCount}]|"
+									class="comment-count"></span>
+								<!--
+							gt: Thymeleaf에서 두 값을 비교하는 연산자로, 조건부 렌더링을 위해 사용됩니다. 
+							여기서는 dto.commentCount가 0보다 큰 경우에만 특정 HTML 요소를 렌더링합니다.
+							
+							|[${dto.commentCount}]|: Thymeleaf의 문자열 템플릿 구문으로, 데이터를 형식화하여 문자열로 출력합니다. 
+							dto.commentCount 값을 대괄호로 감싸서 표시합니다.
+							 -->
+							</td>
+	
+							<!-- 추천 글 작성자의 이름을 표시합니다. -->
+							<td >
+								<!--<div th:text="${dto.author.email}"></div>-->
+								<div th:text="${dto.author.nickName}"></div>
+							</td>
+	
+							<!-- 추천 글이 작성된 날짜를 지정된 형식으로 포맷하여 표시합니다. -->
+							<td th:text="${dto.createdAt.toLocalDate}"></td>
+						</tr>
+						<!-- 추천 글 목록이 비어 있을 경우, 이를 알리는 메시지를 표시합니다. -->
+						<tr th:if="${#lists.isEmpty(list)}">
+							<td colspan="5" style="text-align: center; padding: 40px 0;">현재 영화 추천글이 존재하지 않습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+		</section>
 	</main>
 </body>
 

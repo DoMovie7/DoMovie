@@ -1,10 +1,8 @@
 package com.red.domovie.domain.entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import com.red.domovie.domain.dto.recommend.RecommendUpdateDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,10 +33,11 @@ public class RecommendEntity extends BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 기본 키
+    private long id; // 기본 키
     
     private String title; // 제목
     
+    @Column(columnDefinition = "text")
     private String content; // 내용
     
     @Enumerated(EnumType.STRING)
@@ -59,4 +58,12 @@ public class RecommendEntity extends BaseEntity {
     private String imgUrl; // 포스터 이미지 URL
     private String bucketKey; // 버킷key
     private String orgName;//파일 원본이름
+    
+    
+    public RecommendEntity updateGenreOrTitleOrContent(RecommendUpdateDTO dto) {
+    	this.genre=dto.getGenre();
+    	this.title=dto.getTitle();
+    	this.content=dto.getContent();
+    	return this;
+    }
 }

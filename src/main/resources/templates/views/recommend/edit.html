@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	th:replace="~{views/common/layout :: layout(~{::head}, ~{::main})}">
+
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${recommend.title}">추천 수정 페이지</title>
+	<link rel="stylesheet" href="/css/recommend/write.css">
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+
+<body class="update-page">
+	<header>
+		<div class="header-title">추천 글 수정 페이지</div>
+	</header>
+
+	<main>
+		<div class="container">
+			<form id="writeForm" method="post" th:action="@{/recommends/{id}(id=${recommend.id})}"
+				enctype="multipart/form-data">
+				<input type="hidden" name="_method" value="put" /> <!-- PUT 요청을 위한 히든 필드 -->
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+				<label for="category">장르 선택</label>
+				<select id="category" name="genre" required>
+					<th:block th:each="genre:${T(com.red.domovie.domain.entity.Genre).values()}">
+						<option th:value="${genre}" th:text="${genre.koName}"
+							th:selected="${genre.name() == recommend.genre.name()}"></option>
+					</th:block>
+				</select>
+
+				<label class="posterLabel" th:style="|background-image: url(${recommend.imgUrl});|">
+					<span>포스터 업로드</span>
+					<input type="file" id="file" style="display: none;">
+				</label>
+
+				<label for="title">제목</label>
+				<input type="text" id="title" name="title" th:value="${recommend.title}" required>
+
+				<label for="editor">내용</label>
+				<div id="editor"></div>
+				<input type="hidden" id="content" name="content" th:value="${recommend.content}">
+
+				<br><br>
+
+				<div class="button-group">
+					<button type="submit" class="r-btn">수정</button>
+					<!-- 취소 버튼 클릭 시 상세 페이지로 리디렉션 -->
+					<button type="button" class="r-btn" id="cancelButton">취소</button>
+				</div>
+			</form>
+
+			<div class="btn-group">
+				<!-- 삭제 버튼과 목록 버튼 제거 -->
+			</div>
+
+		</div>
+		<script src="/js/edit.js"></script>
+	</main>
+</body>
+
+</html>

@@ -3,6 +3,7 @@ package com.red.domovie.domain.dto.recommend;
 import java.time.LocalDateTime;
 
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
+import com.red.domovie.domain.entity.Genre;
 import com.red.domovie.domain.entity.RecommendEntity;
 import com.red.domovie.domain.entity.UserEntity;
 
@@ -17,20 +18,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @Getter
-public class RecommendListDTO {
+public class RecommendDetailDTO {
 
     private long id; // 항목 번호
     private String title; // 항목 제목
+    private String content; // 항목 댓글 수
     private String email; // 항목 글쓴이의 이메일
     private String userName; // 항목 글쓴이의 사용자 이름
     private LocalDateTime createdAt; // 항목 작성 날짜와 시간
     private String nickName;
     private String imgUrl; // 항목 이미지 URL
+    private Genre genre; //장르 
     private int commentCount; // 항목 댓글 수
     
     private ProfileDTO author;
     
-    public RecommendListDTO author(ProfileDTO author) { 
+    public RecommendDetailDTO author(ProfileDTO author) { 
     	this.author=author;
     	return this;
     }
