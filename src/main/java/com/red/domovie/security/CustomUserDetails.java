@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Getter
-//principle 객체
+//principal 객체
 @ToString
 public class CustomUserDetails extends User implements OAuth2User {
     private static final long serialVersionUID = 2L; // 닉네임 추가로 2L로 수정

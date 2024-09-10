@@ -14,14 +14,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.red.domovie.common.util.DomovieFileUtil;
 import com.red.domovie.domain.dto.mypage.ProfileDTO;
+import com.red.domovie.domain.dto.recommend.RecommendDetailDTO;
 import com.red.domovie.domain.dto.recommend.RecommendFileSaveDTO;
 import com.red.domovie.domain.dto.recommend.RecommendListDTO;
 import com.red.domovie.domain.dto.recommend.RecommendSaveDTO;
+import com.red.domovie.domain.dto.recommend.RecommendUpdateDTO;
+import com.red.domovie.domain.entity.Genre;
 import com.red.domovie.domain.entity.RecommendEntity;
 import com.red.domovie.domain.entity.UserEntity;
 import com.red.domovie.domain.repository.RecommendRepository;
 import com.red.domovie.service.RecommendService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -45,6 +49,26 @@ public class RecommendServiceProcess implements RecommendService {
 	@Value("${spring.cloud.aws.s3.upload-src.profile}")
 	private String src;
 	
+	/* 장르별 리스트 처리 */
+	@Override
+	public void listProcess(Model model, int genreIdx) {
+		int idx=genreIdx-1;
+		if(idx==-1) {
+			listProcess(model);
+			return;
+		}
+		
+		Genre genre=Genre.values()[idx];
+		System.out.println(genre);
+		
+		List<RecommendListDTO> recommends =recommendRepository.findByGenre(genre).stream()
+				.map(ent->{
+	        		ProfileDTO author=modelMapper.map(ent.getAuthor(), ProfileDTO.class);
+	        		return modelMapper.map(ent, RecommendListDTO.class).author(author);
+        		})
+				.collect(Collectors.toList());
+		model.addAttribute("list", recommends);
+	}
     // RecommendService 인터페이스를 구현한 listProcess 메서드
     @Override
     public void listProcess(Model model) {
@@ -83,9 +107,10 @@ public class RecommendServiceProcess implements RecommendService {
     }
 
     @Override
-    public RecommendEntity getPost(Long id) {
-        return recommendRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+    public void getPost(Long id, Model model) {
+    	model.addAttribute("recommend", recommendRepository.findById(id)
+    			.map(ent->modelMapper.map(ent, RecommendDetailDTO.class))
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id)));
     }
 
 	@Override
@@ -100,4 +125,24 @@ public class RecommendServiceProcess implements RecommendService {
 		result.put("orgName", orgName);
 		return result;
 	}
+
+
+
+	@Override
+	public void deletePost(long id) {
+		recommendRepository.delete(recommendRepository.findById(id).orElseThrow());
+		
+	}
+
+	@Override
+	@Transactional
+	public void updateProcess(Long id, RecommendUpdateDTO dto) {
+		recommendRepository.findById(id)
+			.map(entity->entity.updateGenreOrTitleOrContent(dto))
+			.orElseThrow();
+		
+	}
+	
+	
+	
 }
